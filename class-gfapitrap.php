@@ -86,6 +86,10 @@ class GFAPITrap extends GFFeedAddOn {
                                     'label'         => 'CommunityUnique',
                                     'value'         => 'communityunique',
                                 ),
+                                array(
+                                    'label'         => 'Inquiring for',
+                                    'value'         => 'inquiringFor',
+                                ),
                             ),
                         ),
                     ),
@@ -105,16 +109,29 @@ class GFAPITrap extends GFFeedAddOn {
         error_log('this is the feed:');
         error_log(print_r($feed, true));
         $metaData = $this->get_generic_map_fields( $feed, 'formFieldMap' );
+
         $communityunique = isset($metaData['communityunique']) ? $this->get_field_value($form, $entry, $metaData['communityunique']) : null;
+
         $email = isset($metaData['email']) ? $this->get_field_value($form, $entry, $metaData['email']) : null;
+
         $firstName = isset($metaData['firstname']) ? $this->get_field_value($form, $entry, $metaData['firstname']) : null;
+
         $lastName = isset($metaData['lastname']) ? $this->get_field_value($form, $entry, $metaData['lastname']) : null;
+
         $HomePhone  = isset($metaData['HomePhone ']) ? $this->get_field_value($form, $entry, $metaData['HomePhone ']) : null;
+
         $addressLine1 = isset($metaData['AddressLine1']) ? $this->get_field_value($form, $entry, $metaData['AddressLine1']) : null;
+
         $city = isset($metaData['City']) ? $this->get_field_value($form, $entry, $metaData['City']) : null;
+
         $state = isset($metaData['State']) ? $this->get_field_value($form, $entry, $metaData['State']) : null;
+
         $zip = isset($metaData['PostalCode']) ? $this->get_field_value($form, $entry, $metaData['PostalCode']) : null;
+
         $comments = isset($metaData['Message']) ? GFCommon::replace_variables($metaData['Message'], $form, $entry) : null;
+
+        $inquiringFor = isset($metaData['inquiringFor']) ? $this->get_field_value($form, $entry, $metaData['inquiringFor']) : null;
+        $type = ($inquiringFor == 'self') ? 'prospect' : 'Contact';
     
         $data = array(
             'communityunique' => $communityunique,
@@ -127,6 +144,7 @@ class GFAPITrap extends GFFeedAddOn {
             'State' => $state,
             'PostalCode' => $zip,
             'Message' => $comments,
+            'type' => $type,
         );
     
         error_log('this is the data: ' . print_r($data, true));
@@ -134,7 +152,7 @@ class GFAPITrap extends GFFeedAddOn {
         error_log('this is the response: ' . print_r($response, true));
     }
 
-    public function sendApiRequest(array $data) {
+    public function sendApiRequest(array $data, $inquiringFor) {
 
         $sendData = array(
             "individuals" => [
@@ -156,7 +174,7 @@ class GFAPITrap extends GFFeedAddOn {
                         "value" => $data['HomePhone ']
                     ],[
                         "property" => "type",
-                        "value" => "prospect"
+                        "value" => $data['type']
                     ],
                 ],
                 "addresses" => [
