@@ -51,32 +51,16 @@ class GFAPITrap extends GFFeedAddOn {
                                     'value'         => 'email',
                                 ),
                                 array(
-                                    'label'         => 'First Name',
+                                    'label'         => 'firstName',
                                     'value'         => 'firstname',
                                 ),
                                 array(
-                                    'label'         => 'Last Name',
+                                    'label'         => 'lastName',
                                     'value'         => 'lastname',
                                 ),
                                 array(
-                                    'label'         => 'HomePhone ',
-                                    'value'         => 'HomePhone ',
-                                ),
-                                array(
-                                    'label'         => 'AddressLine1',
-                                    'value'         => 'AddressLine1',
-                                ),
-                                array(
-                                    'label'         => 'City',
-                                    'value'         => 'City',
-                                ),
-                                array(
-                                    'label'         => 'State',
-                                    'value'         => 'State',
-                                ),
-                                array(
-                                    'label'         => 'Zip Code',
-                                    'value'         => 'PostalCode',
+                                    'label'         => 'Phone',
+                                    'value'         => 'phone',
                                 ),
                                 array(
                                     'label'         => 'Comments',
@@ -87,12 +71,12 @@ class GFAPITrap extends GFFeedAddOn {
                                     'value'         => 'communityunique',
                                 ),
                                 array(
-                                    'label'         => 'Interest in',
-                                    'value'         => 'interestIn',
+                                    'label'         => 'InterestIn',
+                                    'value'         => 'interestin',
                                 ),
                                 array(
-                                    'label'         => 'Inquiring for',
-                                    'value'         => 'inquiringFor',
+                                    'label'         => 'InquiringFor',
+                                    'value'         => 'inquiringfor',
                                 ),
                             ),
                         ),
@@ -122,22 +106,22 @@ class GFAPITrap extends GFFeedAddOn {
 
         $lastName = isset($metaData['lastname']) ? $this->get_field_value($form, $entry, $metaData['lastname']) : null;
 
-        $HomePhone  = isset($metaData['HomePhone ']) ? $this->get_field_value($form, $entry, $metaData['HomePhone ']) : null;
+        $Phone  = isset($metaData['phone']) ? $this->get_field_value($form, $entry, $metaData['phone']) : null;
 
         $comments = isset($metaData['Message']) ? GFCommon::replace_variables($metaData['Message'], $form, $entry) : null;
 
         /*Interest in*/
-        $interestIn = isset($metaData['interestIn']) ? $this->get_field_value($form, $entry, $metaData['interestIn']) : null;
+        $interestIn = isset($metaData['interestin']) ? $this->get_field_value($form, $entry, $metaData['interestin']) : null;
 
             // Check if interestIn is one of the excluded values
             $excludedValues = array('Volunteer Inquiries', 'Career Inquiries', 'Vendor Inquiries');
             if (in_array($interestIn, $excludedValues)) {
-                error_log('Skipping API request due to excluded interestIn value: ' . $interestIn);
+                error_log('Skipping API request due to excluded interestin value: ' . $interestIn);
                 return;
             }
 
         /*prospect or contact into type*/
-        $inquiringFor = isset($metaData['inquiringFor']) ? $this->get_field_value($form, $entry, $metaData['inquiringFor']) : null;
+        $inquiringFor = isset($metaData['inquiringfor']) ? $this->get_field_value($form, $entry, $metaData['inquiringfor']) : null;
 
             $type = ($inquiringFor == 'self') ? 'prospect' : 'Contact';
     
@@ -146,9 +130,9 @@ class GFAPITrap extends GFFeedAddOn {
             'email' => $email,
             'firstname' => $firstName,
             'lastname' => $lastName,
-            'HomePhone ' => $HomePhone ,
+            'Phone ' => $phone ,
             'Message' => $comments,
-            'interestIn' => $interestIn,
+            'interestIn' => $interestin,
             'type' => $type,
         );
     
@@ -175,11 +159,11 @@ class GFAPITrap extends GFFeedAddOn {
                         "property" => "email",
                         "value" => $data['email']
                     ], [
-                        "property" => "HomePhone ",
-                        "value" => $data['HomePhone ']
+                        "property" => "Phone",
+                        "value" => $data['phone']
                     ],[
                         "property" => "interestIn", 
-                        "value" => $data['interestIn']
+                        "value" => $data['interestin']
                     ],[
                         "property" => "type",
                         "value" => $data['type']
