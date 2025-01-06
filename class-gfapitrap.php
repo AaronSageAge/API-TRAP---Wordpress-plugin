@@ -129,10 +129,17 @@ class GFAPITrap extends GFFeedAddOn {
         /*Interest in*/
         $interestIn = isset($metaData['interestIn']) ? $this->get_field_value($form, $entry, $metaData['interestIn']) : null;
 
+            // Check if interestIn is one of the excluded values
+            $excludedValues = array('Volunteer Inquiries', 'Career Inquiries', 'Vendor Inquiries');
+            if (in_array($interestIn, $excludedValues)) {
+                error_log('Skipping API request due to excluded interestIn value: ' . $interestIn);
+                return;
+            }
+
         /*prospect or contact into type*/
         $inquiringFor = isset($metaData['inquiringFor']) ? $this->get_field_value($form, $entry, $metaData['inquiringFor']) : null;
 
-        $type = ($inquiringFor == 'self') ? 'prospect' : 'Contact';
+            $type = ($inquiringFor == 'self') ? 'prospect' : 'Contact';
     
         $data = array(
             'communityunique' => $communityunique,
