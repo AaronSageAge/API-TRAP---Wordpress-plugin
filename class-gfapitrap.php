@@ -87,6 +87,10 @@ class GFAPITrap extends GFFeedAddOn {
                                     'value'         => 'communityunique',
                                 ),
                                 array(
+                                    'label'         => 'Interest in',
+                                    'value'         => 'interestIn',
+                                ),
+                                array(
                                     'label'         => 'Inquiring for',
                                     'value'         => 'inquiringFor',
                                 ),
@@ -120,17 +124,14 @@ class GFAPITrap extends GFFeedAddOn {
 
         $HomePhone  = isset($metaData['HomePhone ']) ? $this->get_field_value($form, $entry, $metaData['HomePhone ']) : null;
 
-        $addressLine1 = isset($metaData['AddressLine1']) ? $this->get_field_value($form, $entry, $metaData['AddressLine1']) : null;
-
-        $city = isset($metaData['City']) ? $this->get_field_value($form, $entry, $metaData['City']) : null;
-
-        $state = isset($metaData['State']) ? $this->get_field_value($form, $entry, $metaData['State']) : null;
-
-        $zip = isset($metaData['PostalCode']) ? $this->get_field_value($form, $entry, $metaData['PostalCode']) : null;
-
         $comments = isset($metaData['Message']) ? GFCommon::replace_variables($metaData['Message'], $form, $entry) : null;
 
+        /*Interest in*/
+        $interestIn = isset($metaData['interestIn']) ? $this->get_field_value($form, $entry, $metaData['interestIn']) : null;
+
+        /*prospect or contact into type*/
         $inquiringFor = isset($metaData['inquiringFor']) ? $this->get_field_value($form, $entry, $metaData['inquiringFor']) : null;
+
         $type = ($inquiringFor == 'self') ? 'prospect' : 'Contact';
     
         $data = array(
@@ -139,11 +140,8 @@ class GFAPITrap extends GFFeedAddOn {
             'firstname' => $firstName,
             'lastname' => $lastName,
             'HomePhone ' => $HomePhone ,
-            'AddressLine1' => $addressLine1,
-            'City' => $city,
-            'State' => $state,
-            'PostalCode' => $zip,
             'Message' => $comments,
+            'interestIn' => $interestIn,
             'type' => $type,
         );
     
@@ -173,15 +171,12 @@ class GFAPITrap extends GFFeedAddOn {
                         "property" => "HomePhone ",
                         "value" => $data['HomePhone ']
                     ],[
+                        "property" => "interestIn", 
+                        "value" => $data['interestIn']
+                    ],[
                         "property" => "type",
                         "value" => $data['type']
                     ],
-                ],
-                "addresses" => [
-                    "addressLine1" => $data['AddressLine1'],
-                    "city" => $data['City'],
-                    "state" => $data['State'],
-                    "zip" => $data['PostalCode'],
                 ],
                 "notes"  => [
                     "Message" => $data['Message'],
