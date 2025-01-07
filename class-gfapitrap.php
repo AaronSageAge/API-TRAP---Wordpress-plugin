@@ -98,6 +98,19 @@ class GFAPITrap extends GFFeedAddOn {
                                     'label'         => 'GCLID',
                                     'value'         => 'gclid',
                                 ),
+                                array(
+                                    'label'         => 'careLevel',
+                                    'value'         => 'carelevel',
+                                ),
+                                array(
+                                    'label'         => 'apartmentPreference',
+                                    'value'         => 'apartmentpreference',
+                                ),
+                                array(
+                                    'label'         => 'expansionStatus',
+                                    'value'         => 'expansionstatus',
+                                ),
+                            ),
                             ),
                         ),
                     ),
@@ -150,6 +163,9 @@ class GFAPITrap extends GFFeedAddOn {
         $utmmedium = isset($metaData['utmmedium']) ? $this->get_field_value($form, $entry, $metaData['utmmedium']) : null;
         $utmid = isset($metaData['utmid']) ? $this->get_field_value($form, $entry, $metaData['utmid']) : null;
         $gclid = isset($metaData['gclid']) ? $this->get_field_value($form, $entry, $metaData['gclid']) : null;
+        $carelevel = isset($metaData['carelevel']) ? $this->get_field_value($form, $entry, $metaData['carelevel']) : null;
+        $apartmentpreference = isset($metaData['apartmentpreference']) ? $this->get_field_value($form, $entry, $metaData['apartmentpreference']) : null;
+        $expansionstatus = isset($metaData['expansionstatus']) ? $this->get_field_value($form, $entry, $metaData['expansionstatus']) : null;
     
         $data = array(
             'communityunique' => $communityunique,
@@ -208,9 +224,16 @@ class GFAPITrap extends GFFeedAddOn {
                     ],[
                         "property" => "gclid",
                         "value" => $data['gclid']
-                    ]
-                    ]
-                    ]
+                    ],[
+                        "property" => "carelevel",
+                        "value" => $data['carelevel']
+                    ],[
+                        "property" => "apartmentpreference",
+                        "value" => $data['apartmentpreference']
+                    ],[
+                        "property" => "expansionstatus",
+                        "value" => $data['expansionstatus']
+                    ],
                 ],
                 "notes"  => [
                     "Message" => $data['Message'],
