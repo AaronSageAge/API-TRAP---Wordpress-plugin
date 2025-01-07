@@ -5,7 +5,7 @@
  * Author: Aaron DeMent
  * Author URI: https://github.com/sageage/gravity-api-trap
  * Description: Collect Gravity forms to Webhook
- * Version: 0.1.0
+ * Version: 0.1.2
  * License: GPL2
  * License URL: http://www.gnu.org/licenses/gpl-2.0.txt
  * text-domain: gravity-api-trap
