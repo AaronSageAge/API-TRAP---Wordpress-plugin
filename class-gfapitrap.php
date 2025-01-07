@@ -329,3 +329,4 @@ class GFAPITrap extends GFFeedAddOn {
             return $response;
         }
     }
+}
