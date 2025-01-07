@@ -71,10 +71,6 @@ class GFAPITrap extends GFFeedAddOn {
                                     'value'         => 'communityunique',
                                 ),
                                 array(
-                                    'label'         => 'InterestIn',
-                                    'value'         => 'interestin',
-                                ),
-                                array(
                                     'label'         => 'InquiringFor',
                                     'value'         => 'inquiringfor',
                                 ),
@@ -105,10 +101,6 @@ class GFAPITrap extends GFFeedAddOn {
                                 array(
                                     'label'         => 'apartmentPreference',
                                     'value'         => 'apartmentpreference',
-                                ),
-                                array(
-                                    'label'         => 'expansionStatus',
-                                    'value'         => 'exponsionstatus',
                                 ),
                             ),
                         ),
@@ -143,12 +135,12 @@ class GFAPITrap extends GFFeedAddOn {
         $comments = isset($metaData['Message']) ? GFCommon::replace_variables($metaData['Message'], $form, $entry) : null;
     
         /*Interest in*/
-        $interestin = isset($metaData['interestin']) ? $this->get_field_value($form, $entry, $metaData['interestin']) : null;
+        $carelevel= isset($metaData['carellevel']) ? $this->get_field_value($form, $entry, $metaData['carelevel']) : null;
     
         // Check if interestIn is one of the excluded values
         $excludedValues = array('Volunteer Inquiries', 'Career Inquiries', 'Vendor Inquiries');
-        if (in_array($interestin, $excludedValues)) {
-            error_log('Skipping API request due to excluded interest In value: Career, Volunteer, or Vendor' . $interestin);
+        if (in_array($carelevel, $excludedValues)) {
+            error_log('Skipping API request due to excluded interest In value: Career, Volunteer, or Vendor' . $carelevel);
             return;
         }
     
@@ -164,7 +156,6 @@ class GFAPITrap extends GFFeedAddOn {
         $gclid = isset($metaData['gclid']) ? $this->get_field_value($form, $entry, $metaData['gclid']) : null;
     
         $apartmentpreference = isset($metaData['apartmentpreference']) ? $this->get_field_value($form, $entry, $metaData['apartmentpreference']) : null;
-        $exponsionstatus = isset($metaData['exponsionstatus']) ? $this->get_field_value($form, $entry, $metaData['exponsionstatus']) : null;
     
         $data = array(
             'communityunique' => $communityunique,
@@ -173,7 +164,7 @@ class GFAPITrap extends GFFeedAddOn {
             'lastname' => $lastName,
             'Phone ' => $phone ,
             'Message' => $comments,
-            'interestIn' => $interestin,
+            'CareLevel' => $carelevel,
             'type' => $type,
         );
     
@@ -203,7 +194,7 @@ class GFAPITrap extends GFFeedAddOn {
                         "property" => "Phone",
                         "value" => $data['phone']
                     ],[
-                        "property" => "interestIn", 
+                        "property" => "CareLevel", 
                         "value" => $data['carelevel']
                     ],[
                         "property" => "type",
