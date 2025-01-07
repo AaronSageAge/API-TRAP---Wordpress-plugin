@@ -255,46 +255,77 @@ class GFAPITrap extends GFFeedAddOn {
                 ],
                 "notes"  => [
                     "Message" => $data['Message'],
-                ]
+                ],
+                "comments" => []
             ]
         );
-
+    
         $primaryApiKey = get_option('gravity_api_trap_primary_api_key');
         $secondaryApiKey = get_option('gravity_api_trap_secondary_api_key');
         $url = get_option('gravity_api_trap_endpoint_url');
-
-        $args = [
-            'method' => 'POST',
+    
+        $getResponse = wp_remote_get($url, [
+            'method' => 'GET',
             'headers' => [
                 'Ocp-Apim-Subscription-Key' => $primaryApiKey,
                 'Content-Type' => 'application/json',
                 'PortalId'     => get_option('gravity_api_trap_portal_id'),
-            ],
-            'body' => json_encode($sendData)
-        ];
-
-        error_log('args: ' . print_r($args, true));
-
-        $response = wp_remote_post($url, $args);
-
-        if (is_wp_error($response)) {
-            $args['headers']['Ocp-Apim-Subscription-Key'] = $secondaryApiKey;
-            $response = wp_remote_post($url, $args);
+            ]
+        ]);
+    
+        if (is_wp_error($getResponse)) {
+            $getResponse = wp_remote_get($url, [
+                'method' => 'GET',
+                'headers' => [
+                    'Ocp-Apim-Subscription-Key' => $secondaryApiKey,
+                    'Content-Type' => 'application/json',
+                    'PortalId'     => get_option('gravity_api_trap_portal_id'),
+                ]
+            ]);
         }
-
-        if (is_wp_error($response)) {
+    
+        if (is_wp_error($getResponse)) {
             // Display an error message to the user
-            add_settings_error('gravity-api-trap', 'api_request_error', 'API request failed: ' . $response->get_error_message(), 'error');
-        } elseif ($response['response']['code'] !== 200) {
-            // Display an error message to the user
-            add_settings_error('gravity-api-trap', 'api_request_error', 'API request failed with status code ' . $response['response']['code'], 'error');
+            add_settings_error('gravity-api-trap', 'api_request_error', 'API request failed: ' . $getResponse->get_error_message(), 'error');
         } else {
-            // Log the entire output
-            error_log('API request successful: ' . print_r($response, true));
+            $existingData = json_decode($getResponse['body'], true);
+    
+            foreach ($sendData["individuals"]["properties"] as $property) {
+                if (isset($existingData["individuals"]["properties"][$property["property"]]) && $existingData["individuals"]["properties"][$property["property"]] != $property["value"]) {
+                    $sendData["individuals"]["comments"][] = "Changed " . $property["property"] . " from " . $existingData["individuals"]["properties"][$property["property"]] . " to " . $property["value"];
+                }
+            }
+    
+            $args = [
+                'method' => 'POST',
+                'headers' => [
+                    'Ocp-Apim-Subscription-Key' => $primaryApiKey,
+                    'Content-Type' => 'application/json',
+                    'PortalId'     => get_option('gravity_api_trap_portal_id'),
+                ],
+                'body' => json_encode($sendData)
+            ];
+    
+            error_log('args: ' . print_r($args, true));
+    
+            $response = wp_remote_post($url, $args);
+    
+            if (is_wp_error($response)) {
+                $args['headers']['Ocp-Apim-Subscription-Key'] = $secondaryApiKey;
+                $response = wp_remote_post($url, $args);
+            }
+    
+            if (is_wp_error($response)) {
+                // Display an error message to the user
+                add_settings_error('gravity-api-trap', 'api_request_error', 'API request failed: ' . $response->get_error_message(), 'error');
+            } elseif ($response['response']['code'] !== 200) {
+                // Display an error message to the user
+                add_settings_error('gravity-api-trap', 'api_request_error', 'API request failed with status code ' . $response['response']['code'], 'error');
+            } else {
+                // Log the entire output
+                error_log('API request successful: ' . print_r($response, true));
+            }
+    
+            return $response;
         }
-
-        return $response;
     }
-
-}
-
