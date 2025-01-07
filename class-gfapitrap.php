@@ -75,6 +75,14 @@ class GFAPITrap extends GFFeedAddOn {
                                     'value'         => 'inquiringfor',
                                 ),
                                 array(
+                                    'label'         => 'lovedFirst',
+                                    'value'         => 'lovedfirst',
+                                ),
+                                array(
+                                    'label'         => 'lovedLast',
+                                    'value'         => 'lovedlast',
+                                ),
+                                array(
                                     'label'         => 'utmSource',
                                     'value'         => 'utmsource',
                                 ),
@@ -146,8 +154,11 @@ class GFAPITrap extends GFFeedAddOn {
     
         /*prospect or contact into type*/
         $inquiringfor = isset($metaData['inquiringfor']) ? $this->get_field_value($form, $entry, $metaData['inquiringfor']) : null;
-    
+
         $type = ($inquiringfor == 'self') ? 'prospect' : 'Contact';
+
+        $lovedfirst = isset($metaData['lovedfirst']) ? $this->get_field_value($form, $entry, $metaData['lovedfirst']) : null;
+        $lovedlast = isset($metaData['lovedlast']) ? $this->get_field_value($form, $entry, $metaData['lovedlast']) : null;
     
         $utmsource = isset($metaData['utmsource']) ? $this->get_field_value($form, $entry, $metaData['utmsource']) : null;
         $utmcampaign = isset($metaData['utmcampaign']) ? $this->get_field_value($form, $entry, $metaData['utmcampaign']) : null;
@@ -165,6 +176,14 @@ class GFAPITrap extends GFFeedAddOn {
             'Phone ' => $phone ,
             'Message' => $comments,
             'CareLevel' => $carelevel,
+            'lovedfirst' => $lovedfirst,
+            'lovedlast' => $lovedlast,
+            'utmsource' => $utmsource,
+            'utmcampaign' => $utmcampaign,
+            'utmmedium' => $utmmedium,
+            'utmid' => $utmid,
+            'gclid' => $gclid,
+            'apartmentpreference' => $apartmentpreference,
             'type' => $type,
         );
     
@@ -199,6 +218,12 @@ class GFAPITrap extends GFFeedAddOn {
                     ],[
                         "property" => "type",
                         "value" => $data['type']
+                    ],[
+                        "property" => "lovedfirst",
+                        "value" => $data['lovedfirst']
+                    ],[
+                        "property" => "lovedlast", 
+                        "value" => $data['lovedlast'] 
                     ],[
                         "property" => "utmSource",
                         "value" => $data['utmsource']
