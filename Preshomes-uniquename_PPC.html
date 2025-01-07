@@ -1,28 +1,25 @@
 <script id="communityIDs">
 
-/*need to add code for PPC on this  or create a version for PPC*/
+
 document.addEventListener("DOMContentLoaded", function() {
   var url = window.location.href;
 
   var communityName;
   var uniqueName;
 
-  if (url.includes("/our-locations/westminster-place/")) {
+  if (url.includes("westminster-place")) {
     communityName = "Evanston";
     uniqueName = "WestminsterPlace";
-  } else if (url.includes("/our-locations/lake-forest-place/")) {
+  } else if (url.includes("lake-forest")) {
     communityName = "Lake Forest Place";
     uniqueName = "LakeForestPlacePH";
-  } else if (url.includes("/our-locations/the-moorings/")) {
+  } else if (url.includes("the-moorings")) {
     communityName = "Moorings";
     uniqueName = "TheMooringsPH";
-  } else if (url.includes("/our-locations/ten-twenty-grove/")) {
+  } else if (url.includes("ten-twenty-grove")) {
     communityName = "Ten Twenty Grove";
     uniqueName = "PresHomesTenTwentyGrove";
-  } else if (!url.includes("/our-locations/") && url.includes("https://www.presbyterianhomes.org/") || url.includes("https://presbyteriadev.wpenginepowered.com/") || url.includes("https://presbyteriastage.wpenginepowered.com/")) {
-    communityName = "Presbyterian Homes Corporate";
-    uniqueName = "PresbyterianHomesCorporate";
-  }
+  } 
 
   if (communityName && uniqueName) {
     var communityInput = document.getElementById("input_29_20");
