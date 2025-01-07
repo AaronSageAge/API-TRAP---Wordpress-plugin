@@ -78,6 +78,26 @@ class GFAPITrap extends GFFeedAddOn {
                                     'label'         => 'InquiringFor',
                                     'value'         => 'inquiringfor',
                                 ),
+                                array(
+                                    'label'         => 'utmSource',
+                                    'value'         => 'utmsource',
+                                ),
+                                array(
+                                    'label'         => 'utmMedium',
+                                    'value'         => 'utmmedium',
+                                ),
+                                array(
+                                    'label'         => 'utmCampaign',
+                                    'value'         => 'utmcampaign',
+                                ),
+                                array(
+                                    'label'         => 'utmId',
+                                    'value'         => 'utmid',
+                                ),
+                                array(
+                                    'label'         => 'GCLID',
+                                    'value'         => 'gclid',
+                                ),
                             ),
                         ),
                     ),
@@ -97,33 +117,39 @@ class GFAPITrap extends GFFeedAddOn {
         error_log('this is the feed:');
         error_log(print_r($feed, true));
         $metaData = $this->get_generic_map_fields( $feed, 'formFieldMap' );
-
+    
         $communityunique = isset($metaData['communityunique']) ? $this->get_field_value($form, $entry, $metaData['communityunique']) : null;
-
+    
         $email = isset($metaData['email']) ? $this->get_field_value($form, $entry, $metaData['email']) : null;
-
+    
         $firstName = isset($metaData['firstname']) ? $this->get_field_value($form, $entry, $metaData['firstname']) : null;
-
+    
         $lastName = isset($metaData['lastname']) ? $this->get_field_value($form, $entry, $metaData['lastname']) : null;
-
-        $Phone  = isset($metaData['phone']) ? $this->get_field_value($form, $entry, $metaData['phone']) : null;
-
+    
+        $phone  = isset($metaData['phone']) ? $this->get_field_value($form, $entry, $metaData['phone']) : null;
+    
         $comments = isset($metaData['Message']) ? GFCommon::replace_variables($metaData['Message'], $form, $entry) : null;
-
+    
         /*Interest in*/
-        $interestIn = isset($metaData['interestin']) ? $this->get_field_value($form, $entry, $metaData['interestin']) : null;
-
-            // Check if interestIn is one of the excluded values
-            $excludedValues = array('Volunteer Inquiries', 'Career Inquiries', 'Vendor Inquiries');
-            if (in_array($interestIn, $excludedValues)) {
-                error_log('Skipping API request due to excluded interest In value: Career, Volunteer, or Vendor' . $interestIn);
-                return;
-            }
-
+        $interestin = isset($metaData['interestin']) ? $this->get_field_value($form, $entry, $metaData['interestin']) : null;
+    
+        // Check if interestIn is one of the excluded values
+        $excludedValues = array('Volunteer Inquiries', 'Career Inquiries', 'Vendor Inquiries');
+        if (in_array($interestin, $excludedValues)) {
+            error_log('Skipping API request due to excluded interest In value: Career, Volunteer, or Vendor' . $interestin);
+            return;
+        }
+    
         /*prospect or contact into type*/
-        $inquiringFor = isset($metaData['inquiringfor']) ? $this->get_field_value($form, $entry, $metaData['inquiringfor']) : null;
-
-            $type = ($inquiringFor == 'self') ? 'prospect' : 'Contact';
+        $inquiringfor = isset($metaData['inquiringfor']) ? $this->get_field_value($form, $entry, $metaData['inquiringfor']) : null;
+    
+        $type = ($inquiringfor == 'self') ? 'prospect' : 'Contact';
+    
+        $utmsource = isset($metaData['utmsource']) ? $this->get_field_value($form, $entry, $metaData['utmsource']) : null;
+        $utmcampaign = isset($metaData['utmcampaign']) ? $this->get_field_value($form, $entry, $metaData['utmcampaign']) : null;
+        $utmmedium = isset($metaData['utmmedium']) ? $this->get_field_value($form, $entry, $metaData['utmmedium']) : null;
+        $utmid = isset($metaData['utmid']) ? $this->get_field_value($form, $entry, $metaData['utmid']) : null;
+        $gclid = isset($metaData['gclid']) ? $this->get_field_value($form, $entry, $metaData['gclid']) : null;
     
         $data = array(
             'communityunique' => $communityunique,
@@ -167,7 +193,24 @@ class GFAPITrap extends GFFeedAddOn {
                     ],[
                         "property" => "type",
                         "value" => $data['type']
-                    ],
+                    ],[
+                        "property" => "utmSource",
+                        "value" => $data['utmsource']
+                    ],[
+                        "property" => "utmCampaign",
+                        "value" => $data['utmcampaign']
+                    ],[
+                        "property" => "utmMedium",
+                        "value" => $data['utmmedium']
+                    ],[
+                        "property" => "utmId",
+                        "value" => $data['utmid']
+                    ],[
+                        "property" => "gclid",
+                        "value" => $data['gclid']
+                    ]
+                    ]
+                    ]
                 ],
                 "notes"  => [
                     "Message" => $data['Message'],
