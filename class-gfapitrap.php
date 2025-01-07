@@ -110,6 +110,10 @@ class GFAPITrap extends GFFeedAddOn {
                                     'label'         => 'apartmentPreference',
                                     'value'         => 'apartmentpreference',
                                 ),
+                                array(
+                                    'label'         => 'expansionStatus',
+                                    'value'         => 'expansionstatus',
+                                ),
                             ),
                         ),
                     ),
@@ -167,6 +171,7 @@ class GFAPITrap extends GFFeedAddOn {
         $gclid = isset($metaData['gclid']) ? $this->get_field_value($form, $entry, $metaData['gclid']) : null;
     
         $apartmentpreference = isset($metaData['apartmentpreference']) ? $this->get_field_value($form, $entry, $metaData['apartmentpreference']) : null;
+        $expansionstatus = isset($metaData['expansionstatus']) ? $this->get_field_value($form, $entry, $metaData['expansionstatus']) : null;
     
         $data = array(
             'communityunique' => $communityunique,
@@ -184,6 +189,7 @@ class GFAPITrap extends GFFeedAddOn {
             'utmid' => $utmid,
             'gclid' => $gclid,
             'apartmentpreference' => $apartmentpreference,
+            'expansionstatus' => $expansionstatus,
             'type' => $type,
         );
     
