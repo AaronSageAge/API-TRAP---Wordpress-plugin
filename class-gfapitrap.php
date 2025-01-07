@@ -116,7 +116,7 @@ class GFAPITrap extends GFFeedAddOn {
             // Check if interestIn is one of the excluded values
             $excludedValues = array('Volunteer Inquiries', 'Career Inquiries', 'Vendor Inquiries');
             if (in_array($interestIn, $excludedValues)) {
-                error_log('Skipping API request due to excluded interestin value: ' . $interestIn);
+                error_log('Skipping API request due to excluded interest In value: Career, Volunteer, or Vendor' . $interestIn);
                 return;
             }
 
