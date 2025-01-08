@@ -204,7 +204,7 @@ class GFAPITrap extends GFFeedAddOn {
         );
     
         error_log('this is the data: ' . print_r($data, true));
-        $response = $this->sendApiRequest($data);
+        $response = $this->sendApiRequest($data, $inquiringFor);
         error_log('this is the response: ' . print_r($response, true));
     }
 
@@ -350,4 +350,5 @@ class GFAPITrap extends GFFeedAddOn {
             return $response;
         }
     }
+}
 }
