@@ -260,7 +260,7 @@ class GFAPITrap extends GFFeedAddOn {
                         "value" => $data['apartmentpreference']
                     ],[
                         "property" => "expansionStatus",
-                        "value" => $data['exponsionstatus']
+                        "value" => $data['expansionstatus']
                     ],[
                         "property" => "marketsource",
                         "value" => $data['marketsource']
@@ -300,14 +300,22 @@ class GFAPITrap extends GFFeedAddOn {
         if (is_wp_error($getResponse)) {
             // Display an error message to the user
             add_settings_error('gravity-api-trap', 'api_request_error', 'API request failed: ' . $getResponse->get_error_message(), 'error');
+        } elseif ($getResponse['response']['code'] !== 200) {
+            // Display an error message to the user
+            add_settings_error('gravity-api-trap', 'api_request_error', 'API request failed with status code ' . $getResponse['response']['code'], 'error');
         } else {
             $existingData = json_decode($getResponse['body'], true);
     
-            foreach ($sendData["individuals"]["properties"] as $property) {
-                if (isset($existingData["individuals"]["properties"][$property["property"]]) && $existingData["individuals"]["properties"][$property["property"]] != $property["value"]) {
-                    $sendData["individuals"]["comments"][] = "Changed " . $property["property"] . " from " . $existingData["individuals"]["properties"][$property["property"]] . " to " . $property["value"];
+            if ($existingData === null) {
+                // Handle the case where the response body is not in the expected format
+                add_settings_error('gravity-api-trap', 'api_request_error', 'Invalid response from API', 'error');
+            } else {
+                foreach ($sendData["individuals"]["properties"] as $property) {
+                    if (isset($existingData["individuals"]["properties"][$property["property"]]) && $existingData["individuals"]["properties"][$property["property"]] != $property["value"]) {
+                        $sendData["individuals"]["comments"][] = "Changed " . $property["property"] . " from " . $existingData["individuals"]["properties"][$property["property"]] . " to " . $property["value"];
+                    }
                 }
-            }
+    
     
             $args = [
                 'method' => 'POST',
