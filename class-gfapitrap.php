@@ -114,6 +114,10 @@ class GFAPITrap extends GFFeedAddOn {
                                     'label'         => 'expansionStatus',
                                     'value'         => 'expansionstatus',
                                 ),
+                                array(
+                                    'label'         => 'MarketSource',
+                                    'value'         => 'marketsource',
+                                ),
                             ),
                         ),
                     ),
@@ -159,11 +163,14 @@ class GFAPITrap extends GFFeedAddOn {
         /*prospect or contact into type*/
         $inquiringfor = isset($metaData['inquiringfor']) ? $this->get_field_value($form, $entry, $metaData['inquiringfor']) : null;
 
+        /*prospect or contact change based on inquiring for*/
         $type = ($inquiringfor == 'self') ? 'prospect' : 'Contact';
 
+        /*if contact/loved one*/
         $lovedfirst = isset($metaData['lovedfirst']) ? $this->get_field_value($form, $entry, $metaData['lovedfirst']) : null;
         $lovedlast = isset($metaData['lovedlast']) ? $this->get_field_value($form, $entry, $metaData['lovedlast']) : null;
     
+        /*utm*/
         $utmsource = isset($metaData['utmsource']) ? $this->get_field_value($form, $entry, $metaData['utmsource']) : null;
         $utmcampaign = isset($metaData['utmcampaign']) ? $this->get_field_value($form, $entry, $metaData['utmcampaign']) : null;
         $utmmedium = isset($metaData['utmmedium']) ? $this->get_field_value($form, $entry, $metaData['utmmedium']) : null;
@@ -172,7 +179,9 @@ class GFAPITrap extends GFFeedAddOn {
     
         $apartmentpreference = isset($metaData['apartmentpreference']) ? $this->get_field_value($form, $entry, $metaData['apartmentpreference']) : null;
         $expansionstatus = isset($metaData['expansionstatus']) ? $this->get_field_value($form, $entry, $metaData['expansionstatus']) : null;
-    
+
+        $marketsource = isset($metaData['marketsource']) ? $this->get_field_value($form, $entry, $metaData['marketsource']) : null;
+
         $data = array(
             'communityunique' => $communityunique,
             'email' => $email,
@@ -190,6 +199,7 @@ class GFAPITrap extends GFFeedAddOn {
             'gclid' => $gclid,
             'apartmentpreference' => $apartmentpreference,
             'expansionstatus' => $expansionstatus,
+            'marketsource' => $marketsource,
             'type' => $type,
         );
     
@@ -251,6 +261,9 @@ class GFAPITrap extends GFFeedAddOn {
                     ],[
                         "property" => "expansionStatus",
                         "value" => $data['exponsionstatus']
+                    ],[
+                        "property" => "marketsource",
+                        "value" => $data['marketsource']
                     ],
                 ],
                 "notes"  => [
