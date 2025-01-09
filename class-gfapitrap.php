@@ -164,7 +164,7 @@ class GFAPITrap extends GFFeedAddOn {
         $inquiringfor = isset($metaData['inquiringfor']) ? $this->get_field_value($form, $entry, $metaData['inquiringfor']) : null;
 
         /*prospect or contact change based on inquiring for*/
-        $type = ($inquiringfor == 'self') ? 'prospect' : 'Contact';
+        $type = ($inquiringfor == 'self') ? 'Prospect' : 'Contact';
 
         /*if contact/loved one*/
         $lovedfirst = isset($metaData['lovedfirst']) ? $this->get_field_value($form, $entry, $metaData['lovedfirst']) : null;
