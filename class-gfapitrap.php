@@ -133,6 +133,8 @@ class GFAPITrap extends GFFeedAddOn {
     }
 
     public function process_feed( $feed, $entry, $form ) {
+        error_log('Feed data: ' . print_r($feed, true), 3, plugin_dir_path(__FILE__) . 'debug.log');
+
         var_dump($feed);
         error_log('this is the feed:');
         error_log(print_r($feed, true));
@@ -151,7 +153,7 @@ class GFAPITrap extends GFFeedAddOn {
         $comments = isset($metaData['Message']) ? GFCommon::replace_variables($metaData['Message'], $form, $entry) : null;
     
         /*Interest in*/
-        $carelevel= isset($metaData['carellevel']) ? $this->get_field_value($form, $entry, $metaData['carelevel']) : null;
+        $carelevel = isset($metaData['carelevel']) ? $this->get_field_value($form, $entry, $metaData['carelevel']) : null;
     
         // Check if interestIn is one of the excluded values
         $excludedValues = array('Volunteer Inquiries', 'Career Inquiries', 'Vendor Inquiries');
@@ -209,6 +211,7 @@ class GFAPITrap extends GFFeedAddOn {
     }
 
     public function sendApiRequest(array $data, $inquiringFor) {
+        error_log('API request data: ' . print_r($data, true), 3, plugin_dir_path(__FILE__) . 'debug.log');
 
         $sendData = array(
             "individuals" => [
@@ -303,39 +306,37 @@ class GFAPITrap extends GFFeedAddOn {
                 ]
             ]);
         }
-    
+
         if (is_wp_error($getResponse)) {
-            // Display an error message to the user
-            add_settings_error('gravity-api-trap', 'api_request_error', 'API request failed: ' . $getResponse->get_error_message(), 'error');
-        } elseif ($getResponse['response']['code'] !== 200) {
-            // Display an error message to the user
-            add_settings_error('gravity-api-trap', 'api_request_error', 'API request failed with status code ' . $getResponse['response']['code'], 'error');
+            error_log('API request failed: ' . $getResponse->get_error_message(), 3, plugin_dir_path(__FILE__) . 'debug.log');
+            return;
+        }
+        
+        $existingData = json_decode($getResponse['body'], true);
+    
+        if ($existingData === null) {
+            error_log('Invalid response from API', 3, plugin_dir_path(__FILE__) . 'debug.log');
+            return;
         } else {
-            $existingData = json_decode($getResponse['body'], true);
-    
-            if ($existingData === null) {
-                // Handle the case where the response body is not in the expected format
-                add_settings_error('gravity-api-trap', 'api_request_error', 'Invalid response from API', 'error');
-            } else {
-                foreach ($sendData["individuals"]["properties"] as $property) {
-                    if (isset($existingData["individuals"]["properties"][$property["property"]]) && $existingData["individuals"]["properties"][$property["property"]] != $property["value"]) {
-                        $sendData["individuals"]["comments"][] = "Changed " . $property["property"] . " from " . $existingData["individuals"]["properties"][$property["property"]] . " to " . $property["value"];
-                    }
+            foreach ($sendData["individuals"]["properties"] as $property) {
+                if (isset($existingData["individuals"]["properties"][$property["property"]]) && $existingData["individuals"]["properties"][$property["property"]] != $property["value"]) {
+                    $sendData["individuals"]["comments"][] = "Changed " . $property["property"] . " from " . $existingData["individuals"]["properties"][$property["property"]] . " to " . $property["value"];
                 }
+            }
+
+                $args = [
+                    'method' => 'POST',
+                    'headers' => [
+                        'Ocp-Apim-Subscription-Key' => $primaryApiKey,
+                        'Content-Type' => 'application/json',
+                        'PortalId'     => get_option('gravity_api_trap_portal_id'),
+                    ],
+                    'body' => json_encode($sendData)
+                ];
     
-    
-            $args = [
-                'method' => 'POST',
-                'headers' => [
-                    'Ocp-Apim-Subscription-Key' => $primaryApiKey,
-                    'Content-Type' => 'application/json',
-                    'PortalId'     => get_option('gravity_api_trap_portal_id'),
-                ],
-                'body' => json_encode($sendData)
-            ];
-    
-            error_log('args: ' . print_r($args, true));
-    
+            error_log('API request JSON data: ' . json_encode($sendData, JSON_PRETTY_PRINT), 3, plugin_dir_path(__FILE__) . 'debug.log');
+
+
             $response = wp_remote_post($url, $args);
     
             if (is_wp_error($response)) {
@@ -344,18 +345,20 @@ class GFAPITrap extends GFFeedAddOn {
             }
     
             if (is_wp_error($response)) {
-                // Display an error message to the user
-                add_settings_error('gravity-api-trap', 'api_request_error', 'API request failed: ' . $response->get_error_message(), 'error');
-            } elseif ($response['response']['code'] !== 200) {
-                // Display an error message to the user
-                add_settings_error('gravity-api-trap', 'api_request_error', 'API request failed with status code ' . $response['response']['code'], 'error');
+                error_log('API request failed: ' . $response->get_error_message(), 3, plugin_dir_path(__FILE__) . 'debug.log');
+                return;
+            }
+
+            $responseCode = wp_remote_retrieve_response_code($response);
+            $responseBody = wp_remote_retrieve_body($response);
+            
+            if ($responseCode === 200) {
+                log('API request successful: ' . $responseCode . ' - ' . $responseBody, 3, plugin_dir_path(__FILE__) . 'debug.log');
             } else {
-                // Log the entire output
-                error_log('API request successful: ' . print_r($response, true));
+                error_log('API request failed: ' . $responseCode . ' - ' . $responseBody, 3, plugin_dir_path(__FILE__) . 'debug.log');
             }
     
             return $response;
         }
     }
-}
 }
