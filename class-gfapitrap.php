@@ -187,7 +187,7 @@ class GFAPITrap extends GFFeedAddOn {
             'email' => $email,
             'firstname' => $firstName,
             'lastname' => $lastName,
-            'Phone ' => $phone ,
+            'Phone ' => $phone,
             'Message' => $comments,
             'CareLevel' => $carelevel,
             'lovedfirst' => $lovedfirst,
@@ -235,12 +235,6 @@ class GFAPITrap extends GFFeedAddOn {
                         "property" => "type",
                         "value" => $data['type']
                     ],[
-                        "property" => "lovedfirst",
-                        "value" => $data['lovedfirst']
-                    ],[
-                        "property" => "lovedlast", 
-                        "value" => $data['lovedlast'] 
-                    ],[
                         "property" => "utmSource",
                         "value" => $data['utmsource']
                     ],[
@@ -269,7 +263,20 @@ class GFAPITrap extends GFFeedAddOn {
                 "notes"  => [
                     "Message" => $data['Message'],
                 ],
-                "comments" => []
+                "comments" => [],
+                "relationship" => [
+                    "type" => "Family Member",
+                    "properties" => [
+                        [
+                            "property" => "firstname",
+                            "value" => $data['lovedfirst']
+                        ],
+                        [
+                            "property" => "lastname",
+                            "value" => $data['lovedlast']
+                        ]
+                    ]
+                ]
             ]
         );
     
