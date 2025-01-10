@@ -217,19 +217,19 @@ class GFAPITrap extends GFFeedAddOn {
                 ],
                 "properties" => [
                     [
-                        "property" => "firstname",
+                        "property" => "First Name",
                         "value" => $data['firstname']
                     ], [
-                        "property" => "lastname",
+                        "property" => "Last Name",
                         "value" => $data['lastname']
                     ], [
-                        "property" => "email",
+                        "property" => "Email",
                         "value" => $data['email']
                     ], [
-                        "property" => "Phone",
+                        "property" => "Home Phone",
                         "value" => $data['phone']
                     ],[
-                        "property" => "CareLevel", 
+                        "property" => "Care Level", 
                         "value" => $data['carelevel']
                     ],[
                         "property" => "type",
@@ -238,25 +238,25 @@ class GFAPITrap extends GFFeedAddOn {
                         "property" => "utmSource",
                         "value" => $data['utmsource']
                     ],[
-                        "property" => "utmCampaign",
+                        "property" => "UTM Campaign",
                         "value" => $data['utmcampaign']
                     ],[
-                        "property" => "utmMedium",
+                        "property" => "UTM Medium",
                         "value" => $data['utmmedium']
                     ],[
-                        "property" => "utmId",
+                        "property" => "UTM Id",
                         "value" => $data['utmid']
                     ],[
-                        "property" => "gclid",
+                        "property" => "GCLID",
                         "value" => $data['gclid']
                     ],[
-                        "property" => "apartmentPreference",
+                        "property" => "Apartment Preference",
                         "value" => $data['apartmentpreference']
                     ],[
-                        "property" => "expansionStatus",
+                        "property" => "Expansion Status",
                         "value" => $data['expansionstatus']
                     ],[
-                        "property" => "marketsource",
+                        "property" => "Market Source",
                         "value" => $data['marketsource']
                     ],
                 ],
@@ -268,11 +268,11 @@ class GFAPITrap extends GFFeedAddOn {
                     "type" => "Family Member",
                     "properties" => [
                         [
-                            "property" => "firstname",
+                            "property" => "First Name",
                             "value" => $data['lovedfirst']
                         ],
                         [
-                            "property" => "lastname",
+                            "property" => "Last Name",
                             "value" => $data['lovedlast']
                         ]
                     ]
