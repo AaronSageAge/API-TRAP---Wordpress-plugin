@@ -148,7 +148,7 @@ class GFAPITrap extends GFFeedAddOn {
     
         $lastName = isset($metaData['lastname']) ? $this->get_field_value($form, $entry, $metaData['lastname']) : null;
     
-        $phone  = isset($metaData['phone']) ? $this->get_field_value($form, $entry, $metaData['phone']) : null;
+        $phone  = isset($metaData['phone']) ? preg_replace('/\D/', '', $this->get_field_value($form, $entry, $metaData['phone'])) : null;
     
         $comments = isset($metaData['Message']) ? GFCommon::replace_variables($metaData['Message'], $form, $entry) : null;
     
