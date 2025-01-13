@@ -220,16 +220,16 @@ class GFAPITrap extends GFFeedAddOn {
                 ],
                 "properties" => [
                     [
-                        "property" => "FirstName",
+                        "property" => "First Name",
                         "value" => $data['firstname']
                     ], [
-                        "property" => "LastName",
+                        "property" => "Last Name",
                         "value" => $data['lastname']
                     ], [
                         "property" => "Email",
                         "value" => $data['email']
                     ], [
-                        "property" => "Phone1",
+                        "property" => "Home Phone",
                         "value" => $data['phone']
                     ],[
                         "property" => "Care Level", 
@@ -241,19 +241,19 @@ class GFAPITrap extends GFFeedAddOn {
                         "property" => "utmSource",
                         "value" => $data['utmsource']
                     ],[
-                        "property" => "utmCampaign",
+                        "property" => "UTM Campaign",
                         "value" => $data['utmcampaign']
                     ],[
-                        "property" => "utmMedium",
+                        "property" => "UTM Medium",
                         "value" => $data['utmmedium']
                     ],[
-                        "property" => "utmId",
+                        "property" => "UTM Id",
                         "value" => $data['utmid']
                     ],[
-                        "property" => "gclid",
+                        "property" => "GCLID",
                         "value" => $data['gclid']
                     ],[
-                        "property" => "ApartmentPreferenceTypeId",
+                        "property" => "Apartment Preference",
                         "value" => $data['apartmentpreference']
                     ],[
                         "property" => "Expansion Status",
