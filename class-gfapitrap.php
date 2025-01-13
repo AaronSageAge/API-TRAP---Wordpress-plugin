@@ -104,7 +104,7 @@ class GFAPITrap extends GFFeedAddOn {
                                 ),
                                 array(
                                     'label'         => 'careLevel',
-                                    'value'         => 'carelevel',
+                                    'value'         => 'careLevel',
                                 ),
                                 array(
                                     'label'         => 'apartmentPreference',
@@ -153,7 +153,7 @@ class GFAPITrap extends GFFeedAddOn {
         $comments = isset($metaData['Message']) ? GFCommon::replace_variables($metaData['Message'], $form, $entry) : null;
     
         /*Interest in*/
-        $careLevel = isset($metaData['carelevel']) ? $this->get_field_value($form, $entry, $metaData['carelevel']) : null;
+        $careLevel = isset($metaData['careLevel']) ? $this->get_field_value($form, $entry, $metaData['careLevel']) : null;
     
         // Check if interestIn is one of the excluded values
         $excludedValues = array('Volunteer Inquiries', 'Career Inquiries', 'Vendor Inquiries');
