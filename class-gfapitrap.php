@@ -220,10 +220,10 @@ class GFAPITrap extends GFFeedAddOn {
                 ],
                 "properties" => [
                     [
-                        "property" => "First Name",
+                        "property" => "Firstname",
                         "value" => $data['firstname']
                     ], [
-                        "property" => "Last Name",
+                        "property" => "Lastname",
                         "value" => $data['lastname']
                     ], [
                         "property" => "Email",
