@@ -200,16 +200,16 @@ foreach ($careLevelValues as $value) {
 
 
     /*prospect or contact change based on inquiring for*/
-    if ($inquiringfor == 'Myself') {
+    /*if ($inquiringfor == 'Myself') {
         $individualType = 'Contact';
         $relationshipType = 'Prospect';
     } elseif ($inquiringfor == 'A Loved One') {
-        $individualType = 'Prospect';
+        $individualType = 'Contact';
         $relationshipType = 'Contact';
     } else {
         $individualType = 'Contact';
         $relationshipType = 'Prospect';
-    }
+    }*/
 
         /*if contact/loved one*/
         $lovedfirst = isset($metaData['lovedfirst']) ? $this->get_field_value($form, $entry, $metaData['lovedfirst']) : null;
@@ -281,7 +281,7 @@ foreach ($careLevelValues as $value) {
                             "value" => $data['CareLevel']
                         ],[
                             "property" => "type",
-                           "value" => $individualType
+                           "value" => "Contact"
                         ],[
                             "property" => "utmSource",
                             "value" => $data['utmsource']
@@ -331,10 +331,10 @@ foreach ($careLevelValues as $value) {
                     ],
                     "relationship" => "Family Member",
                     "properties" => [
-                        [
+                        /*[
                             "property" => "Email",
                             "value" => $data['email'] // Changed from lovedfirst to email
-                        ],
+                        ],*/
                         [
                             "property" => "firstname",
                             "value" => $data['lovedfirst']
@@ -345,7 +345,7 @@ foreach ($careLevelValues as $value) {
                         ],
                         [
                             "property" => "type",
-                            "value" => $relationshipType
+                            "value" => "Prospect"
                         ]
                     ]
                 ]
