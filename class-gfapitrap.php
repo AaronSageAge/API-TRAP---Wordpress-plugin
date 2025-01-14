@@ -152,28 +152,48 @@ class GFAPITrap extends GFFeedAddOn {
     
         $comments = isset($metaData['Message']) ? $this->get_field_value($form, $entry, $metaData['Message']) : null;
     
-        /*Interest in*/
-        $careLevel = isset($metaData['careLevel']) ? $this->get_field_value($form, $entry, $metaData['careLevel']) : null;
+/*Interest in*/
+$careLevelMap = array(
+    25 => 'LakeForest',
+    26 => 'Moorings',
+    9 => 'Westminster',
+    27 => 'TTG'
+);
 
-        error_log('Care Level value: ' . print_r($careLevel, true), 3, plugin_dir_path(__FILE__) . 'debug.log');
-        
-        if (empty($careLevel)) {
-            error_log('Care Level is empty', 3, plugin_dir_path(__FILE__) . 'debug.log');
-        }
-        
-        $careLevelValues = explode(' ', $careLevel);
-        error_log('Care Level values: ' . print_r($careLevelValues, true), 3, plugin_dir_path(__FILE__) . 'debug.log');
-        
-        $data['CareLevel'] = implode(', ', $careLevelValues);
-        $excludedValues = array('Volunteer Inquiries', 'Career Inquiries', 'Vendor Inquiries');
-        foreach ($careLevelValues as $value) {
-            $location = substr($value, strpos($value, '-') + 1, strpos($value, ':') - strpos($value, '-') - 1);
-            if (in_array($location, $excludedValues)) {
-                error_log('Skipping API request due to excluded interest In value: Career, Volunteer, or Vendor' . $location);
-                return;
+$careLevel = null;
+foreach ($metaData as $meta) {
+    if (is_array($meta) && isset($meta['key']) && $meta['key'] == 'careLevel') {
+        $careLevels = explode(' ', $meta['custom_value']);
+        $careLevelValues = array();
+        foreach ($careLevels as $careLevel) {
+            $parts = explode(':', $careLevel);
+            $careLevelId = trim($parts[1], '{}');
+            if (isset($careLevelMap[$careLevelId])) {
+                $careLevelValues[] = $careLevelMap[$careLevelId];
             }
         }
-    
+        $careLevel = implode(', ', $careLevelValues);
+        break;
+    }
+}
+
+
+$data['CareLevel'] = $careLevel;
+
+error_log('Care Level metadata: ' . print_r($metaData, true), 3, plugin_dir_path(__FILE__) . 'debug.log');
+error_log('Selected care level: ' . $careLevel, 3, plugin_dir_path(__FILE__) . 'debug.log');
+
+if (empty($careLevel)) {
+    error_log('Care Level is empty', 3, plugin_dir_path(__FILE__) . 'debug.log');
+}
+
+$excludedValues = array('Volunteer Inquiries', 'Career Inquiries', 'Vendor Inquiries');
+foreach ($careLevelValues as $value) {
+    if (in_array($value, $excludedValues)) {
+        error_log('Skipping API request due to excluded interest In value: Career, Volunteer, or Vendor' . $value);
+        return;
+    }
+}
         /*prospect or contact into type*/
         $inquiringfor = isset($metaData['inquiringfor']) ? $this->get_field_value($form, $entry, $metaData['inquiringfor']) : null;
 
@@ -258,7 +278,7 @@ class GFAPITrap extends GFFeedAddOn {
                             "value" => $data['Phone']
                         ],[
                             "property" => "Care Level", 
-                            "value" => (string)$data['CareLevel']
+                            "value" => $data['CareLevel']
                         ],[
                             "property" => "type",
                            "value" => $individualType
