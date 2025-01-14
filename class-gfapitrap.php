@@ -103,7 +103,7 @@ class GFAPITrap extends GFFeedAddOn {
                                     'value'         => 'gclid',
                                 ),
                                 array(
-                                    'label'         => 'careLevel',
+                                    'label'         => 'Care Level',
                                     'value'         => 'careLevel',
                                 ),
                                 array(
@@ -144,29 +144,52 @@ class GFAPITrap extends GFFeedAddOn {
     
         $email = isset($metaData['email']) ? $this->get_field_value($form, $entry, $metaData['email']) : null;
     
-        $firstName = isset($metaData['firstname']) ? $this->get_field_value($form, $entry, $metaData['firstname']) : null;
+        $first = isset($metaData['firstname']) ? $this->get_field_value($form, $entry, $metaData['firstname']) : null;
     
-        $lastName = isset($metaData['lastname']) ? $this->get_field_value($form, $entry, $metaData['lastname']) : null;
+        $last = isset($metaData['lastname']) ? $this->get_field_value($form, $entry, $metaData['lastname']) : null;
     
         $phone  = isset($metaData['phone']) ? preg_replace('/\D/', '', $this->get_field_value($form, $entry, $metaData['phone'])) : null;
     
-        $comments = isset($metaData['Message']) ? GFCommon::replace_variables($metaData['Message'], $form, $entry) : null;
+        $comments = isset($metaData['Message']) ? $this->get_field_value($form, $entry, $metaData['Message']) : null;
     
         /*Interest in*/
         $careLevel = isset($metaData['careLevel']) ? $this->get_field_value($form, $entry, $metaData['careLevel']) : null;
-    
-        // Check if interestIn is one of the excluded values
+
+        error_log('Care Level value: ' . print_r($careLevel, true), 3, plugin_dir_path(__FILE__) . 'debug.log');
+        
+        if (empty($careLevel)) {
+            error_log('Care Level is empty', 3, plugin_dir_path(__FILE__) . 'debug.log');
+        }
+        
+        $careLevelValues = explode(' ', $careLevel);
+        error_log('Care Level values: ' . print_r($careLevelValues, true), 3, plugin_dir_path(__FILE__) . 'debug.log');
+        
+        $data['CareLevel'] = implode(', ', $careLevelValues);
         $excludedValues = array('Volunteer Inquiries', 'Career Inquiries', 'Vendor Inquiries');
-        if (in_array($carelevel, $excludedValues)) {
-            error_log('Skipping API request due to excluded interest In value: Career, Volunteer, or Vendor' . $carelevel);
-            return;
+        foreach ($careLevelValues as $value) {
+            $location = substr($value, strpos($value, '-') + 1, strpos($value, ':') - strpos($value, '-') - 1);
+            if (in_array($location, $excludedValues)) {
+                error_log('Skipping API request due to excluded interest In value: Career, Volunteer, or Vendor' . $location);
+                return;
+            }
         }
     
         /*prospect or contact into type*/
         $inquiringfor = isset($metaData['inquiringfor']) ? $this->get_field_value($form, $entry, $metaData['inquiringfor']) : null;
 
-        /*prospect or contact change based on inquiring for*/
-        $type = ($inquiringfor == 'self') ? 'Prospect' : 'Contact';
+
+
+    /*prospect or contact change based on inquiring for*/
+    if ($inquiringfor == 'Myself') {
+        $individualType = 'Contact';
+        $relationshipType = 'Prospect';
+    } elseif ($inquiringfor == 'A Loved One') {
+        $individualType = 'Prospect';
+        $relationshipType = 'Contact';
+    } else {
+        $individualType = 'Contact';
+        $relationshipType = 'Prospect';
+    }
 
         /*if contact/loved one*/
         $lovedfirst = isset($metaData['lovedfirst']) ? $this->get_field_value($form, $entry, $metaData['lovedfirst']) : null;
@@ -187,8 +210,8 @@ class GFAPITrap extends GFFeedAddOn {
         $data = array(
             'communityunique' => $communityunique,
             'email' => $email,
-            'firstname' => $firstName,
-            'lastname' => $lastName,
+            'FirstName' => $first,
+            'LastName' => $last,
             'Phone' => $phone,
             'Message' => $comments,
             'CareLevel' => $careLevel,
@@ -201,88 +224,113 @@ class GFAPITrap extends GFFeedAddOn {
             'gclid' => $gclid,
             'apartmentpreference' => $apartmentpreference,
             'expansionstatus' => $expansionstatus,
-            'marketsource' => $marketsource,
-            'type' => $type,
+            'marketsource' => $marketsource
         );
     
         error_log('this is the data: ' . print_r($data, true));
-        $response = $this->sendApiRequest($data, $inquiringFor);
+        $response = $this->sendApiRequest($data, $inquiringfor, $individualType, $relationshipType);
         error_log('this is the response: ' . print_r($response, true));
     }
 
-    public function sendApiRequest(array $data, $inquiringFor) {
+    public function sendApiRequest(array $data, $inquiringfor, $individualType, $relationshipType) {
         error_log('API request data: ' . print_r($data, true), 3, plugin_dir_path(__FILE__) . 'debug.log');
 
-        $sendData = array(
+        $sendData = [
             "individuals" => [
-                "communities" => [
-                    "NameUnique" => $data['communityunique'],
-                ],
-                "properties" => [
-                    [
-                        "property" => "First Name",
-                        "value" => $data['firstname']
-                    ], [
-                        "property" => "Last Name",
-                        "value" => $data['lastname']
-                    ], [
-                        "property" => "Email",
-                        "value" => $data['email']
-                    ], [
-                        "property" => "Home Phone",
-                        "value" => $data['Phone']
-                    ],[
-                        "property" => "Care Level", 
-                        "value" => $data['CareLevel']
-                    ],[
-                        "property" => "type",
-                        "value" => $data['type']
-                    ],[
-                        "property" => "utmSource",
-                        "value" => $data['utmsource']
-                    ],[
-                        "property" => "UTM Campaign",
-                        "value" => $data['utmcampaign']
-                    ],[
-                        "property" => "UTM Medium",
-                        "value" => $data['utmmedium']
-                    ],[
-                        "property" => "UTM Id",
-                        "value" => $data['utmid']
-                    ],[
-                        "property" => "GCLID",
-                        "value" => $data['gclid']
-                    ],[
-                        "property" => "Apartment Preference",
-                        "value" => $data['apartmentpreference']
-                    ],[
-                        "property" => "Expansion Status",
-                        "value" => $data['expansionstatus']
-                    ],[
-                        "property" => "Market Source",
-                        "value" => $data['marketsource']
+                [
+                    "communities" => [
+                        [
+                            "NameUnique" => $data['communityunique'],
+                        ]
                     ],
-                ],
-                "notes"  => [
-                    "Message" => $data['Message'],
-                ],
-                "comments" => [],
-                "relationship" => [
-                    "type" => "Family Member",
                     "properties" => [
                         [
-                            "property" => "First Name",
+                            "property" => "firstname",
+                            "value" => $data['FirstName']
+                        ], [
+                            "property" => "lastname",
+                            "value" => $data['LastName']
+                        ], [
+                            "property" => "Email",
+                            "value" => $data['email']
+                        ], [
+                            "property" => "Home Phone",
+                            "value" => $data['Phone']
+                        ],[
+                            "property" => "Care Level", 
+                            "value" => (string)$data['CareLevel']
+                        ],[
+                            "property" => "type",
+                           "value" => $individualType
+                        ],[
+                            "property" => "utmSource",
+                            "value" => $data['utmsource']
+                        ],[
+                            "property" => "UTM Campaign",
+                            "value" => $data['utmcampaign']
+                        ],[
+                            "property" => "UTM Medium",
+                            "value" => $data['utmmedium']
+                        ],[
+                            "property" => "UTM Id",
+                            "value" => $data['utmid']
+                        ],[
+                            "property" => "GCLID",
+                            "value" => $data['gclid']
+                        ],[
+                            "property" => "Apartment Preference",
+                            "value" => $data['apartmentpreference']
+                        ],[
+                            "property" => "Expansion Status",
+                            "value" => $data['expansionstatus']
+                        ],[
+                            "property" => "Market Source",
+                            "value" => $data['marketsource']
+                        ],
+                    ],
+                    "activities" => [
+                        [
+                            "reInquiry" => true,
+                            "description" => "Webform",
+                            "activityStatusMasterId" => 2,
+                            "activityResultMasterId" => 2,
+                            "activityTypeMasterId" => 17
+                        ]
+                    ],
+                    "notes" => [
+                        [
+                            "Message" => (string)$data['Message'], // Cast to string
+                        ]
+                    ]
+                ],
+                [
+                    "communities" => [
+                        [
+                            "NameUnique" => $data['communityunique'],
+                        ]
+                    ],
+                    "relationship" => "Family Member",
+                    "properties" => [
+                        [
+                            "property" => "Email",
+                            "value" => $data['email'] // Changed from lovedfirst to email
+                        ],
+                        [
+                            "property" => "firstname",
                             "value" => $data['lovedfirst']
                         ],
                         [
-                            "property" => "Last Name",
+                            "property" => "lastname",
                             "value" => $data['lovedlast']
+                        ],
+                        [
+                            "property" => "type",
+                            "value" => $relationshipType
                         ]
                     ]
                 ]
             ]
-        );
-    
+        ];
         $primaryApiKey = get_option('gravity_api_trap_primary_api_key');
         $secondaryApiKey = get_option('gravity_api_trap_secondary_api_key');
         $url = get_option('gravity_api_trap_endpoint_url');
@@ -353,7 +401,7 @@ class GFAPITrap extends GFFeedAddOn {
             $responseBody = wp_remote_retrieve_body($response);
             
             if ($responseCode === 200) {
-                log('API request successful: ' . $responseCode . ' - ' . $responseBody, 3, plugin_dir_path(__FILE__) . 'debug.log');
+                error_log('API request successful: ' . $responseCode . ' - ' . $responseBody, 3, plugin_dir_path(__FILE__) . 'debug.log');
             } else {
                 error_log('API request failed: ' . $responseCode . ' - ' . $responseBody, 3, plugin_dir_path(__FILE__) . 'debug.log');
             }
