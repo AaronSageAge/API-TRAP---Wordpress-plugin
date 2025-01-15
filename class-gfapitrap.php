@@ -200,16 +200,16 @@ foreach ($careLevelValues as $value) {
 
 
     /*prospect or contact change based on inquiring for*/
-    /*if ($inquiringfor == 'Myself') {
-        $individualType = 'Contact';
-        $relationshipType = 'Prospect';
+    if ($inquiringfor == 'Myself') {
+        $individualType = 'Prospect';
+        $relationshipType = '';
     } elseif ($inquiringfor == 'A Loved One') {
         $individualType = 'Contact';
-        $relationshipType = 'Contact';
+        $relationshipType = 'Prospect';
     } else {
         $individualType = 'Prospect';
-        $relationshipType = 'Contact';
-    }*/
+        $relationshipType = '';
+    }
 
         /*if contact/loved one*/
         $lovedfirst = isset($metaData['lovedfirst']) ? $this->get_field_value($form, $entry, $metaData['lovedfirst']) : null;
@@ -281,7 +281,7 @@ foreach ($careLevelValues as $value) {
                             "value" => $data['CareLevel']
                         ],[
                             "property" => "type",
-                           "value" => "Contact"
+                           "value" => $individualType
                         ],[
                             "property" => "utmSource",
                             "value" => $data['utmsource']
@@ -328,10 +328,7 @@ foreach ($careLevelValues as $value) {
                     ],
                     "relationship" => "Family Member",
                     "properties" => [
-                        [
-                            "property" => "Expansion Status",
-                            "value" => $data['expansionstatus']
-                        ],
+            
                         [
                             "property" => "firstname",
                             "value" => $data['lovedfirst']
@@ -342,12 +339,26 @@ foreach ($careLevelValues as $value) {
                         ],
                         [
                             "property" => "type",
-                            "value" => "Prospect"
+                            "value" => $relationshipType
                         ]
                     ]
                 ]
             ]
         ];
+
+        // Add the "Expansion Status" property to the prospect be it indiviaul or Relationship
+        if ($relationshipType == 'Prospect') {
+            $sendData["individuals"][1]["properties"][] = [
+                "property" => "Expansion Status",
+                "value" => $data['expansionstatus']
+            ];
+        } elseif ($individualType == 'Prospect') {
+            $sendData["individuals"][0]["properties"][] = [
+                "property" => "Expansion Status",
+                "value" => $data['expansionstatus']
+            ];
+        }
+
         $primaryApiKey = get_option('gravity_api_trap_primary_api_key');
         $secondaryApiKey = get_option('gravity_api_trap_secondary_api_key');
         $url = get_option('gravity_api_trap_endpoint_url');
