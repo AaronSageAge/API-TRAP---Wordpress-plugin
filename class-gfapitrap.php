@@ -281,7 +281,7 @@ foreach ($careLevelValues as $value) {
                             "value" => $data['CareLevel']
                         ],[
                             "property" => "type",
-                           "value" => "Contact"
+                           "value" => "Prospect"
                         ],[
                             "property" => "utmSource",
                             "value" => $data['utmsource']
@@ -345,7 +345,7 @@ foreach ($careLevelValues as $value) {
                         ],
                         [
                             "property" => "type",
-                            "value" => "Prospect"
+                            "value" => "Contact"
                         ]
                     ]
                 ]
