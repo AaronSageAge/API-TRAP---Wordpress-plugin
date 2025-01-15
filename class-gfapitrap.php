@@ -200,7 +200,7 @@ foreach ($careLevelValues as $value) {
 
 
     /*prospect or contact change based on inquiring for*/
-    if ($inquiringfor == 'Myself') {
+    /*if ($inquiringfor == 'Myself') {
         $individualType = 'Prospect';
         $relationshipType = 'Contact';
     } elseif ($inquiringfor == 'A Loved One') {
@@ -209,7 +209,7 @@ foreach ($careLevelValues as $value) {
     } else {
         $individualType = 'Prospect';
         $relationshipType = 'Contact';
-    }
+    }*/
 
         /*if contact/loved one*/
         $lovedfirst = isset($metaData['lovedfirst']) ? $this->get_field_value($form, $entry, $metaData['lovedfirst']) : null;
@@ -281,7 +281,7 @@ foreach ($careLevelValues as $value) {
                             "value" => $data['CareLevel']
                         ],[
                             "property" => "type",
-                           "value" => $individualType
+                           "value" => "Contact"
                         ],[
                             "property" => "utmSource",
                             "value" => $data['utmsource']
@@ -303,10 +303,7 @@ foreach ($careLevelValues as $value) {
                         ],[
                             "property" => "Market Source",
                             "value" => $data['marketsource']
-                        ],[
-                            "property" => "Expansion Status",
-                            "value" => $data['expansionstatus']
-                        ],
+                        ]
                     ],
                     "activities" => [
                         [
@@ -345,7 +342,7 @@ foreach ($careLevelValues as $value) {
                         ],
                         [
                             "property" => "type",
-                            "value" => $relationshipType
+                            "value" => "Prospect"
                         ]
                     ]
                 ]
