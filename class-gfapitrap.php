@@ -201,11 +201,11 @@ foreach ($careLevelValues as $value) {
 
     /*prospect or contact change based on inquiring for*/
     /*if ($inquiringfor == 'Myself') {
-        $individualType = 'Prospect';
-        $relationshipType = 'Contact';
-    } elseif ($inquiringfor == 'A Loved One') {
         $individualType = 'Contact';
         $relationshipType = 'Prospect';
+    } elseif ($inquiringfor == 'A Loved One') {
+        $individualType = 'Contact';
+        $relationshipType = 'Contact';
     } else {
         $individualType = 'Prospect';
         $relationshipType = 'Contact';
@@ -303,7 +303,7 @@ foreach ($careLevelValues as $value) {
                         ],[
                             "property" => "Market Source",
                             "value" => $data['marketsource']
-                        ]
+                        ],
                     ],
                     "activities" => [
                         [
