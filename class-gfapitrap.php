@@ -207,8 +207,8 @@ foreach ($careLevelValues as $value) {
         $individualType = 'Contact';
         $relationshipType = 'Contact';
     } else {
-        $individualType = 'Contact';
-        $relationshipType = 'Prospect';
+        $individualType = 'Prospect';
+        $relationshipType = 'Contact';
     }*/
 
         /*if contact/loved one*/
@@ -281,7 +281,7 @@ foreach ($careLevelValues as $value) {
                             "value" => $data['CareLevel']
                         ],[
                             "property" => "type",
-                           "value" => "Prospect"
+                           "value" => "Contact"
                         ],[
                             "property" => "utmSource",
                             "value" => $data['utmsource']
@@ -300,9 +300,6 @@ foreach ($careLevelValues as $value) {
                         ],[
                             "property" => "Apartment Preference",
                             "value" => $data['apartmentpreference']
-                        ],[
-                            "property" => "Expansion Status",
-                            "value" => $data['expansionstatus']
                         ],[
                             "property" => "Market Source",
                             "value" => $data['marketsource']
@@ -331,10 +328,10 @@ foreach ($careLevelValues as $value) {
                     ],
                     "relationship" => "Family Member",
                     "properties" => [
-                        /*[
-                            "property" => "Email",
-                            "value" => $data['email'] // Changed from lovedfirst to email
-                        ],*/
+                        [
+                            "property" => "Expansion Status",
+                            "value" => $data['expansionstatus']
+                        ],
                         [
                             "property" => "firstname",
                             "value" => $data['lovedfirst']
@@ -345,7 +342,7 @@ foreach ($careLevelValues as $value) {
                         ],
                         [
                             "property" => "type",
-                            "value" => "Contact"
+                            "value" => "Prospect"
                         ]
                     ]
                 ]
