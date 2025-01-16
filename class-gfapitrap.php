@@ -103,12 +103,44 @@ class GFAPITrap extends GFFeedAddOn {
                                     'value'         => 'gclid',
                                 ),
                                 array(
-                                    'label'         => 'Care Level',
-                                    'value'         => 'careLevel',
+                                    'label'         => 'Care Level - AL',
+                                    'value'         => 'careLevelAL',
                                 ),
                                 array(
-                                    'label'         => 'apartmentPreference',
-                                    'value'         => 'apartmentpreference',
+                                    'label'         => 'Care Level - IL no expansion',
+                                    'value'         => 'careLevelIL',
+                                ),
+                                array(
+                                    'label'         => 'Care Level - MS',
+                                    'value'         => 'careLevelMS',
+                                ),
+                                array(
+                                    'label'         => 'Care Level - SN',
+                                    'value'         => 'careLevelSN',
+                                ),
+                                array(
+                                    'label'         => 'Care Level - RT',
+                                    'value'         => 'careLevelRT',
+                                ),
+                                array(
+                                    'label'         => 'Care Level - RC',
+                                    'value'         => 'careLevelRC',
+                                ),
+                                array(
+                                    'label'         => 'Result Residents Cottage',
+                                    'value'         => 'resultcottage',
+                                ),
+                                array(
+                                    'label'         => 'Result Residents Apartment',
+                                    'value'         => 'resultapartment',
+                                ),
+                                array(
+                                    'label'         => 'Result Residents Townhouse',
+                                    'value'         => 'resulttownhouse',
+                                ),
+                                array(
+                                    'label'         => 'Result Residents Apartment',
+                                    'value'         => 'resultapartment',
                                 ),
                                 array(
                                     'label'         => 'expansionStatus',
@@ -152,64 +184,91 @@ class GFAPITrap extends GFFeedAddOn {
     
         $comments = isset($metaData['Message']) ? $this->get_field_value($form, $entry, $metaData['Message']) : null;
     
-/*Interest in*/
-$careLevelMap = array(
-    25 => 'LakeForest',
-    26 => 'Moorings',
-    9 => 'Westminster',
-    27 => 'TTG'
-);
+        /*Interest in - Carelevels*/
 
-$careLevel = null;
-foreach ($metaData as $meta) {
-    if (is_array($meta) && isset($meta['key']) && $meta['key'] == 'careLevel') {
-        $careLevels = explode(' ', $meta['custom_value']);
-        $careLevelValues = array();
-        foreach ($careLevels as $careLevel) {
-            $parts = explode(':', $careLevel);
-            $careLevelId = trim($parts[1], '{}');
-            if (isset($careLevelMap[$careLevelId])) {
-                $careLevelValues[] = $careLevelMap[$careLevelId];
+        $careLevelAL1 = isset($metaData['careLevelAL']) ? $this->get_field_value($form, $entry, $metaData['careLevelAL']) : null;
+        $careLevelIL1 = isset($metaData['careLevelIL']) ? $this->get_field_value($form, $entry, $metaData['careLevelIL']) : null;
+        $careLevelMS1 = isset($metaData['careLevelMS']) ? $this->get_field_value($form, $entry, $metaData['careLevelMS']) : null;
+        $careLevelRC1 = isset($metaData['careLevelRC']) ? $this->get_field_value($form, $entry, $metaData['careLevelRC']) : null;
+        $careLevelRT1 = isset($metaData['careLevelRT']) ? $this->get_field_value($form, $entry, $metaData['careLevelRT']) : null;
+        $careLevelSN1 = isset($metaData['careLevelSN']) ? $this->get_field_value($form, $entry, $metaData['careLevelSN']) : null;
+        $careLevelST1 = isset($metaData['careLevelST']) ? $this->get_field_value($form, $entry, $metaData['careLevelST']) : null;
+
+        $careLevels = [
+            'careLevelAL' => $careLevelAL1,
+            'careLevelIL' => $careLevelIL1,
+            'careLevelMS' => $careLevelMS1,
+            'careLevelRC' => $careLevelRC1,
+            'careLevelRT' => $careLevelRT1,
+            'careLevelSN' => $careLevelSN1,
+            'careLevelST' => $careLevelST1,
+        ];
+        $CareLevelValue = null;
+        foreach ($careLevels as $level => $value) {
+            if ($value !== null && $value !== '') {
+                $CareLevelValue = $value;
+                break;
             }
         }
-        $careLevel = implode(', ', $careLevelValues);
-        break;
-    }
-}
+
+        $LogFilePath = plugin_dir_path(__FILE__) . 'debug.log';
+        error_log('Care Level - AL: ' . print_r($careLevelAL1, true) . PHP_EOL, 3, $LogFilePath);
+        error_log('Care Level - IL: ' . print_r($careLevelIL1, true) . PHP_EOL, 3, $LogFilePath);
+        error_log('Care Level - MS: ' . print_r($careLevelMS1, true) . PHP_EOL, 3, $LogFilePath);
+        error_log('Care Level - RC: ' . print_r($careLevelRC1, true) . PHP_EOL, 3, $LogFilePath);
+        error_log('Care Level - RT: ' . print_r($careLevelRT1, true) . PHP_EOL, 3, $LogFilePath);
+        error_log('Care Level - SN: ' . print_r($careLevelSN1, true) . PHP_EOL, 3, $LogFilePath);
+        error_log('Care Level - ST: ' . print_r($careLevelST1, true) . PHP_EOL, 3, $LogFilePath);
+                
+        error_log('Care Level Value: ' . print_r($CareLevelValue, true) . PHP_EOL, 3, $LogFilePath);
 
 
-$data['CareLevel'] = $careLevel;
+        $excludedValues = array('Volunteer Inquiries', 'Career Inquiries', 'Vendor Inquiries');
+        foreach ($CareLevelValue as $value) {
+            if (in_array($value, $excludedValue)) {
+                error_log('Skipping API request due to excluded interest In value: Career, Volunteer, or Vendor' . $value);
+                return;
+            }
+        }
+        /*Residence Preference*/
+        $resultCottage = isset($metaData['resultcottage']) ? $this->get_field_value($form, $entry, $metaData['resultcottage']) : null;
+        $resultTwonhouses = isset($metaData['resulttownhouses']) ? $this->get_field_value($form, $entry, $metaData['resulttownhouses']) : null;
+        $resultApartment = isset($metaData['resultapartment']) ? $this->get_field_value($form, $entry, $metaData['resultapartment']) : null;
 
-error_log('Care Level metadata: ' . print_r($metaData, true), 3, plugin_dir_path(__FILE__) . 'debug.log');
-error_log('Selected care level: ' . $careLevel, 3, plugin_dir_path(__FILE__) . 'debug.log');
+        $residencePreferences = [
+            'resultcottage1' => $resultCottage,
+            'resulttownhouses1' => $resultTwonhouses,
+            'resultapartment1' => $resultApartment,
+        ];
 
-if (empty($careLevel)) {
-    error_log('Care Level is empty', 3, plugin_dir_path(__FILE__) . 'debug.log');
-}
+        $residenceValue = null;
+        foreach ($residencePreferences as $residence => $value) {
+            if ($value !== null && $value !== '') {
+                $residenceValue = $value;
+                break;
+            }
+        }
 
-$excludedValues = array('Volunteer Inquiries', 'Career Inquiries', 'Vendor Inquiries');
-foreach ($careLevelValues as $value) {
-    if (in_array($value, $excludedValues)) {
-        error_log('Skipping API request due to excluded interest In value: Career, Volunteer, or Vendor' . $value);
-        return;
-    }
-}
+        error_log('Cottages: ' . print_r($resultCottage, true) . PHP_EOL, 3, $LogFilePath);
+        error_log('Care Level - IL: ' . print_r($resultTwonhouses, true) . PHP_EOL, 3, $LogFilePath);
+        error_log('Care Level - MS: ' . print_r($resultApartment, true) . PHP_EOL, 3, $LogFilePath);
+                
+        error_log('Appartment Prefernce Value: ' . print_r($residenceValue, true) . PHP_EOL, 3, $LogFilePath);
+
         /*prospect or contact into type*/
         $inquiringfor = isset($metaData['inquiringfor']) ? $this->get_field_value($form, $entry, $metaData['inquiringfor']) : null;
 
-
-
-    /*prospect or contact change based on inquiring for*/
-    if ($inquiringfor == 'Myself') {
-        $individualType = 'Prospect';
-        $relationshipType = '';
-    } elseif ($inquiringfor == 'A Loved One') {
-        $individualType = 'Contact';
-        $relationshipType = 'Prospect';
-    } else {
-        $individualType = 'Prospect';
-        $relationshipType = '';
-    }
+        /*prospect or contact change based on inquiring for*/
+        if ($inquiringfor == 'Myself') {
+            $individualType = 'Prospect';
+            $relationshipType = '';
+        } elseif ($inquiringfor == 'A Loved One') {
+            $individualType = 'Contact';
+            $relationshipType = 'Prospect';
+        } else {
+            $individualType = 'Prospect';
+            $relationshipType = '';
+        }
 
         /*if contact/loved one*/
         $lovedfirst = isset($metaData['lovedfirst']) ? $this->get_field_value($form, $entry, $metaData['lovedfirst']) : null;
@@ -222,7 +281,7 @@ foreach ($careLevelValues as $value) {
         $utmid = isset($metaData['utmid']) ? $this->get_field_value($form, $entry, $metaData['utmid']) : null;
         $gclid = isset($metaData['gclid']) ? $this->get_field_value($form, $entry, $metaData['gclid']) : null;
     
-        $apartmentpreference = isset($metaData['apartmentpreference']) ? $this->get_field_value($form, $entry, $metaData['apartmentpreference']) : null;
+        //$apartmentpreference = isset($metaData['apartmentpreference']) ? $this->get_field_value($form, $entry, $metaData['apartmentpreference']) : null;
         $expansionstatus = isset($metaData['expansionstatus']) ? $this->get_field_value($form, $entry, $metaData['expansionstatus']) : null;
 
         $marketsource = isset($metaData['marketsource']) ? $this->get_field_value($form, $entry, $metaData['marketsource']) : null;
@@ -234,7 +293,6 @@ foreach ($careLevelValues as $value) {
             'LastName' => $last,
             'Phone' => $phone,
             'Message' => $comments,
-            'CareLevel' => $careLevel,
             'lovedfirst' => $lovedfirst,
             'lovedlast' => $lovedlast,
             'utmsource' => $utmsource,
@@ -242,9 +300,10 @@ foreach ($careLevelValues as $value) {
             'utmmedium' => $utmmedium,
             'utmid' => $utmid,
             'gclid' => $gclid,
-            'apartmentpreference' => $apartmentpreference,
+            'apartmentpreference' => $residenceValue,
             'expansionstatus' => $expansionstatus,
-            'marketsource' => $marketsource
+            'marketsource' => $marketsource,
+            'carelevel' => $CareLevelValue
         );
     
         error_log('this is the data: ' . print_r($data, true));
@@ -278,7 +337,7 @@ foreach ($careLevelValues as $value) {
                             "value" => $data['Phone']
                         ],[
                             "property" => "Care Level", 
-                            "value" => $data['CareLevel']
+                            "value" => $data['carelevel'],
                         ],[
                             "property" => "type",
                            "value" => $individualType
@@ -298,12 +357,12 @@ foreach ($careLevelValues as $value) {
                             "property" => "GCLID",
                             "value" => $data['gclid']
                         ],[
-                            "property" => "Apartment Preference",
-                            "value" => $data['apartmentpreference']
-                        ],[
                             "property" => "Market Source",
                             "value" => $data['marketsource']
                         ],
+                    ],
+                    "Apartement Preference" => [
+                        ["value" => $data['apartmentpreference']]
                     ],
                     "activities" => [
                         [
