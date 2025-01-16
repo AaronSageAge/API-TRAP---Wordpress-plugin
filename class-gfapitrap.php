@@ -493,7 +493,7 @@ class GFAPITrap extends GFFeedAddOn {
                     }
                 }
             }
-        }
+        
 
                 $args = [
                     'method' => 'POST',
