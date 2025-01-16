@@ -241,7 +241,7 @@ class GFAPITrap extends GFFeedAddOn {
         $excludedInquiryLevels = array_filter($inquireLevels);
 
         if (!empty($excludedInquiryLevels)) {
-            error_log('Skipping API request due to excluded inquiry level');
+           // error_log('Skipping API request due to excluded inquiry level');
             return;
         }
 
@@ -479,7 +479,7 @@ class GFAPITrap extends GFFeedAddOn {
         }
 
         if (is_wp_error($getResponse)) {
-            error_log('API request failed: ' . $getResponse->get_error_message(), 3, plugin_dir_path(__FILE__) . 'debug.log');
+            //error_log('API request failed: ' . $getResponse->get_error_message(), 3, plugin_dir_path(__FILE__) . 'debug.log');
             return;
         }
         
@@ -519,7 +519,7 @@ class GFAPITrap extends GFFeedAddOn {
             }
     
             if (is_wp_error($response)) {
-                error_log('API request failed: ' . $response->get_error_message(), 3, plugin_dir_path(__FILE__) . 'debug.log');
+                //error_log('API request failed: ' . $response->get_error_message(), 3, plugin_dir_path(__FILE__) . 'debug.log');
                 return;
             }
 
