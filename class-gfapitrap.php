@@ -177,11 +177,11 @@ class GFAPITrap extends GFFeedAddOn {
     }
 
     public function process_feed( $feed, $entry, $form ) {
-        error_log('Feed data: ' . print_r($feed, true), 3, plugin_dir_path(__FILE__) . 'debug.log');
+        //error_log('Feed data: ' . print_r($feed, true), 3, plugin_dir_path(__FILE__) . 'debug.log');
 
         var_dump($feed);
-        error_log('this is the feed:');
-        error_log(print_r($feed, true));
+        //error_log('this is the feed:');
+        //error_log(print_r($feed, true));
         $metaData = $this->get_generic_map_fields( $feed, 'formFieldMap' );
     
         $communityunique = isset($metaData['communityunique']) ? $this->get_field_value($form, $entry, $metaData['communityunique']) : null;
@@ -246,7 +246,8 @@ class GFAPITrap extends GFFeedAddOn {
         }
 
         /*Error logging*/
-        $LogFilePath = plugin_dir_path(__FILE__) . 'debug.log';
+        
+        /*$LogFilePath = plugin_dir_path(__FILE__) . 'debug.log';
         error_log('Care Level - AL: ' . print_r($careLevelAL1, true) . PHP_EOL, 3, $LogFilePath);
         error_log('Care Level - IL: ' . print_r($careLevelIL1, true) . PHP_EOL, 3, $LogFilePath);
         error_log('Care Level - MS: ' . print_r($careLevelMS1, true) . PHP_EOL, 3, $LogFilePath);
@@ -256,6 +257,7 @@ class GFAPITrap extends GFFeedAddOn {
         error_log('Care Level - ST: ' . print_r($careLevelST1, true) . PHP_EOL, 3, $LogFilePath);
                 
         error_log('Care Level Value: ' . print_r($CareLevelValue, true) . PHP_EOL, 3, $LogFilePath);
+        */
 
         /*Residence Preference*/
         $resultCottage = isset($metaData['resultcottage']) ? $this->get_field_value($form, $entry, $metaData['resultcottage']) : null;
@@ -279,11 +281,13 @@ class GFAPITrap extends GFFeedAddOn {
         }
 
         /*error log for residence preference*/
+        /*
         error_log('Cottages: ' . print_r($resultCottage, true) . PHP_EOL, 3, $LogFilePath);
         error_log('Care Level - IL: ' . print_r($resultTwonhouses, true) . PHP_EOL, 3, $LogFilePath);
         error_log('Care Level - MS: ' . print_r($resultApartment, true) . PHP_EOL, 3, $LogFilePath);
                 
         error_log('Appartment Prefernce Value: ' . print_r($residenceValue, true) . PHP_EOL, 3, $LogFilePath);
+        */
 
         /*prospect or contact into type*/
         $inquiringfor = isset($metaData['inquiringfor']) ? $this->get_field_value($form, $entry, $metaData['inquiringfor']) : null;
@@ -338,13 +342,13 @@ class GFAPITrap extends GFFeedAddOn {
             'carelevel' => $CareLevelValue
         );
     
-        error_log('this is the data: ' . print_r($data, true));
+        //error_log('this is the data: ' . print_r($data, true));
         $response = $this->sendApiRequest($data, $inquiringfor, $individualType, $relationshipType);
-        error_log('this is the response: ' . print_r($response, true));
+        //error_log('this is the response: ' . print_r($response, true));
     }
 
     public function sendApiRequest(array $data, $inquiringfor, $individualType, $relationshipType) {
-        error_log('API request data: ' . print_r($data, true), 3, plugin_dir_path(__FILE__) . 'debug.log');
+        //error_log('API request data: ' . print_r($data, true), 3, plugin_dir_path(__FILE__) . 'debug.log');
 
         $sendData = [
             "individuals" => [
@@ -504,7 +508,7 @@ class GFAPITrap extends GFFeedAddOn {
                     'body' => json_encode($sendData)
                 ];
     
-            error_log('API request JSON data: ' . json_encode($sendData, JSON_PRETTY_PRINT), 3, plugin_dir_path(__FILE__) . 'debug.log');
+            //error_log('API request JSON data: ' . json_encode($sendData, JSON_PRETTY_PRINT), 3, plugin_dir_path(__FILE__) . 'debug.log');
 
 
             $response = wp_remote_post($url, $args);
@@ -522,11 +526,13 @@ class GFAPITrap extends GFFeedAddOn {
             $responseCode = wp_remote_retrieve_response_code($response);
             $responseBody = wp_remote_retrieve_body($response);
             
+            /*
             if ($responseCode === 200) {
                 error_log('API request successful: ' . $responseCode . ' - ' . $responseBody, 3, plugin_dir_path(__FILE__) . 'debug.log');
             } else {
                 error_log('API request failed: ' . $responseCode . ' - ' . $responseBody, 3, plugin_dir_path(__FILE__) . 'debug.log');
             }
+            */
     
             return $response;
         }
