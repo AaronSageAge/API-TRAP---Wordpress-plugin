@@ -359,10 +359,10 @@ class GFAPITrap extends GFFeedAddOn {
                         ],[
                             "property" => "Market Source",
                             "value" => $data['marketsource']
-                        ],
-                    ],
-                    "Apartement Preference" => [
-                        ["value" => $data['apartmentpreference']]
+                        ],[
+                            "property" => "Apartment Preference",
+                            "value" => $data['apartmentpreference']
+                        ]
                     ],
                     "activities" => [
                         [
