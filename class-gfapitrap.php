@@ -127,6 +127,18 @@ class GFAPITrap extends GFFeedAddOn {
                                     'value'         => 'careLevelRC',
                                 ),
                                 array(
+                                    'label'         => 'Volunteer Inquiry',
+                                    'value'         => 'volunteerinquiry',
+                                ),
+                                array(
+                                    'label'         => 'Career Inquiry',
+                                    'value'         => 'careerinquiry',
+                                ),
+                                array(
+                                    'label'         => 'Vendor Inquiry',
+                                    'value'         => 'vendorinquiry',
+                                ),
+                                array(
                                     'label'         => 'Result Residents Cottage',
                                     'value'         => 'resultcottage',
                                 ),
@@ -185,7 +197,6 @@ class GFAPITrap extends GFFeedAddOn {
         $comments = isset($metaData['Message']) ? $this->get_field_value($form, $entry, $metaData['Message']) : null;
     
         /*Interest in - Carelevels*/
-
         $careLevelAL1 = isset($metaData['careLevelAL']) ? $this->get_field_value($form, $entry, $metaData['careLevelAL']) : null;
         $careLevelIL1 = isset($metaData['careLevelIL']) ? $this->get_field_value($form, $entry, $metaData['careLevelIL']) : null;
         $careLevelMS1 = isset($metaData['careLevelMS']) ? $this->get_field_value($form, $entry, $metaData['careLevelMS']) : null;
@@ -194,6 +205,12 @@ class GFAPITrap extends GFFeedAddOn {
         $careLevelSN1 = isset($metaData['careLevelSN']) ? $this->get_field_value($form, $entry, $metaData['careLevelSN']) : null;
         $careLevelST1 = isset($metaData['careLevelST']) ? $this->get_field_value($form, $entry, $metaData['careLevelST']) : null;
 
+        /*Inquiries*/
+        $volunteerInquiry = isset($metaData['volunteerinquiry']) ? $this->get_field_value($form, $entry, $metaData['volunteerinquiry']) : null;
+        $careerInquiry = isset($metaData['careerinquiry']) ? $this->get_field_value($form, $entry, $metaData['careerinquiry']) : null;
+        $vedorInquiry = isset($metaData['vendorinquiry']) ? $this->get_field_value($form, $entry, $metaData['vendorinquiry']) : null;
+
+        /*Interest in - Carelevels Array*/
         $careLevels = [
             'careLevelAL' => $careLevelAL1,
             'careLevelIL' => $careLevelIL1,
@@ -203,6 +220,8 @@ class GFAPITrap extends GFFeedAddOn {
             'careLevelSN' => $careLevelSN1,
             'careLevelST' => $careLevelST1,
         ];
+
+        /*Interest in - Carelevels Value*/
         $CareLevelValue = null;
         foreach ($careLevels as $level => $value) {
             if ($value !== null && $value !== '') {
@@ -211,6 +230,22 @@ class GFAPITrap extends GFFeedAddOn {
             }
         }
 
+        /*Inquiries Array*/
+        $inquireLevels = [
+            'volunteerinquiry1' => $volunteerInquiry,
+            'careerinquiry1' => $careerInquiry,
+            'vendorinquiry1' => $vedorInquiry
+        ];
+
+        /*excluded inquiry levels from API send*/
+        $excludedInquiryLevels = array_filter($inquireLevels);
+
+        if (!empty($excludedInquiryLevels)) {
+            error_log('Skipping API request due to excluded inquiry level');
+            return;
+        }
+
+        /*Error logging*/
         $LogFilePath = plugin_dir_path(__FILE__) . 'debug.log';
         error_log('Care Level - AL: ' . print_r($careLevelAL1, true) . PHP_EOL, 3, $LogFilePath);
         error_log('Care Level - IL: ' . print_r($careLevelIL1, true) . PHP_EOL, 3, $LogFilePath);
@@ -222,25 +257,19 @@ class GFAPITrap extends GFFeedAddOn {
                 
         error_log('Care Level Value: ' . print_r($CareLevelValue, true) . PHP_EOL, 3, $LogFilePath);
 
-
-        $excludedValues = array('Volunteer Inquiries', 'Career Inquiries', 'Vendor Inquiries');
-        foreach ($CareLevelValue as $value) {
-            if (in_array($value, $excludedValue)) {
-                error_log('Skipping API request due to excluded interest In value: Career, Volunteer, or Vendor' . $value);
-                return;
-            }
-        }
         /*Residence Preference*/
         $resultCottage = isset($metaData['resultcottage']) ? $this->get_field_value($form, $entry, $metaData['resultcottage']) : null;
         $resultTwonhouses = isset($metaData['resulttownhouses']) ? $this->get_field_value($form, $entry, $metaData['resulttownhouses']) : null;
         $resultApartment = isset($metaData['resultapartment']) ? $this->get_field_value($form, $entry, $metaData['resultapartment']) : null;
 
+        /*Residence Preference Array*/
         $residencePreferences = [
             'resultcottage1' => $resultCottage,
             'resulttownhouses1' => $resultTwonhouses,
             'resultapartment1' => $resultApartment,
         ];
 
+        /*residence preference value*/
         $residenceValue = null;
         foreach ($residencePreferences as $residence => $value) {
             if ($value !== null && $value !== '') {
@@ -249,6 +278,7 @@ class GFAPITrap extends GFFeedAddOn {
             }
         }
 
+        /*error log for residence preference*/
         error_log('Cottages: ' . print_r($resultCottage, true) . PHP_EOL, 3, $LogFilePath);
         error_log('Care Level - IL: ' . print_r($resultTwonhouses, true) . PHP_EOL, 3, $LogFilePath);
         error_log('Care Level - MS: ' . print_r($resultApartment, true) . PHP_EOL, 3, $LogFilePath);
@@ -281,11 +311,13 @@ class GFAPITrap extends GFFeedAddOn {
         $utmid = isset($metaData['utmid']) ? $this->get_field_value($form, $entry, $metaData['utmid']) : null;
         $gclid = isset($metaData['gclid']) ? $this->get_field_value($form, $entry, $metaData['gclid']) : null;
     
-        //$apartmentpreference = isset($metaData['apartmentpreference']) ? $this->get_field_value($form, $entry, $metaData['apartmentpreference']) : null;
+        /*expansion status*/
         $expansionstatus = isset($metaData['expansionstatus']) ? $this->get_field_value($form, $entry, $metaData['expansionstatus']) : null;
 
+        /*market source*/
         $marketsource = isset($metaData['marketsource']) ? $this->get_field_value($form, $entry, $metaData['marketsource']) : null;
 
+        /*data Array*/
         $data = array(
             'communityunique' => $communityunique,
             'email' => $email,
@@ -447,17 +479,21 @@ class GFAPITrap extends GFFeedAddOn {
             return;
         }
         
+        /*Check for existing data and add comments if true*/
         $existingData = json_decode($getResponse['body'], true);
     
         if ($existingData === null) {
             error_log('Invalid response from API', 3, plugin_dir_path(__FILE__) . 'debug.log');
             return;
         } else {
-            foreach ($sendData["individuals"]["properties"] as $property) {
-                if (isset($existingData["individuals"]["properties"][$property["property"]]) && $existingData["individuals"]["properties"][$property["property"]] != $property["value"]) {
-                    $sendData["individuals"]["comments"][] = "Changed " . $property["property"] . " from " . $existingData["individuals"]["properties"][$property["property"]] . " to " . $property["value"];
+            foreach ($sendData["individuals"] as $index => $individual) {
+                foreach ($individual["properties"] as $property) {
+                    if (isset($existingData["individuals"][$index]["properties"][$property["property"]]) && $existingData["individuals"][$index]["properties"][$property["property"]] != $property["value"]) {
+                        $sendData["individuals"][$index]["comments"][] = "Changed " . $property["property"] . " from " . $existingData["individuals"][$index]["properties"][$property["property"]] . " to " . $property["value"];
+                    }
                 }
             }
+        }
 
                 $args = [
                     'method' => 'POST',
