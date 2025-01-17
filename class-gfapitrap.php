@@ -180,8 +180,8 @@ class GFAPITrap extends GFFeedAddOn {
         error_log('Feed data: ' . print_r($feed, true), 3, plugin_dir_path(__FILE__) . 'debug.log');
 
         var_dump($feed);
-error_log('this is the feed:');
-error_log(print_r($feed, true));
+//error_log('this is the feed:');
+//error_log(print_r($feed, true));
         $metaData = $this->get_generic_map_fields( $feed, 'formFieldMap' );
     
         $communityunique = isset($metaData['communityunique']) ? $this->get_field_value($form, $entry, $metaData['communityunique']) : null;
@@ -241,12 +241,12 @@ error_log(print_r($feed, true));
         $excludedInquiryLevels = array_filter($inquireLevels);
 
         if (!empty($excludedInquiryLevels)) {
-error_log('Skipping API request due to excluded inquiry level');
+//error_log('Skipping API request due to excluded inquiry level');
             return;
         }
 
-        /*Error logging*/
-        
+/*Error logging*/
+/*
 $LogFilePath = plugin_dir_path(__FILE__) . 'debug.log';
 error_log('Care Level - AL: ' . print_r($careLevelAL1, true) . PHP_EOL, 3, $LogFilePath);
 error_log('Care Level - IL: ' . print_r($careLevelIL1, true) . PHP_EOL, 3, $LogFilePath);
@@ -257,7 +257,7 @@ error_log('Care Level - SN: ' . print_r($careLevelSN1, true) . PHP_EOL, 3, $LogF
 error_log('Care Level - ST: ' . print_r($careLevelST1, true) . PHP_EOL, 3, $LogFilePath);
                 
 error_log('Care Level Value: ' . print_r($CareLevelValue, true) . PHP_EOL, 3, $LogFilePath);
-
+*/
         /*Residence Preference*/
         $resultCottage = isset($metaData['resultcottage']) ? $this->get_field_value($form, $entry, $metaData['resultcottage']) : null;
         $resultTwonhouses = isset($metaData['resulttownhouses']) ? $this->get_field_value($form, $entry, $metaData['resulttownhouses']) : null;
@@ -281,12 +281,13 @@ error_log('Care Level Value: ' . print_r($CareLevelValue, true) . PHP_EOL, 3, $L
 
         /*error log for residence preference*/
         
+/*
 error_log('Cottages: ' . print_r($resultCottage, true) . PHP_EOL, 3, $LogFilePath);
 error_log('Care Level - IL: ' . print_r($resultTwonhouses, true) . PHP_EOL, 3, $LogFilePath);
 error_log('Care Level - MS: ' . print_r($resultApartment, true) . PHP_EOL, 3, $LogFilePath);
                 
 error_log('Appartment Prefernce Value: ' . print_r($residenceValue, true) . PHP_EOL, 3, $LogFilePath);
-
+*/
         /*prospect or contact into type*/
         $inquiringfor = isset($metaData['inquiringfor']) ? $this->get_field_value($form, $entry, $metaData['inquiringfor']) : null;
 
@@ -340,13 +341,13 @@ error_log('Appartment Prefernce Value: ' . print_r($residenceValue, true) . PHP_
             'carelevel' => $CareLevelValue
         );
     
-        //error_log('this is the data: ' . print_r($data, true));
+//error_log('this is the data: ' . print_r($data, true));
         $response = $this->sendApiRequest($data, $inquiringfor, $individualType, $relationshipType);
-        //error_log('this is the response: ' . print_r($response, true));
+//error_log('this is the response: ' . print_r($response, true));
     }
 
     public function sendApiRequest(array $data, $inquiringfor, $individualType, $relationshipType) {
-        //error_log('API request data: ' . print_r($data, true), 3, plugin_dir_path(__FILE__) . 'debug.log');
+//error_log('API request data: ' . print_r($data, true), 3, plugin_dir_path(__FILE__) . 'debug.log');
 
         $sendData = [
             "individuals" => [
@@ -489,7 +490,7 @@ error_log('Appartment Prefernce Value: ' . print_r($residenceValue, true) . PHP_
         }
 
         if (is_wp_error($getResponse)) {
-error_log('API request failed: ' . $getResponse->get_error_message(), 3, plugin_dir_path(__FILE__) . 'debug.log');
+//error_log('API request failed: ' . $getResponse->get_error_message(), 3, plugin_dir_path(__FILE__) . 'debug.log');
             return;
         }
         
@@ -497,7 +498,7 @@ error_log('API request failed: ' . $getResponse->get_error_message(), 3, plugin_
         $existingData = json_decode($getResponse['body'], true);
     
         if ($existingData === null) {
-error_log('Invalid response from API', 3, plugin_dir_path(__FILE__) . 'debug.log');
+//error_log('Invalid response from API', 3, plugin_dir_path(__FILE__) . 'debug.log');
             return;
         } else {
             foreach ($sendData["individuals"] as $index => $individual) {
@@ -518,7 +519,7 @@ error_log('Invalid response from API', 3, plugin_dir_path(__FILE__) . 'debug.log
                     'body' => json_encode($sendData)
                 ];
     
-error_log('API request JSON data: ' . json_encode($sendData, JSON_PRETTY_PRINT), 3, plugin_dir_path(__FILE__) . 'debug.log');
+//error_log('API request JSON data: ' . json_encode($sendData, JSON_PRETTY_PRINT), 3, plugin_dir_path(__FILE__) . 'debug.log');
 
 
             $response = wp_remote_post($url, $args);
@@ -529,19 +530,20 @@ error_log('API request JSON data: ' . json_encode($sendData, JSON_PRETTY_PRINT),
             }
     
             if (is_wp_error($response)) {
-error_log('API request failed: ' . $response->get_error_message(), 3, plugin_dir_path(__FILE__) . 'debug.log');
+//error_log('API request failed: ' . $response->get_error_message(), 3, plugin_dir_path(__FILE__) . 'debug.log');
                 return;
             }
 
             $responseCode = wp_remote_retrieve_response_code($response);
             $responseBody = wp_remote_retrieve_body($response);
             
+
 if ($responseCode === 200) {
-                error_log('API request successful: ' . $responseCode . ' - ' . $responseBody, 3, plugin_dir_path(__FILE__) . 'debug.log');
-            } else {
-                error_log('API request failed: ' . $responseCode . ' - ' . $responseBody, 3, plugin_dir_path(__FILE__) . 'debug.log');
-            }
-    
+    //error_log('API request successful: ' . $responseCode . ' - ' . $responseBody, 3, plugin_dir_path(__FILE__) . 'debug.log');
+        } else {
+            //error_log('API request failed: ' . $responseCode . ' - ' . $responseBody, 3, plugin_dir_path(__FILE__) . 'debug.log');
+        }
+
             return $response;
         }
     }
