@@ -177,11 +177,11 @@ class GFAPITrap extends GFFeedAddOn {
     }
 
     public function process_feed( $feed, $entry, $form ) {
-        //error_log('Feed data: ' . print_r($feed, true), 3, plugin_dir_path(__FILE__) . 'debug.log');
+        error_log('Feed data: ' . print_r($feed, true), 3, plugin_dir_path(__FILE__) . 'debug.log');
 
         var_dump($feed);
-        //error_log('this is the feed:');
-        //error_log(print_r($feed, true));
+error_log('this is the feed:');
+error_log(print_r($feed, true));
         $metaData = $this->get_generic_map_fields( $feed, 'formFieldMap' );
     
         $communityunique = isset($metaData['communityunique']) ? $this->get_field_value($form, $entry, $metaData['communityunique']) : null;
@@ -241,23 +241,22 @@ class GFAPITrap extends GFFeedAddOn {
         $excludedInquiryLevels = array_filter($inquireLevels);
 
         if (!empty($excludedInquiryLevels)) {
-           // error_log('Skipping API request due to excluded inquiry level');
+error_log('Skipping API request due to excluded inquiry level');
             return;
         }
 
         /*Error logging*/
         
-        /*$LogFilePath = plugin_dir_path(__FILE__) . 'debug.log';
-        error_log('Care Level - AL: ' . print_r($careLevelAL1, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - IL: ' . print_r($careLevelIL1, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - MS: ' . print_r($careLevelMS1, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - RC: ' . print_r($careLevelRC1, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - RT: ' . print_r($careLevelRT1, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - SN: ' . print_r($careLevelSN1, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - ST: ' . print_r($careLevelST1, true) . PHP_EOL, 3, $LogFilePath);
+$LogFilePath = plugin_dir_path(__FILE__) . 'debug.log';
+error_log('Care Level - AL: ' . print_r($careLevelAL1, true) . PHP_EOL, 3, $LogFilePath);
+error_log('Care Level - IL: ' . print_r($careLevelIL1, true) . PHP_EOL, 3, $LogFilePath);
+error_log('Care Level - MS: ' . print_r($careLevelMS1, true) . PHP_EOL, 3, $LogFilePath);
+error_log('Care Level - RC: ' . print_r($careLevelRC1, true) . PHP_EOL, 3, $LogFilePath);
+error_log('Care Level - RT: ' . print_r($careLevelRT1, true) . PHP_EOL, 3, $LogFilePath);
+error_log('Care Level - SN: ' . print_r($careLevelSN1, true) . PHP_EOL, 3, $LogFilePath);
+error_log('Care Level - ST: ' . print_r($careLevelST1, true) . PHP_EOL, 3, $LogFilePath);
                 
-        error_log('Care Level Value: ' . print_r($CareLevelValue, true) . PHP_EOL, 3, $LogFilePath);
-        */
+error_log('Care Level Value: ' . print_r($CareLevelValue, true) . PHP_EOL, 3, $LogFilePath);
 
         /*Residence Preference*/
         $resultCottage = isset($metaData['resultcottage']) ? $this->get_field_value($form, $entry, $metaData['resultcottage']) : null;
@@ -281,13 +280,12 @@ class GFAPITrap extends GFFeedAddOn {
         }
 
         /*error log for residence preference*/
-        /*
-        error_log('Cottages: ' . print_r($resultCottage, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - IL: ' . print_r($resultTwonhouses, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - MS: ' . print_r($resultApartment, true) . PHP_EOL, 3, $LogFilePath);
+        
+error_log('Cottages: ' . print_r($resultCottage, true) . PHP_EOL, 3, $LogFilePath);
+error_log('Care Level - IL: ' . print_r($resultTwonhouses, true) . PHP_EOL, 3, $LogFilePath);
+error_log('Care Level - MS: ' . print_r($resultApartment, true) . PHP_EOL, 3, $LogFilePath);
                 
-        error_log('Appartment Prefernce Value: ' . print_r($residenceValue, true) . PHP_EOL, 3, $LogFilePath);
-        */
+error_log('Appartment Prefernce Value: ' . print_r($residenceValue, true) . PHP_EOL, 3, $LogFilePath);
 
         /*prospect or contact into type*/
         $inquiringfor = isset($metaData['inquiringfor']) ? $this->get_field_value($form, $entry, $metaData['inquiringfor']) : null;
@@ -372,32 +370,8 @@ class GFAPITrap extends GFFeedAddOn {
                             "property" => "Home Phone",
                             "value" => $data['Phone']
                         ],[
-                            "property" => "Care Level", 
-                            "value" => $data['carelevel'],
-                        ],[
                             "property" => "type",
                            "value" => $individualType
-                        ],[
-                            "property" => "utmSource",
-                            "value" => $data['utmsource']
-                        ],[
-                            "property" => "UTM Campaign",
-                            "value" => $data['utmcampaign']
-                        ],[
-                            "property" => "UTM Medium",
-                            "value" => $data['utmmedium']
-                        ],[
-                            "property" => "UTM Id",
-                            "value" => $data['utmid']
-                        ],[
-                            "property" => "GCLID",
-                            "value" => $data['gclid']
-                        ],[
-                            "property" => "Market Source",
-                            "value" => $data['marketsource']
-                        ],[
-                            "property" => "Apartment Preference",
-                            "value" => $data['apartmentpreference']
                         ]
                     ],
                     "activities" => [
@@ -441,16 +415,64 @@ class GFAPITrap extends GFFeedAddOn {
             ]
         ];
 
-        // Add the "Expansion Status" property to the prospect be it indiviaul or Relationship
+        // Add the additional property to the prospect be it indiviaul or Relationship based on Myself or Loved One
         if ($relationshipType == 'Prospect') {
             $sendData["individuals"][1]["properties"][] = [
                 "property" => "Expansion Status",
                 "value" => $data['expansionstatus']
+            ],[
+                "property" => "Market Source",
+                "value" => $data['marketsource']
+            ],[
+                "property" => "Apartment Preference",
+                "value" => $data['apartmentpreference']
+            ],[
+                "property" => "Care Level", 
+                "value" => $data['carelevel'],
+            ],[
+                "property" => "utmSource",
+                "value" => $data['utmsource']
+            ],[
+                "property" => "UTM Campaign",
+                "value" => $data['utmcampaign']
+            ],[
+                "property" => "UTM Medium",
+                "value" => $data['utmmedium']
+            ],[
+                "property" => "UTM Id",
+                "value" => $data['utmid']
+            ],[
+                "property" => "GCLID",
+                "value" => $data['gclid']
             ];
         } elseif ($individualType == 'Prospect') {
             $sendData["individuals"][0]["properties"][] = [
                 "property" => "Expansion Status",
                 "value" => $data['expansionstatus']
+            ],[
+                "property" => "Market Source",
+                "value" => $data['marketsource']
+            ],[
+                "property" => "Apartment Preference",
+                "value" => $data['apartmentpreference']
+            ],[
+                "property" => "Care Level", 
+                "value" => $data['carelevel'],
+            ],[
+                "property" => "utmSource",
+                "value" => $data['utmsource']
+            ],[
+                "property" => "UTM Campaign",
+                "value" => $data['utmcampaign']
+            ],[
+                "property" => "UTM Medium",
+                "value" => $data['utmmedium']
+            ],[
+                "property" => "UTM Id",
+                "value" => $data['utmid']
+            ],[
+                "property" => "GCLID",
+                "value" => $data['gclid']
             ];
         }
 
@@ -479,7 +501,7 @@ class GFAPITrap extends GFFeedAddOn {
         }
 
         if (is_wp_error($getResponse)) {
-            //error_log('API request failed: ' . $getResponse->get_error_message(), 3, plugin_dir_path(__FILE__) . 'debug.log');
+error_log('API request failed: ' . $getResponse->get_error_message(), 3, plugin_dir_path(__FILE__) . 'debug.log');
             return;
         }
         
@@ -487,7 +509,7 @@ class GFAPITrap extends GFFeedAddOn {
         $existingData = json_decode($getResponse['body'], true);
     
         if ($existingData === null) {
-            error_log('Invalid response from API', 3, plugin_dir_path(__FILE__) . 'debug.log');
+error_log('Invalid response from API', 3, plugin_dir_path(__FILE__) . 'debug.log');
             return;
         } else {
             foreach ($sendData["individuals"] as $index => $individual) {
@@ -508,7 +530,7 @@ class GFAPITrap extends GFFeedAddOn {
                     'body' => json_encode($sendData)
                 ];
     
-            //error_log('API request JSON data: ' . json_encode($sendData, JSON_PRETTY_PRINT), 3, plugin_dir_path(__FILE__) . 'debug.log');
+error_log('API request JSON data: ' . json_encode($sendData, JSON_PRETTY_PRINT), 3, plugin_dir_path(__FILE__) . 'debug.log');
 
 
             $response = wp_remote_post($url, $args);
@@ -519,20 +541,18 @@ class GFAPITrap extends GFFeedAddOn {
             }
     
             if (is_wp_error($response)) {
-                //error_log('API request failed: ' . $response->get_error_message(), 3, plugin_dir_path(__FILE__) . 'debug.log');
+error_log('API request failed: ' . $response->get_error_message(), 3, plugin_dir_path(__FILE__) . 'debug.log');
                 return;
             }
 
             $responseCode = wp_remote_retrieve_response_code($response);
             $responseBody = wp_remote_retrieve_body($response);
             
-            /*
-            if ($responseCode === 200) {
+if ($responseCode === 200) {
                 error_log('API request successful: ' . $responseCode . ' - ' . $responseBody, 3, plugin_dir_path(__FILE__) . 'debug.log');
             } else {
                 error_log('API request failed: ' . $responseCode . ' - ' . $responseBody, 3, plugin_dir_path(__FILE__) . 'debug.log');
             }
-            */
     
             return $response;
         }
