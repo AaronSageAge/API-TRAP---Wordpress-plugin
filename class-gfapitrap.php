@@ -416,64 +416,52 @@ error_log('Appartment Prefernce Value: ' . print_r($residenceValue, true) . PHP_
         ];
 
         // Add the additional property to the prospect be it indiviaul or Relationship based on Myself or Loved One
+        
+        // Define the properties array
+        $properties = [
+            [
+                "property" => "Expansion Status",
+                "value" => $data['expansionstatus']
+            ],
+            [
+                "property" => "Market Source",
+                "value" => $data['marketsource']
+            ],
+            [
+                "property" => "Apartment Preference",
+                "value" => $data['apartmentpreference']
+            ],
+            [
+                "property" => "Care Level",
+                "value" => $data['carelevel']
+            ],
+            [
+                "property" => "utmSource",
+                "value" => $data['utmsource']
+            ],
+            [
+                "property" => "UTM Campaign",
+                "value" => $data['utmcampaign']
+            ],
+            [
+                "property" => "UTM Medium",
+                "value" => $data['utmmedium']
+            ],
+            [
+                "property" => "UTM Id",
+                "value" => $data['utmid']
+            ],
+            [
+                "property" => "GCLID",
+                "value" => $data['gclid']
+            ]
+        ];
+
+        // Check the conditions and add the properties to the correct array
         if ($relationshipType == 'Prospect') {
-            $sendData["individuals"][1]["properties"][] = [
-                "property" => "Expansion Status",
-                "value" => $data['expansionstatus']
-            ],[
-                "property" => "Market Source",
-                "value" => $data['marketsource']
-            ],[
-                "property" => "Apartment Preference",
-                "value" => $data['apartmentpreference']
-            ],[
-                "property" => "Care Level", 
-                "value" => $data['carelevel'],
-            ],[
-                "property" => "utmSource",
-                "value" => $data['utmsource']
-            ],[
-                "property" => "UTM Campaign",
-                "value" => $data['utmcampaign']
-            ],[
-                "property" => "UTM Medium",
-                "value" => $data['utmmedium']
-            ],[
-                "property" => "UTM Id",
-                "value" => $data['utmid']
-            ],[
-                "property" => "GCLID",
-                "value" => $data['gclid']
-            ];
+            $sendData["individuals"][1]["properties"] = array_merge($sendData["individuals"][1]["properties"], $properties);
         } elseif ($individualType == 'Prospect') {
-            $sendData["individuals"][0]["properties"][] = [
-                "property" => "Expansion Status",
-                "value" => $data['expansionstatus']
-            ],[
-                "property" => "Market Source",
-                "value" => $data['marketsource']
-            ],[
-                "property" => "Apartment Preference",
-                "value" => $data['apartmentpreference']
-            ],[
-                "property" => "Care Level", 
-                "value" => $data['carelevel'],
-            ],[
-                "property" => "utmSource",
-                "value" => $data['utmsource']
-            ],[
-                "property" => "UTM Campaign",
-                "value" => $data['utmcampaign']
-            ],[
-                "property" => "UTM Medium",
-                "value" => $data['utmmedium']
-            ],[
-                "property" => "UTM Id",
-                "value" => $data['utmid']
-            ],[
-                "property" => "GCLID",
-                "value" => $data['gclid']
-            ];
+            $sendData["individuals"][0]["properties"] = array_merge($sendData["individuals"][0]["properties"], $properties);
         }
 
         $primaryApiKey = get_option('gravity_api_trap_primary_api_key');
