@@ -455,6 +455,10 @@ error_log('Appartment Prefernce Value: ' . print_r($residenceValue, true) . PHP_
             [
                 "property" => "GCLID",
                 "value" => $data['gclid']
+            ],
+            [
+                "property" => "Lead Score",
+                "value" => "Not Yet Classified"
             ]
         ];
 
@@ -503,11 +507,21 @@ error_log('Appartment Prefernce Value: ' . print_r($residenceValue, true) . PHP_
         } else {
             foreach ($sendData["individuals"] as $index => $individual) {
                 foreach ($individual["properties"] as $property) {
-                    if (isset($existingData["individuals"][$index]["properties"][$property["property"]]) && $existingData["individuals"][$index]["properties"][$property["property"]] != $property["value"]) {
-                        $sendData["individuals"][$index]["comments"][] = "Changed " . $property["property"] . " from " . $existingData["individuals"][$index]["properties"][$property["property"]] . " to " . $property["value"];
+                    // Check if field is toggled for prospect or contact
+                    if ($relationshipType == 'Prospect' || $individualType == 'Prospect') {
+                        // Check if field is toggled for prospect
+                        if (isset($existingData["individuals"][$index]["properties"][$property["property"]]) && $existingData["individuals"][$index]["properties"][$property["property"]] != $property["value"]) {
+                            $sendData["individuals"][$index]["comments"][] = "Changed " . $property["property"] . " from " . $existingData["individuals"][$index]["properties"][$property["property"]] . " to " . $property["value"];
+                        }
+                    } elseif ($relationshipType == 'Contact' || $individualType == 'Contact') {
+                        // Check if field is toggled for contact
+                        if (isset($existingData["individuals"][$index]["properties"][$property["property"]]) && $existingData["individuals"][$index]["properties"][$property["property"]] != $property["value"]) {
+                            $sendData["individuals"][$index]["comments"][] = "Changed " . $property["property"] . " from " . $existingData["individuals"][$index]["properties"][$property["property"]] . " to " . $property["value"];
+                        }
                     }
                 }
             }
+        }
         
                 $args = [
                     'method' => 'POST',
