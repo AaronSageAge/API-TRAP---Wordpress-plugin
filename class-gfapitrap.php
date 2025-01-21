@@ -455,18 +455,39 @@ error_log('Appartment Prefernce Value: ' . print_r($residenceValue, true) . PHP_
             [
                 "property" => "GCLID",
                 "value" => $data['gclid']
-            ],
-            [
-                "property" => "Lead Score",
-                "value" => "Not Yet Classified"
             ]
         ];
 
+        // Function to add or append property value
+        function add_or_append_property(&$properties, $property, $value) {
+            foreach ($properties as &$prop) {
+                if ($prop['property'] == $property) {
+                    if (is_array($prop['value'])) {
+                        $prop['value'][] = $value;
+                    } else {
+                        $prop['value'] = [$prop['value'], $value];
+                    }
+                    return;
+                }
+            }
+            $properties[] = ["property" => $property, "value" => $value];
+        }
+
         // Check the conditions and add the properties to the correct array
         if ($relationshipType == 'Prospect') {
-            $sendData["individuals"][1]["properties"] = array_merge($sendData["individuals"][1]["properties"], $properties);
+            if (!isset($sendData["individuals"][1]["comments"])) {
+                $sendData["individuals"][1]["comments"] = [];
+            }
+            foreach ($properties as $prop) {
+                add_or_append_property($sendData["individuals"][1]["comments"], $prop['property'], $prop['value']);
+            }
         } elseif ($individualType == 'Prospect') {
-            $sendData["individuals"][0]["properties"] = array_merge($sendData["individuals"][0]["properties"], $properties);
+            if (!isset($sendData["individuals"][0]["comments"])) {
+                $sendData["individuals"][0]["comments"] = [];
+            }
+            foreach ($properties as $prop) {
+                add_or_append_property($sendData["individuals"][0]["comments"], $prop['property'], $prop['value']);
+            }
         }
 
         $primaryApiKey = get_option('gravity_api_trap_primary_api_key');
@@ -496,31 +517,6 @@ error_log('Appartment Prefernce Value: ' . print_r($residenceValue, true) . PHP_
         if (is_wp_error($getResponse)) {
 //error_log('API request failed: ' . $getResponse->get_error_message(), 3, plugin_dir_path(__FILE__) . 'debug.log');
             return;
-        }
-        
-        /*Check for existing data and add comments if true*/
-        $existingData = json_decode($getResponse['body'], true);
-    
-        if ($existingData === null) {
-//error_log('Invalid response from API', 3, plugin_dir_path(__FILE__) . 'debug.log');
-            return;
-        } else {
-            foreach ($sendData["individuals"] as $index => $individual) {
-                foreach ($individual["properties"] as $property) {
-                    // Check if field is toggled for prospect or contact
-                    if ($relationshipType == 'Prospect' || $individualType == 'Prospect') {
-                        // Check if field is toggled for prospect
-                        if (isset($existingData["individuals"][$index]["properties"][$property["property"]]) && $existingData["individuals"][$index]["properties"][$property["property"]] != $property["value"]) {
-                            $sendData["individuals"][$index]["comments"][] = "Changed " . $property["property"] . " from " . $existingData["individuals"][$index]["properties"][$property["property"]] . " to " . $property["value"];
-                        }
-                    } elseif ($relationshipType == 'Contact' || $individualType == 'Contact') {
-                        // Check if field is toggled for contact
-                        if (isset($existingData["individuals"][$index]["properties"][$property["property"]]) && $existingData["individuals"][$index]["properties"][$property["property"]] != $property["value"]) {
-                            $sendData["individuals"][$index]["comments"][] = "Changed " . $property["property"] . " from " . $existingData["individuals"][$index]["properties"][$property["property"]] . " to " . $property["value"];
-                        }
-                    }
-                }
-            }
         }
         
                 $args = [
@@ -561,4 +557,3 @@ if ($responseCode === 200) {
             return $response;
         }
     }
-}
