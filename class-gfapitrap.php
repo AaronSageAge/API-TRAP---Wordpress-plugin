@@ -46,35 +46,35 @@ class GFAPITrap extends GFFeedAddOn {
                             'title'             => 'API Field',
                             'allow_custom'      => FALSE,
                             'choices'           => array(
-                                array('label' => 'Email','value' => 'email'),
-                                array('label' => 'firstName','value' => 'firstname'),
-                                array('label' => 'lastName','value' => 'lastname'),
-                                array('label' => 'Phone','value' => 'phone'),
-                                array('label' => 'Comments','value' => 'Message'),
-                                array('label' => 'CommunityUnique','value' => 'communityunique'),
-                                array('label' => 'InquiringFor','value' => 'inquiringfor'),
-                                array('label' => 'lovedFirst','value' => 'lovedfirst'),
-                                array('label' => 'lovedLast','value' => 'lovedlast'),
-                                array('label' => 'utmSource','value' => 'utmsource'),
-                                array('label' => 'utmMedium','value' => 'utmmedium'),
-                                array('label' => 'utmCampaign','value' => 'utmcampaign'),
-                                array('label' => 'utmId', 'value' => 'utmid'),
+                                array('label' => 'Email','value' => 'email',),
+                                array('label' => 'firstName','value' => 'firstname',),
+                                array('label' => 'lastName','value' => 'lastname',),
+                                array('label' => 'Phone','value' => 'phone',),
+                                array('label' => 'Comments','value' => 'Message',),
+                                array('label' => 'CommunityUnique','value' => 'communityunique',),
+                                array('label' => 'InquiringFor','value' => 'inquiringfor',),
+                                array('label' => 'lovedFirst','value' => 'lovedfirst',),
+                                array('label' => 'lovedLast','value' => 'lovedlast',),
+                                array('label' => 'utmSource','value' => 'utmsource',),
+                                array('label' => 'utmMedium','value' => 'utmmedium',),
+                                array('label' => 'utmCampaign','value' => 'utmcampaign',),
+                                array('label' => 'utmId', 'value' => 'utmid',),
                                 array('label' => 'GCLID','value' => 'gclid'),
-                                array('label' => 'Care Level - AL','value' => 'careLevelAL'),
-                                array('label' => 'Care Level - IL no expansion','value' => 'careLevelIL'),
-                                array('label' => 'Care Level - MS','value' => 'careLevelMS'),
-                                array('label' => 'Care Level - SN','value' => 'careLevelSN'),
-                                array('label' => 'Care Level - RT', 'value' => 'careLevelRT'),
+                                array('label' => 'Care Level - AL','value' => 'careLevelAL',),
+                                array('label' => 'Care Level - IL no expansion','value' => 'careLevelIL',),
+                                array('label' => 'Care Level - MS','value' => 'careLevelMS',),
+                                array('label' => 'Care Level - SN','value' => 'careLevelSN',),
+                                array('label' => 'Care Level - RT', 'value' => 'careLevelRT',),
                                 array('label' => 'Care Level - RC','value' => 'careLevelRC'),
-                                array('label' => 'Volunteer Inquiry','value' => 'volunteerinquiry'),
-                                array('label' => 'Career Inquiry', 'value' => 'careerinquiry'),
+                                array('label' => 'Volunteer Inquiry','value' => 'volunteerinquiry',),
+                                array('label' => 'Career Inquiry', 'value' => 'careerinquiry',),
                                 array('label' => 'Vendor Inquiry', 'value' => 'vendorinquiry'),
-                                array('label' => 'Result Residents Cottage', 'value' => 'resultcottage'),
-                                array('label' => 'Result Residents Apartment', 'value' => 'resultapartment'),
-                                array('label' => 'Result Residents Townhouse', 'value' => 'resulttownhouse'),
-                                array('label' => 'Result Residents Apartment', 'value' => 'resultapartment'),
-                                array('label' => 'expansionStatus', 'value' => 'expansionstatus'),
-                                array('label' => 'MarketSource', 'value' => 'marketsource'),
+                                array('label' => 'Result Residents Cottage', 'value' => 'resultcottage',),
+                                array('label' => 'Result Residents Apartment', 'value' => 'resultapartment',),
+                                array('label' => 'Result Residents Townhouse', 'value' => 'resulttownhouse',),
+                                array('label' => 'Result Residents Apartment', 'value' => 'resultapartment',),
+                                array('label' => 'expansionStatus', 'value' => 'expansionstatus',),
+                                array('label' => 'MarketSource', 'value' => 'marketsource',),
                             ),
                         ),
                     ),
@@ -326,7 +326,7 @@ error_log('API request data: ' . print_r($data, true), 3, plugin_dir_path(__FILE
             foreach ($existingIndividuals as $individual) {
                 if (isset($individual['notes'])) {
                     foreach ($properties as $prop) {
-                        add_or_append_property($individual['notes'], "Message", $prop['value']);
+                        $this->add_or_append_property($individual['notes'], "Message", $prop['value']);
                     }
                 } else {
                     $individual['notes'] = [["Message" => $prop['value']]];
@@ -339,9 +339,10 @@ error_log('API request data: ' . print_r($data, true), 3, plugin_dir_path(__FILE
                 $sendData["individuals"][0]["notes"] = [];
             }
             foreach ($properties as $prop) {
-                add_or_append_property($sendData["individuals"][0]["notes"], "Message", $prop['value']);
+                $this->add_or_append_property($sendData["individuals"][0]["notes"], "Message", $prop['value']);
             }
         }
+
         $primaryApiKey = get_option('gravity_api_trap_primary_api_key');
         $secondaryApiKey = get_option('gravity_api_trap_secondary_api_key');
         $url = get_option('gravity_api_trap_endpoint_url');
@@ -408,4 +409,14 @@ if ($responseCode === 200) {
 
             return $response;
         }
+        private function add_or_append_property(&$notes, $key, $value) {
+            foreach ($notes as &$note) {
+                if ($note['Message'] === $key) {
+                    $note['Message'] .= ' ' . $value;
+                    return;
+                }
+            }
+            $notes[] = ['Message' => $value];
+        }
+        
     }
