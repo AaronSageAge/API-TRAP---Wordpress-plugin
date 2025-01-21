@@ -475,18 +475,18 @@ error_log('Appartment Prefernce Value: ' . print_r($residenceValue, true) . PHP_
 
         // Check the conditions and add the properties to the correct array
         if ($relationshipType == 'Prospect') {
-            if (!isset($sendData["individuals"][1]["comments"])) {
-                $sendData["individuals"][1]["comments"] = [];
+            if (!isset($sendData["individuals"][1]["Message"])) {
+                $sendData["individuals"][1]["Message"] = [];
             }
             foreach ($properties as $prop) {
-                add_or_append_property($sendData["individuals"][1]["comments"], $prop['property'], $prop['value']);
+                add_or_append_property($sendData["individuals"][1]["Message"], $prop['property'], $prop['value']);
             }
         } elseif ($individualType == 'Prospect') {
-            if (!isset($sendData["individuals"][0]["comments"])) {
-                $sendData["individuals"][0]["comments"] = [];
+            if (!isset($sendData["individuals"][0]["Message"])) {
+                $sendData["individuals"][0]["Message"] = [];
             }
             foreach ($properties as $prop) {
-                add_or_append_property($sendData["individuals"][0]["comments"], $prop['property'], $prop['value']);
+                add_or_append_property($sendData["individuals"][0]["Message"], $prop['property'], $prop['value']);
             }
         }
 
