@@ -258,55 +258,108 @@ error_log('this is the data: ' . print_r($data, true));
         $response = $this->sendApiRequest($data, $inquiringfor, $individualType, $relationshipType);
 error_log('this is the response: ' . print_r($response, true));
     }
-
     public function sendApiRequest(array $data, $inquiringfor, $individualType, $relationshipType) {
-error_log('API request data: ' . print_r($data, true), 3, plugin_dir_path(__FILE__) . 'debug.log');
 
-      // Initialize the $sendData["individuals"] array
-      $sendData = ["individuals" => []];
-
-        $sendData = [
-            "individuals" => [
-                [
-                    "communities" => [
-                        ["NameUnique" => $data['communityunique']]
-                    ],
-                    "properties" => [
-                        ["property" => "firstname",   "value" => $data['FirstName']], 
-                        [ "property" => "lastname",  "value" => $data['LastName']], 
-                        ["property" => "Email",      "value" => $data['email']], 
-                        ["property" => "Home Phone", "value" => $data['Phone']],
-                        ["property" => "type",       "value" => $individualType]
-                    ],
-                    "activities" => [
-                        [
-                            "reInquiry" => true,
-                            "description" => "Webform",
-                            "activityStatusMasterId" => 2,
-                            "activityResultMasterId" => 2,
-                            "activityTypeMasterId" => 17
-                        ]
-                    ],
-                    "notes" => [
-                        ["Message" => (string)$data['Message']] // Cast to string
-                    ]
-                ],
-                [
-                    "communities" => [
-                        ["NameUnique" => $data['communityunique']]
-                    ],
-                    "relationship" => "Family Member",
-                    "properties" => [
-                        ["property" => "firstname", "value" => $data['lovedfirst']],
-                        ["property" => "lastname", "value" => $data['lovedlast']],
-                        ["property" => "type",     "value" => $relationshipType]
+        $primaryApiKey = get_option('gravity_api_trap_primary_api_key');
+        $secondaryApiKey = get_option('gravity_api_trap_secondary_api_key');
+        $url = get_option('gravity_api_trap_endpoint_url');
+    
+        // Validate the input data
+        if (empty($data) || empty($inquiringfor) || empty($individualType) || empty($relationshipType)) {
+            error_log('Invalid input data', 3, plugin_dir_path(__FILE__) . 'debug.log');
+            return;
+        }
+    
+        // Check if the individual already exists as a Prospect or Contact
+        $existingIndividualsUrl = get_option('gravity_api_trap_endpoint_url') . '/individuals';
+        $existingIndividualsResponse = wp_remote_get($existingIndividualsUrl, [
+            'method' => 'GET',
+            'headers' => [
+                'Ocp-Apim-Subscription-Key' => $primaryApiKey,
+                'Content-Type' => 'application/json',
+                'PortalId'     => get_option('gravity_api_trap_portal_id'),
+            ]
+        ]);
+    
+        if (is_wp_error($existingIndividualsResponse)) {
+            error_log('API request failed: ' . $existingIndividualsResponse->get_error_message(), 3, plugin_dir_path(__FILE__) . 'debug.log');
+            return;
+        }
+    
+        $existingIndividuals = json_decode(wp_remote_retrieve_body($existingIndividualsResponse), true);
+    
+        // Check if the individual already exists
+        $existingIndividual = null;
+        foreach ($existingIndividuals as $individual) {
+            if ($individual['properties']['firstname'] === $data['FirstName'] && $individual['properties']['lastname'] === $data['LastName']) {
+                $existingIndividual = $individual;
+                break;
+            }
+        }
+    
+        if ($existingIndividual) {
+            $sendData = [
+                "individuals" => [
+                    [
+                        "id" => $existingIndividual['id'],
+                        "properties" => array_merge(
+                            $existingIndividual['properties'] ?? [], // Add a default value if 'properties' key does not exist
+                            [
+                                ["property" => "firstname",   "value" => $data['FirstName']],
+                                [ "property" => "lastname",  "value" => $data['LastName']],
+                                ["property" => "Email",      "value" => $data['email']],
+                                ["property" => "Home Phone", "value" => $data['Phone']],
+                                ["property" => "type",       "value" => $individualType]
+                            ]
+                        )
                     ]
                 ]
-            ]
-        ];
-
+            ];
+        } else {
+            // Add the new property values to the sendData array
+            $sendData = [
+                "individuals" => [
+                    [
+                        "communities" => [
+                            ["NameUnique" => $data['communityunique']]
+                        ],
+                        "properties" => [
+                            ["property" => "firstname",   "value" => $data['FirstName']], 
+                            [ "property" => "lastname",  "value" => $data['LastName']], 
+                            ["property" => "Email",      "value" => $data['email']], 
+                            ["property" => "Home Phone", "value" => $data['Phone']],
+                            ["property" => "type",       "value" => $individualType]
+                        ],
+                        "activities" => [
+                            [
+                                "reInquiry" => true,
+                                "description" => "Webform",
+                                "activityStatusMasterId" => 2,
+                                "activityResultMasterId" => 2,
+                                "activityTypeMasterId" => 17
+                            ]
+                        ],
+                        "notes" => [
+                            ["Message" => (string)$data['Message']] // Cast to string
+                        ]
+                    ],
+                    [
+                        "communities" => [
+                            ["NameUnique" => $data['communityunique']]
+                        ],
+                        "relationship" => "Family Member",
+                        "properties" => [
+                            ["property" => "firstname", "value" => $data['lovedfirst']],
+                            ["property" => "lastname", "value" => $data['lovedlast']],
+                            ["property" => "type",     "value" => $relationshipType]
+                        ]
+                    ]
+                ]
+            ];
+        }
+    
         // Add the additional property to the prospect be it Indiviaul or Relationship based on Myself or Loved One
-        
+    
         // Define the properties array
         $properties = [
             ["property" => "Expansion Status",     "value" => $data['expansionstatus']],
@@ -319,104 +372,63 @@ error_log('API request data: ' . print_r($data, true), 3, plugin_dir_path(__FILE
             ["property" => "UTM Id",               "value" => $data['utmid']],
             ["property" => "GCLID",                "value" => $data['gclid']]
         ];
-
-        // Check if any individual in the API response already exists
-        if (isset($getResponse['body']) && !empty($getResponse['body'])) {
-            $existingIndividuals = json_decode($getResponse['body'], true);
-            foreach ($existingIndividuals as $individual) {
-                if (isset($individual['notes'])) {
-                    foreach ($properties as $prop) {
-                        $this->add_or_append_property($individual['notes'], "Message", $prop['value']);
-                    }
-                } else {
-                    $individual['notes'] = [["Message" => $prop['value']]];
-                }
-            }
-            $sendData["individuals"] = $existingIndividuals;
-        } else {
-            // If no individual exists, add the properties to the first individual's notes
-            if (!isset($sendData["individuals"][0]["notes"])) {
-                $sendData["individuals"][0]["notes"] = [];
-            }
-            foreach ($properties as $prop) {
-                $this->add_or_append_property($sendData["individuals"][0]["notes"], "Message", $prop['value']);
-            }
-        }
-
-        $primaryApiKey = get_option('gravity_api_trap_primary_api_key');
-        $secondaryApiKey = get_option('gravity_api_trap_secondary_api_key');
-        $url = get_option('gravity_api_trap_endpoint_url');
     
-        $getResponse = wp_remote_get($url, [
-            'method' => 'GET',
+        // Add the properties to the sendData array
+        if ($inquiringfor === 'Myself') {
+            $sendData["individuals"][0]["properties"] = array_merge(
+                $sendData["individuals"][0]["properties"] ?? [], // Add a default value if 'properties' key does not exist
+                $properties
+            );
+            $notes = [];
+            foreach ($properties as $property) {
+                $notes[] = ["Message" => $property['property'] . ": " . $property['value']];
+            }
+            $sendData["individuals"][0]["notes"] = array_merge(
+                $sendData["individuals"][0]["notes"] ?? [], // Add a default value if 'notes' key does not exist
+                $notes
+            );
+        } else {
+            $sendData["individuals"][1]["properties"] = array_merge($sendData["individuals"][1]["properties"] ?? [], $properties);
+            $notes = [];
+            foreach ($properties as $property) {
+                $notes[] = ["Message" => $property['property'] . ": " . $property['value']];
+            }
+            $sendData["individuals"][1]["notes"] = array_merge($sendData["individuals"][1]["notes"] ?? [], $notes);
+        }
+    
+        $args = [
+            'method' => 'POST',
             'headers' => [
                 'Ocp-Apim-Subscription-Key' => $primaryApiKey,
                 'Content-Type' => 'application/json',
                 'PortalId'     => get_option('gravity_api_trap_portal_id'),
-            ]
-        ]);
+            ],
+            'body' => json_encode($sendData)
+        ];
     
-        if (is_wp_error($getResponse)) {
-            $getResponse = wp_remote_get($url, [
-                'method' => 'GET',
-                'headers' => [
-                    'Ocp-Apim-Subscription-Key' => $secondaryApiKey,
-                    'Content-Type' => 'application/json',
-                    'PortalId'     => get_option('gravity_api_trap_portal_id'),
-                ]
-            ]);
+        error_log('API request JSON data: ' . json_encode($sendData, JSON_PRETTY_PRINT), 3, plugin_dir_path(__FILE__) . 'debug.log');
+    
+        $response = wp_remote_post($url, $args);
+    
+        if (is_wp_error($response)) {
+            $args['headers']['Ocp-Apim-Subscription-Key'] = $secondaryApiKey;
+            $response = wp_remote_post($url, $args);
         }
-
-        if (is_wp_error($getResponse)) {
-error_log('API request failed: ' . $getResponse->get_error_message(), 3, plugin_dir_path(__FILE__) . 'debug.log');
+    
+        if (is_wp_error($response)) {
+            error_log('API request failed: ' . $response->get_error_message(), 3, plugin_dir_path(__FILE__) . 'debug.log');
             return;
         }
-        
-                $args = [
-                    'method' => 'POST',
-                    'headers' => [
-                        'Ocp-Apim-Subscription-Key' => $primaryApiKey,
-                        'Content-Type' => 'application/json',
-                        'PortalId'     => get_option('gravity_api_trap_portal_id'),
-                    ],
-                    'body' => json_encode($sendData)
-                ];
     
-error_log('API request JSON data: ' . json_encode($sendData, JSON_PRETTY_PRINT), 3, plugin_dir_path(__FILE__) . 'debug.log');
-
-
-            $response = wp_remote_post($url, $args);
+        $responseCode = wp_remote_retrieve_response_code($response);
+        $responseBody = wp_remote_retrieve_body($response);
     
-            if (is_wp_error($response)) {
-                $args['headers']['Ocp-Apim-Subscription-Key'] = $secondaryApiKey;
-                $response = wp_remote_post($url, $args);
-            }
-    
-            if (is_wp_error($response)) {
-error_log('API request failed: ' . $response->get_error_message(), 3, plugin_dir_path(__FILE__) . 'debug.log');
-                return;
-            }
-
-            $responseCode = wp_remote_retrieve_response_code($response);
-            $responseBody = wp_remote_retrieve_body($response);
-            
-
-if ($responseCode === 200) {
-    error_log('API request successful: ' . $responseCode . ' - ' . $responseBody, 3, plugin_dir_path(__FILE__) . 'debug.log');
+        if ($responseCode === 200) {
+            error_log('API request successful: ' . $responseCode . ' - ' . $responseBody, 3, plugin_dir_path(__FILE__) . 'debug.log');
         } else {
             error_log('API request failed: ' . $responseCode . ' - ' . $responseBody, 3, plugin_dir_path(__FILE__) . 'debug.log');
         }
-
-            return $response;
-        }
-        private function add_or_append_property(&$notes, $key, $value) {
-            foreach ($notes as &$note) {
-                if ($note['Message'] === $key) {
-                    $note['Message'] .= ' ' . $value;
-                    return;
-                }
-            }
-            $notes[] = ['Message' => $value];
-        }
-        
-    }
+    
+        return $response;
+    }    
+}
