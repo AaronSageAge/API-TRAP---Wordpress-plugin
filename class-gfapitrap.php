@@ -264,7 +264,7 @@ class GFAPITrap extends GFFeedAddOn {
         $primaryApiKey = get_option('gravity_api_trap_primary_api_key');
         $secondaryApiKey = get_option('gravity_api_trap_secondary_api_key');
         $url = get_option('gravity_api_trap_endpoint_url');
-    
+
         $getResponse = wp_remote_get($url, [
             'method' => 'GET',
             'headers' => [
@@ -273,7 +273,7 @@ class GFAPITrap extends GFFeedAddOn {
                 'PortalId'     => get_option('gravity_api_trap_portal_id'),
             ]
         ]);
-    
+
         if (is_wp_error($getResponse)) {
             $getResponse = wp_remote_get($url, [
                 'method' => 'GET',
@@ -292,117 +292,58 @@ class GFAPITrap extends GFFeedAddOn {
 
         $existingIndividuals = json_decode(wp_remote_retrieve_body($getResponse), true);
 
-        $sendData = [
-            "individuals" => [
-                [
-                    "communities" => [
-                        ["NameUnique" => $data['communityunique']]
-                    ],
-                    "properties" => [
-                        ["property" => "firstname",   "value" => $data['FirstName']], 
-                        [ "property" => "lastname",  "value" => $data['LastName']], 
-                        ["property" => "Email",      "value" => $data['email']], 
-                        ["property" => "Home Phone", "value" => $data['Phone']],
-                        ["property" => "type",       "value" => $individualType]
-                    ],
-                    "activities" => [
-                        [
-                            "reInquiry" => !empty($existingIndividuals), // toggle reInquiry based on existing individuals
-                            "description" => "Webform",
-                            "activityStatusMasterId" => 2,
-                            "activityResultMasterId" => 2,
-                            "activityTypeMasterId" => 17
-                        ]
-                    ],
-                    "notes" => [
-                        ["Message" => (string)$data['Message']] // Cast to string
-                    ]
-                ],
-                [
-                    "communities" => [
-                        ["NameUnique" => $data['communityunique']]
-                    ],
-                    "relationship" => "Family Member",
-                    "properties" => [
-                        ["property" => "firstname", "value" => $data['lovedfirst']],
-                        ["property" => "lastname", "value" => $data['lovedlast']],
-                        ["property" => "type",     "value" => $relationshipType]
-                    ]
-                ]
-            ]
-        ];
-
-        // Add the additional property to the prospect be it Indiviaul or Relationship based on Myself or Loved One
-        
-        // Define the properties array
-        $properties = [
-            ["property" => "Expansion Status",     "value" => $data['expansionstatus']],
-            ["property" => "Market Source",        "value" => $data['marketsource']],
-            ["property" => "Apartment Preference", "value" => $data['apartmentpreference']],
-            ["property" => "Care Level",           "value" => $data['carelevel']],
-            ["property" => "utmSource",            "value" => $data['utmsource']],
-            ["property" => "UTM Campaign",         "value" => $data['utmcampaign']],
-            ["property" => "UTM Medium",           "value" => $data['utmmedium']],
-            ["property" => "UTM Id",               "value" => $data['utmid']],
-            ["property" => "GCLID",                "value" => $data['gclid']]
-        ];
-
-        // Check if any individual in the API response already exists
-        if (isset($getResponse['body']) && !empty($getResponse['body'])) {
-            $existingIndividual = null;
-            foreach ($existingIndividuals as $individual) {
-                if ($individual['properties'][0]['value'] === $data['email']) { // Check if email matches
-                    $existingIndividual = $individual;
-                    break;
-                }
+        $existingIndividual = null;
+        foreach ($existingIndividuals as $individual) {
+            if ($individual['properties'][0]['value'] === $data['email']) { // Check if email matches
+                $existingIndividual = $individual;
+                break;
             }
-            if ($existingIndividual) {
-                $sendData["individuals"] = [$existingIndividual];
-                $sendData["individuals"][0]["activities"][0]["reInquiry"] = true; // Set reInquiry to true if existing
-            } else {
-                // Individual does not exist, create a new one
-                $sendData = [
-                    "individuals" => [
-                        [
-                            "communities" => [
-                                ["NameUnique" => $data['communityunique']]
-                            ],
-                            "properties" => [
-                                ["property" => "firstname",   "value" => $data['FirstName']], 
-                                [ "property" => "lastname",  "value" => $data['LastName']], 
-                                ["property" => "Email",      "value" => $data['email']], 
-                                ["property" => "Home Phone", "value" => $data['Phone']],
-                                ["property" => "type",       "value" => $individualType]
-                            ],
-                            "activities" => [
-                                [
-                                    "reInquiry" => false, // Set reInquiry to false if new
-                                    "description" => "Webform",
-                                    "activityStatusMasterId" => 2,
-                                    "activityResultMasterId" => 2,
-                                    "activityTypeMasterId" => 17
-                                ]
-                            ],
-                            "notes" => [
-                                ["Message" => (string)$data['Message']] // Cast to string
+        }
+
+        if ($existingIndividual) {
+            // Update existing individual
+            $sendData = [
+                "individuals" => [
+                    [
+                        "id" => $existingIndividual['id'],
+                        "communities" => [
+                            ["NameUnique" => $data['communityunique']]
+                        ],
+                        "properties" => [
+                            ["property" => "firstname",   "value" => $data['FirstName']], 
+                            [ "property" => "lastname",  "value" => $data['LastName']], 
+                            ["property" => "Email",      "value" => $data['email']], 
+                            ["property" => "Home Phone", "value" => $data['Phone']],
+                            ["property" => "type",       "value" => $individualType]
+                        ],
+                        "activities" => [
+                            [
+                                "reInquiry" => true,
+                                "description" => "Webform",
+                                "activityStatusMasterId" => 2,
+                                "activityResultMasterId" => 2,
+                                "activityTypeMasterId" => 17
                             ]
                         ],
-                        [
-                            "communities" => [
-                                ["NameUnique" => $data['communityunique']]
-                            ],
-                            "relationship" => "Family Member",
-                            "properties" => [
-                                ["property" => "firstname", "value" => $data['lovedfirst']],
-                                ["property" => "lastname", "value" => $data['lovedlast']],
-                                ["property" => "type",     "value" => $relationshipType]
-                            ]
+                        "notes" => [
+                            ["Message" => (string)$data['Message']] // Cast to string
+                        ]
+                    ],
+                    [
+                        "communities" => [
+                            ["NameUnique" => $data['communityunique']]
+                        ],
+                        "relationship" => "Family Member",
+                        "properties" => [
+                            ["property" => "firstname", "value" => $data['lovedfirst']],
+                            ["property" => "lastname", "value" => $data['lovedlast']],
+                            ["property" => "type",     "value" => $relationshipType]
                         ]
                     ]
-                ];
-            }
+                ]
+            ];
         } else {
-            // No API response, create a new individual
+            // Create new individual
             $sendData = [
                 "individuals" => [
                     [
@@ -418,7 +359,7 @@ class GFAPITrap extends GFFeedAddOn {
                         ],
                         "activities" => [
                             [
-                                "reInquiry" => false, // Set reInquiry to false if new
+                                "reInquiry" => false,
                                 "description" => "Webform",
                                 "activityStatusMasterId" => 2,
                                 "activityResultMasterId" => 2,
@@ -444,12 +385,41 @@ class GFAPITrap extends GFFeedAddOn {
             ];
         }
 
-        // Add the additional properties to the individual
-        foreach ($properties as $prop) {
-            if (!isset($sendData["individuals"][0]["properties"])) {
-                $sendData["individuals"][0]["properties"] = [];
+        // Add the additional property to the prospect be it Indiviaul or Relationship based on Myself or Loved One
+        
+        // Define the properties array
+        $properties = [
+            ["property" => "Expansion Status",     "value" => $data['expansionstatus']],
+            ["property" => "Market Source",        "value" => $data['marketsource']],
+            ["property" => "Apartment Preference", "value" => $data['apartmentpreference']],
+            ["property" => "Care Level",           "value" => $data['carelevel']],
+            ["property" => "utmSource",            "value" => $data['utmsource']],
+            ["property" => "UTM Campaign",         "value" => $data['utmcampaign']],
+            ["property" => "UTM Medium",           "value" => $data['utmmedium']],
+            ["property" => "UTM Id",               "value" => $data['utmid']],
+            ["property" => "GCLID",                "value" => $data['gclid']]
+        ];
+
+        // Check if any individual in the API response already exists
+        if (isset($getResponse['body']) && !empty($getResponse['body'])) {
+            foreach ($existingIndividuals as $individual) {
+                if (isset($individual['notes'])) {
+                    foreach ($properties as $prop) {
+                        $this->add_or_append_property($individual['notes'], "Message", $prop['value']);
+                    }
+                } else {
+                    $individual['notes'] = [["Message" => $prop['value']]];
+                }
             }
-            $sendData["individuals"][0]["properties"][] = $prop;
+            $sendData["individuals"] = $existingIndividuals;
+        } else {
+            // If no individual exists, add the properties to the first individual's notes
+            if (!isset($sendData["individuals"][0]["notes"])) {
+                $sendData["individuals"][0]["notes"] = [];
+            }
+            foreach ($properties as $prop) {
+                $this->add_or_append_property($sendData["individuals"][0]["notes"], "Message", $prop['value']);
+            }
         }
 
         $args = [
