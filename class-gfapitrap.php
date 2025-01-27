@@ -270,6 +270,7 @@ error_log('this is the response: ' . print_r($response, true));
             return;
         }
     
+        
         // Check if the individual already exists as a Prospect or Contact
         $existingIndividualsUrl = get_option('gravity_api_trap_endpoint_url') . '/individuals';
         $existingIndividualsResponse = wp_remote_get($existingIndividualsUrl, [
@@ -291,7 +292,7 @@ error_log('this is the response: ' . print_r($response, true));
         // Check if the individual already exists
         $existingIndividual = null;
         foreach ($existingIndividuals as $individual) {
-            if ($individual['properties']['firstname'] === $data['FirstName'] && $individual['properties']['lastname'] === $data['LastName']) {
+            if ($individual['properties']['Email'] === $data['email']) {
                 $existingIndividual = $individual;
                 break;
             }
@@ -315,6 +316,55 @@ error_log('this is the response: ' . print_r($response, true));
                     ]
                 ]
             ];
+            $sendData["individuals"][0]["activities"] = [
+                [
+                    "reInquiry" => true,
+                    "description" => "Webform",
+                    "activityStatusMasterId" => 2,
+                    "activityResultMasterId" => 2,
+                    "activityTypeMasterId" => 17
+                ]
+            ];
+
+            // Define the properties array
+            $properties = [
+                ["property" => "Expansion Status",     "value" => $data['expansionstatus']],
+                ["property" => "Market Source",        "value" => $data['marketsource']],
+                ["property" => "Apartment Preference", "value" => $data['apartmentpreference']],
+                ["property" => "Care Level",           "value" => $data['carelevel']],
+                ["property" => "utmSource",            "value" => $data['utmsource']],
+                ["property" => "UTM Campaign",         "value" => $data['utmcampaign']],
+                ["property" => "UTM Medium",           "value" => $data['utmmedium']],
+                ["property" => "UTM Id",               "value" => $data['utmid']],
+                ["property" => "GCLID",                "value" => $data['gclid']]
+            ];
+
+            // Add the properties to the sendData array
+            if ($inquiringfor === 'Myself') {
+                $sendData["individuals"][0]["properties"] = array_merge(
+                    $sendData["individuals"][0]["properties"] ?? [], // Add a default value if 'properties' key does not exist
+                    $properties
+                );
+                $notes = [];
+                $noteMessage = '';
+                foreach ($properties as $property) {
+                    $noteMessage .= $property['property'] . ": " . $property['value'] . "\n";
+                }
+                $notes[] = ["Message" => trim($noteMessage)];
+                $sendData["individuals"][0]["notes"] = array_merge(
+                    $sendData["individuals"][0]["notes"] ?? [], // Add a default value if 'notes' key does not exist
+                    $notes
+                );
+            } else {
+                $sendData["individuals"][1]["properties"] = array_merge($sendData["individuals"][1]["properties"] ?? [], $properties);
+                $notes = [];
+                $noteMessage = '';
+                foreach ($properties as $property) {
+                    $noteMessage .= $property['property'] . ": " . $property['value'] . "\n";
+                }
+                $notes[] = ["Message" => trim($noteMessage)];
+                $sendData["individuals"][1]["notes"] = array_merge($sendData["individuals"][1]["notes"] ?? [], $notes);
+            }
         } else {
             // Add the new property values to the sendData array
             $sendData = [
@@ -325,14 +375,14 @@ error_log('this is the response: ' . print_r($response, true));
                         ],
                         "properties" => [
                             ["property" => "firstname",   "value" => $data['FirstName']], 
-                            [ "property" => "lastname",  "value" => $data['LastName']], 
+                            ["property" => "lastname",  "value" => $data['LastName']], 
                             ["property" => "Email",      "value" => $data['email']], 
                             ["property" => "Home Phone", "value" => $data['Phone']],
                             ["property" => "type",       "value" => $individualType]
                         ],
                         "activities" => [
                             [
-                                "reInquiry" => true,
+                                "reInquiry" => false,
                                 "description" => "Webform",
                                 "activityStatusMasterId" => 2,
                                 "activityResultMasterId" => 2,
@@ -356,44 +406,6 @@ error_log('this is the response: ' . print_r($response, true));
                     ]
                 ]
             ];
-        }
-    
-        // Add the additional property to the prospect be it Indiviaul or Relationship based on Myself or Loved One
-    
-        // Define the properties array
-        $properties = [
-            ["property" => "Expansion Status",     "value" => $data['expansionstatus']],
-            ["property" => "Market Source",        "value" => $data['marketsource']],
-            ["property" => "Apartment Preference", "value" => $data['apartmentpreference']],
-            ["property" => "Care Level",           "value" => $data['carelevel']],
-            ["property" => "utmSource",            "value" => $data['utmsource']],
-            ["property" => "UTM Campaign",         "value" => $data['utmcampaign']],
-            ["property" => "UTM Medium",           "value" => $data['utmmedium']],
-            ["property" => "UTM Id",               "value" => $data['utmid']],
-            ["property" => "GCLID",                "value" => $data['gclid']]
-        ];
-    
-        // Add the properties to the sendData array
-        if ($inquiringfor === 'Myself') {
-            $sendData["individuals"][0]["properties"] = array_merge(
-                $sendData["individuals"][0]["properties"] ?? [], // Add a default value if 'properties' key does not exist
-                $properties
-            );
-            $notes = [];
-            foreach ($properties as $property) {
-                $notes[] = ["Message" => $property['property'] . ": " . $property['value']];
-            }
-            $sendData["individuals"][0]["notes"] = array_merge(
-                $sendData["individuals"][0]["notes"] ?? [], // Add a default value if 'notes' key does not exist
-                $notes
-            );
-        } else {
-            $sendData["individuals"][1]["properties"] = array_merge($sendData["individuals"][1]["properties"] ?? [], $properties);
-            $notes = [];
-            foreach ($properties as $property) {
-                $notes[] = ["Message" => $property['property'] . ": " . $property['value']];
-            }
-            $sendData["individuals"][1]["notes"] = array_merge($sendData["individuals"][1]["notes"] ?? [], $notes);
         }
     
         $args = [
