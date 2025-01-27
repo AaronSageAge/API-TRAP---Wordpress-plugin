@@ -79,7 +79,7 @@ class GFAPITrap extends GFFeedAddOn {
                         ),
                     ),
                 ),
-            ]
+            )
         );
     }
 
@@ -93,8 +93,8 @@ class GFAPITrap extends GFFeedAddOn {
         error_log('Feed data: ' . print_r($feed, true), 3, plugin_dir_path(__FILE__) . 'debug.log');
 
         var_dump($feed);
-        error_log('this is the feed:');
-        error_log(print_r($feed, true));
+error_log('this is the feed:');
+error_log(print_r($feed, true));
         $metaData = $this->get_generic_map_fields( $feed, 'formFieldMap' );
     
         $communityunique = isset($metaData['communityunique']) ? $this->get_field_value($form, $entry, $metaData['communityunique']) : null;
@@ -154,22 +154,22 @@ class GFAPITrap extends GFFeedAddOn {
         $excludedInquiryLevels = array_filter($inquireLevels);
 
         if (!empty($excludedInquiryLevels)) {
-            error_log('Skipping API request due to excluded inquiry level');
+error_log('Skipping API request due to excluded inquiry level');
             return;
         }
 
-        /*Error logging*/
+/*Error logging*/
 
-        $LogFilePath = plugin_dir_path(__FILE__) . 'debug.log';
-        error_log('Care Level - AL: ' . print_r($careLevelAL1, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - IL: ' . print_r($careLevelIL1, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - MS: ' . print_r($careLevelMS1, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - RC: ' . print_r($careLevelRC1, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - RT: ' . print_r($careLevelRT1, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - SN: ' . print_r($careLevelSN1, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - ST: ' . print_r($careLevelST1, true) . PHP_EOL, 3, $LogFilePath);
+$LogFilePath = plugin_dir_path(__FILE__) . 'debug.log';
+error_log('Care Level - AL: ' . print_r($careLevelAL1, true) . PHP_EOL, 3, $LogFilePath);
+error_log('Care Level - IL: ' . print_r($careLevelIL1, true) . PHP_EOL, 3, $LogFilePath);
+error_log('Care Level - MS: ' . print_r($careLevelMS1, true) . PHP_EOL, 3, $LogFilePath);
+error_log('Care Level - RC: ' . print_r($careLevelRC1, true) . PHP_EOL, 3, $LogFilePath);
+error_log('Care Level - RT: ' . print_r($careLevelRT1, true) . PHP_EOL, 3, $LogFilePath);
+error_log('Care Level - SN: ' . print_r($careLevelSN1, true) . PHP_EOL, 3, $LogFilePath);
+error_log('Care Level - ST: ' . print_r($careLevelST1, true) . PHP_EOL, 3, $LogFilePath);
                 
-        error_log('Care Level Value: ' . print_r($CareLevelValue, true) . PHP_EOL, 3, $LogFilePath);
+error_log('Care Level Value: ' . print_r($CareLevelValue, true) . PHP_EOL, 3, $LogFilePath);
 
         /*Residence Preference*/
         $resultCottage = isset($metaData['resultcottage']) ? $this->get_field_value($form, $entry, $metaData['resultcottage']) : null;
@@ -195,11 +195,11 @@ class GFAPITrap extends GFFeedAddOn {
         /*error log for residence preference*/
         
 
-        error_log('Cottages: ' . print_r($resultCottage, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - IL: ' . print_r($resultTwonhouses, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - MS: ' . print_r($resultApartment, true) . PHP_EOL, 3, $LogFilePath);
+error_log('Cottages: ' . print_r($resultCottage, true) . PHP_EOL, 3, $LogFilePath);
+error_log('Care Level - IL: ' . print_r($resultTwonhouses, true) . PHP_EOL, 3, $LogFilePath);
+error_log('Care Level - MS: ' . print_r($resultApartment, true) . PHP_EOL, 3, $LogFilePath);
                 
-        error_log('Appartment Prefernce Value: ' . print_r($residenceValue, true) . PHP_EOL, 3, $LogFilePath);
+error_log('Appartment Prefernce Value: ' . print_r($residenceValue, true) . PHP_EOL, 3, $LogFilePath);
 
         /*prospect or contact into type*/
         $inquiringfor = isset($metaData['inquiringfor']) ? $this->get_field_value($form, $entry, $metaData['inquiringfor']) : null;
@@ -254,11 +254,10 @@ class GFAPITrap extends GFFeedAddOn {
             'carelevel' => $CareLevelValue
         );
     
-        error_log('this is the data: ' . print_r($data, true));
+error_log('this is the data: ' . print_r($data, true));
         $response = $this->sendApiRequest($data, $inquiringfor, $individualType, $relationshipType);
-        error_log('this is the response: ' . print_r($response, true));
+error_log('this is the response: ' . print_r($response, true));
     }
-
     public function sendApiRequest(array $data, $inquiringfor, $individualType, $relationshipType) {
 
         $primaryApiKey = get_option('gravity_api_trap_primary_api_key');
@@ -379,16 +378,7 @@ class GFAPITrap extends GFFeedAddOn {
                             ["property" => "lastname",  "value" => $data['LastName']], 
                             ["property" => "Email",      "value" => $data['email']], 
                             ["property" => "Home Phone", "value" => $data['Phone']],
-                            ["property" => "type",       "value" => $individualType],
-                            ["property" => "Care Level", "value" => $data['carelevel']],
-                            ["property" => "Apartment Preference", "value" => $data['apartmentpreference']],
-                            ["property" => "Expansion Status",     "value" => $data['expansionstatus']],
-                            ["property" => "Market Source",        "value" => $data['marketsource']],
-                            ["property" => "utmSource",            "value" => $data['utmsource']],
-                            ["property" => "UTM Campaign",         "value" => $data['utmcampaign']],
-                            ["property" => "UTM Medium",           "value" => $data['utmmedium']],
-                            ["property" => "UTM Id",               "value" => $data['utmid']],
-                            ["property" => "GCLID",                "value" => $data['gclid']]
+                            ["property" => "type",       "value" => $individualType]
                         ],
                         "activities" => [
                             [
