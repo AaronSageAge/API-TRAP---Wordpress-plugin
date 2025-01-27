@@ -93,8 +93,8 @@ class GFAPITrap extends GFFeedAddOn {
         error_log('Feed data: ' . print_r($feed, true), 3, plugin_dir_path(__FILE__) . 'debug.log');
 
         var_dump($feed);
-error_log('this is the feed:');
-error_log(print_r($feed, true));
+        error_log('this is the feed:');
+        error_log(print_r($feed, true));
         $metaData = $this->get_generic_map_fields( $feed, 'formFieldMap' );
     
         $communityunique = isset($metaData['communityunique']) ? $this->get_field_value($form, $entry, $metaData['communityunique']) : null;
@@ -154,22 +154,22 @@ error_log(print_r($feed, true));
         $excludedInquiryLevels = array_filter($inquireLevels);
 
         if (!empty($excludedInquiryLevels)) {
-error_log('Skipping API request due to excluded inquiry level');
+        error_log('Skipping API request due to excluded inquiry level');
             return;
         }
 
-/*Error logging*/
+        /*Error logging*/
 
-$LogFilePath = plugin_dir_path(__FILE__) . 'debug.log';
-error_log('Care Level - AL: ' . print_r($careLevelAL1, true) . PHP_EOL, 3, $LogFilePath);
-error_log('Care Level - IL: ' . print_r($careLevelIL1, true) . PHP_EOL, 3, $LogFilePath);
-error_log('Care Level - MS: ' . print_r($careLevelMS1, true) . PHP_EOL, 3, $LogFilePath);
-error_log('Care Level - RC: ' . print_r($careLevelRC1, true) . PHP_EOL, 3, $LogFilePath);
-error_log('Care Level - RT: ' . print_r($careLevelRT1, true) . PHP_EOL, 3, $LogFilePath);
-error_log('Care Level - SN: ' . print_r($careLevelSN1, true) . PHP_EOL, 3, $LogFilePath);
-error_log('Care Level - ST: ' . print_r($careLevelST1, true) . PHP_EOL, 3, $LogFilePath);
-                
-error_log('Care Level Value: ' . print_r($CareLevelValue, true) . PHP_EOL, 3, $LogFilePath);
+        $LogFilePath = plugin_dir_path(__FILE__) . 'debug.log';
+        error_log('Care Level - AL: ' . print_r($careLevelAL1, true) . PHP_EOL, 3, $LogFilePath);
+        error_log('Care Level - IL: ' . print_r($careLevelIL1, true) . PHP_EOL, 3, $LogFilePath);
+        error_log('Care Level - MS: ' . print_r($careLevelMS1, true) . PHP_EOL, 3, $LogFilePath);
+        error_log('Care Level - RC: ' . print_r($careLevelRC1, true) . PHP_EOL, 3, $LogFilePath);
+        error_log('Care Level - RT: ' . print_r($careLevelRT1, true) . PHP_EOL, 3, $LogFilePath);
+        error_log('Care Level - SN: ' . print_r($careLevelSN1, true) . PHP_EOL, 3, $LogFilePath);
+        error_log('Care Level - ST: ' . print_r($careLevelST1, true) . PHP_EOL, 3, $LogFilePath);
+                        
+        error_log('Care Level Value: ' . print_r($CareLevelValue, true) . PHP_EOL, 3, $LogFilePath);
 
         /*Residence Preference*/
         $resultCottage = isset($metaData['resultcottage']) ? $this->get_field_value($form, $entry, $metaData['resultcottage']) : null;
@@ -194,12 +194,11 @@ error_log('Care Level Value: ' . print_r($CareLevelValue, true) . PHP_EOL, 3, $L
 
         /*error log for residence preference*/
         
-
-error_log('Cottages: ' . print_r($resultCottage, true) . PHP_EOL, 3, $LogFilePath);
-error_log('Care Level - IL: ' . print_r($resultTwonhouses, true) . PHP_EOL, 3, $LogFilePath);
-error_log('Care Level - MS: ' . print_r($resultApartment, true) . PHP_EOL, 3, $LogFilePath);
-                
-error_log('Appartment Prefernce Value: ' . print_r($residenceValue, true) . PHP_EOL, 3, $LogFilePath);
+        error_log('Cottages: ' . print_r($resultCottage, true) . PHP_EOL, 3, $LogFilePath);
+        error_log('Care Level - IL: ' . print_r($resultTwonhouses, true) . PHP_EOL, 3, $LogFilePath);
+        error_log('Care Level - MS: ' . print_r($resultApartment, true) . PHP_EOL, 3, $LogFilePath);
+                        
+        error_log('Appartment Prefernce Value: ' . print_r($residenceValue, true) . PHP_EOL, 3, $LogFilePath);
 
         /*prospect or contact into type*/
         $inquiringfor = isset($metaData['inquiringfor']) ? $this->get_field_value($form, $entry, $metaData['inquiringfor']) : null;
@@ -254,16 +253,44 @@ error_log('Appartment Prefernce Value: ' . print_r($residenceValue, true) . PHP_
             'carelevel' => $CareLevelValue
         );
     
-error_log('this is the data: ' . print_r($data, true));
+        error_log('this is the data: ' . print_r($data, true));
         $response = $this->sendApiRequest($data, $inquiringfor, $individualType, $relationshipType);
-error_log('this is the response: ' . print_r($response, true));
+        error_log('this is the response: ' . print_r($response, true));
     }
 
     public function sendApiRequest(array $data, $inquiringfor, $individualType, $relationshipType) {
-error_log('API request data: ' . print_r($data, true), 3, plugin_dir_path(__FILE__) . 'debug.log');
+        error_log('API request data: ' . print_r($data, true), 3, plugin_dir_path(__FILE__) . 'debug.log');
 
-      // Initialize the $sendData["individuals"] array
-      $sendData = ["individuals" => []];
+        $primaryApiKey = get_option('gravity_api_trap_primary_api_key');
+        $secondaryApiKey = get_option('gravity_api_trap_secondary_api_key');
+        $url = get_option('gravity_api_trap_endpoint_url');
+    
+        $getResponse = wp_remote_get($url, [
+            'method' => 'GET',
+            'headers' => [
+                'Ocp-Apim-Subscription-Key' => $primaryApiKey,
+                'Content-Type' => 'application/json',
+                'PortalId'     => get_option('gravity_api_trap_portal_id'),
+            ]
+        ]);
+    
+        if (is_wp_error($getResponse)) {
+            $getResponse = wp_remote_get($url, [
+                'method' => 'GET',
+                'headers' => [
+                    'Ocp-Apim-Subscription-Key' => $secondaryApiKey,
+                    'Content-Type' => 'application/json',
+                    'PortalId'     => get_option('gravity_api_trap_portal_id'),
+                ]
+            ]);
+        }
+
+        if (is_wp_error($getResponse)) {
+            error_log('API request failed: ' . $getResponse->get_error_message(), 3, plugin_dir_path(__FILE__) . 'debug.log');
+            return;
+        }
+
+        $existingIndividuals = json_decode(wp_remote_retrieve_body($getResponse), true);
 
         $sendData = [
             "individuals" => [
@@ -280,7 +307,7 @@ error_log('API request data: ' . print_r($data, true), 3, plugin_dir_path(__FILE
                     ],
                     "activities" => [
                         [
-                            "reInquiry" => true,
+                            "reInquiry" => !empty($existingIndividuals), // toggle reInquiry based on existing individuals
                             "description" => "Webform",
                             "activityStatusMasterId" => 2,
                             "activityResultMasterId" => 2,
@@ -322,101 +349,152 @@ error_log('API request data: ' . print_r($data, true), 3, plugin_dir_path(__FILE
 
         // Check if any individual in the API response already exists
         if (isset($getResponse['body']) && !empty($getResponse['body'])) {
-            $existingIndividuals = json_decode($getResponse['body'], true);
+            $existingIndividual = null;
             foreach ($existingIndividuals as $individual) {
-                if (isset($individual['notes'])) {
-                    foreach ($properties as $prop) {
-                        $this->add_or_append_property($individual['notes'], "Message", $prop['value']);
-                    }
-                } else {
-                    $individual['notes'] = [["Message" => $prop['value']]];
+                if ($individual['properties'][0]['value'] === $data['email']) { // Check if email matches
+                    $existingIndividual = $individual;
+                    break;
                 }
             }
-            $sendData["individuals"] = $existingIndividuals;
+            if ($existingIndividual) {
+                $sendData["individuals"] = [$existingIndividual];
+                $sendData["individuals"][0]["activities"][0]["reInquiry"] = true; // Set reInquiry to true if existing
+            } else {
+                // Individual does not exist, create a new one
+                $sendData = [
+                    "individuals" => [
+                        [
+                            "communities" => [
+                                ["NameUnique" => $data['communityunique']]
+                            ],
+                            "properties" => [
+                                ["property" => "firstname",   "value" => $data['FirstName']], 
+                                [ "property" => "lastname",  "value" => $data['LastName']], 
+                                ["property" => "Email",      "value" => $data['email']], 
+                                ["property" => "Home Phone", "value" => $data['Phone']],
+                                ["property" => "type",       "value" => $individualType]
+                            ],
+                            "activities" => [
+                                [
+                                    "reInquiry" => false, // Set reInquiry to false if new
+                                    "description" => "Webform",
+                                    "activityStatusMasterId" => 2,
+                                    "activityResultMasterId" => 2,
+                                    "activityTypeMasterId" => 17
+                                ]
+                            ],
+                            "notes" => [
+                                ["Message" => (string)$data['Message']] // Cast to string
+                            ]
+                        ],
+                        [
+                            "communities" => [
+                                ["NameUnique" => $data['communityunique']]
+                            ],
+                            "relationship" => "Family Member",
+                            "properties" => [
+                                ["property" => "firstname", "value" => $data['lovedfirst']],
+                                ["property" => "lastname", "value" => $data['lovedlast']],
+                                ["property" => "type",     "value" => $relationshipType]
+                            ]
+                        ]
+                    ]
+                ];
+            }
         } else {
-            // If no individual exists, add the properties to the first individual's notes
-            if (!isset($sendData["individuals"][0]["notes"])) {
-                $sendData["individuals"][0]["notes"] = [];
-            }
-            foreach ($properties as $prop) {
-                $this->add_or_append_property($sendData["individuals"][0]["notes"], "Message", $prop['value']);
-            }
+            // No API response, create a new individual
+            $sendData = [
+                "individuals" => [
+                    [
+                        "communities" => [
+                            ["NameUnique" => $data['communityunique']]
+                        ],
+                        "properties" => [
+                            ["property" => "firstname",   "value" => $data['FirstName']], 
+                            [ "property" => "lastname",  "value" => $data['LastName']], 
+                            ["property" => "Email",      "value" => $data['email']], 
+                            ["property" => "Home Phone", "value" => $data['Phone']],
+                            ["property" => "type",       "value" => $individualType]
+                        ],
+                        "activities" => [
+                            [
+                                "reInquiry" => false, // Set reInquiry to false if new
+                                "description" => "Webform",
+                                "activityStatusMasterId" => 2,
+                                "activityResultMasterId" => 2,
+                                "activityTypeMasterId" => 17
+                            ]
+                        ],
+                        "notes" => [
+                            ["Message" => (string)$data['Message']] // Cast to string
+                        ]
+                    ],
+                    [
+                        "communities" => [
+                            ["NameUnique" => $data['communityunique']]
+                        ],
+                        "relationship" => "Family Member",
+                        "properties" => [
+                            ["property" => "firstname", "value" => $data['lovedfirst']],
+                            ["property" => "lastname", "value" => $data['lovedlast']],
+                            ["property" => "type",     "value" => $relationshipType]
+                        ]
+                    ]
+                ]
+            ];
         }
 
-        $primaryApiKey = get_option('gravity_api_trap_primary_api_key');
-        $secondaryApiKey = get_option('gravity_api_trap_secondary_api_key');
-        $url = get_option('gravity_api_trap_endpoint_url');
-    
-        $getResponse = wp_remote_get($url, [
-            'method' => 'GET',
+        // Add the additional properties to the individual
+        foreach ($properties as $prop) {
+            if (!isset($sendData["individuals"][0]["properties"])) {
+                $sendData["individuals"][0]["properties"] = [];
+            }
+            $sendData["individuals"][0]["properties"][] = $prop;
+        }
+
+        $args = [
+            'method' => 'POST',
             'headers' => [
                 'Ocp-Apim-Subscription-Key' => $primaryApiKey,
                 'Content-Type' => 'application/json',
                 'PortalId'     => get_option('gravity_api_trap_portal_id'),
-            ]
-        ]);
-    
-        if (is_wp_error($getResponse)) {
-            $getResponse = wp_remote_get($url, [
-                'method' => 'GET',
-                'headers' => [
-                    'Ocp-Apim-Subscription-Key' => $secondaryApiKey,
-                    'Content-Type' => 'application/json',
-                    'PortalId'     => get_option('gravity_api_trap_portal_id'),
-                ]
-            ]);
+            ],
+            'body' => json_encode($sendData)
+        ];
+
+        error_log('API request JSON data: ' . json_encode($sendData, JSON_PRETTY_PRINT), 3, plugin_dir_path(__FILE__) . 'debug.log');
+
+        $response = wp_remote_post($url, $args);
+
+        if (is_wp_error($response)) {
+            $args['headers']['Ocp-Apim-Subscription-Key'] = $secondaryApiKey;
+            $response = wp_remote_post($url, $args);
         }
 
-        if (is_wp_error($getResponse)) {
-error_log('API request failed: ' . $getResponse->get_error_message(), 3, plugin_dir_path(__FILE__) . 'debug.log');
+        if (is_wp_error($response)) {
+            error_log('API request failed: ' . $response->get_error_message(), 3, plugin_dir_path(__FILE__) . 'debug.log');
             return;
         }
-        
-                $args = [
-                    'method' => 'POST',
-                    'headers' => [
-                        'Ocp-Apim-Subscription-Key' => $primaryApiKey,
-                        'Content-Type' => 'application/json',
-                        'PortalId'     => get_option('gravity_api_trap_portal_id'),
-                    ],
-                    'body' => json_encode($sendData)
-                ];
-    
-error_log('API request JSON data: ' . json_encode($sendData, JSON_PRETTY_PRINT), 3, plugin_dir_path(__FILE__) . 'debug.log');
 
+        $responseCode = wp_remote_retrieve_response_code($response);
+        $responseBody = wp_remote_retrieve_body($response);
 
-            $response = wp_remote_post($url, $args);
-    
-            if (is_wp_error($response)) {
-                $args['headers']['Ocp-Apim-Subscription-Key'] = $secondaryApiKey;
-                $response = wp_remote_post($url, $args);
-            }
-    
-            if (is_wp_error($response)) {
-error_log('API request failed: ' . $response->get_error_message(), 3, plugin_dir_path(__FILE__) . 'debug.log');
-                return;
-            }
-
-            $responseCode = wp_remote_retrieve_response_code($response);
-            $responseBody = wp_remote_retrieve_body($response);
-            
-
-if ($responseCode === 200) {
-    error_log('API request successful: ' . $responseCode . ' - ' . $responseBody, 3, plugin_dir_path(__FILE__) . 'debug.log');
+        if ($responseCode === 200) {
+            error_log('API request successful: ' . $responseCode . ' - ' . $responseBody, 3, plugin_dir_path(__FILE__) . 'debug.log');
         } else {
             error_log('API request failed: ' . $responseCode . ' - ' . $responseBody, 3, plugin_dir_path(__FILE__) . 'debug.log');
         }
 
-            return $response;
-        }
-        private function add_or_append_property(&$notes, $key, $value) {
-            foreach ($notes as &$note) {
-                if ($note['Message'] === $key) {
-                    $note['Message'] .= ' ' . $value;
-                    return;
-                }
-            }
-            $notes[] = ['Message' => $value];
-        }
-        
+        return $response;
     }
+
+    private function add_or_append_property(&$notes, $key, $value) {
+        foreach ($notes as &$note) {
+            if ($note['Message'] === $key) {
+                $note['Message'] .= ' ' . $value;
+                return;
+            }
+        }
+        $notes[] = ['Message' => $value];
+    }
+}
