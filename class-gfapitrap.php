@@ -97,181 +97,80 @@ class GFAPITrap extends GFFeedAddOn {
         error_log(print_r($feed, true));
         $metaData = $this->get_generic_map_fields( $feed, 'formFieldMap' );
     
+        // Mapping Arrays (Make these complete!)
+        $communityUniqueMap = [
+            '546729' => '546729', // Lake Forest Place
+            '546730' => '546730', // Ten Twenty Grove
+            '546731' => '546731', // The Moorings
+            '546732' => '546732', // Westminster Place
+            // ... add all possible values from your form
+        ];
+
+        $careLevelMap = [ // This one looks okay
+            'Assisted Living' => '762',
+            // ... (rest of the care levels)
+        ];
+
+        $apartmentPreferenceMap = [
+            '28' => '1298', // Example: One Bedroom w/ den Apartment (from Schema.json)
+            '29' => '1303', // Example: One bedroom Townhouse (from Schema.json)
+            // ... add ALL possible IDs from your form's Apartment Preference field
+        ];
+
+        $expansionStatusMap = [
+            '547072' => '547072', // 1. Active Interest
+            // ... add all other expansion statuses and their IDs
+        ];
+
+        $marketSourceMap = [
+            '20217' => '20217', // A Place for Mom
+            // ... add all other market sources and their IDs
+        ];
+
+
+        // ... (get field values)
+
+        // APPLY MAPPINGS *BEFORE* CHECKING FOR NULL
         $communityunique = isset($metaData['communityunique']) ? $this->get_field_value($form, $entry, $metaData['communityunique']) : null;
-    
-        $email = isset($metaData['email']) ? $this->get_field_value($form, $entry, $metaData['email']) : null;
-    
-        $first = isset($metaData['firstname']) ? $this->get_field_value($form, $entry, $metaData['firstname']) : null;
-    
-        $last = isset($metaData['lastname']) ? $this->get_field_value($form, $entry, $metaData['lastname']) : null;
-    
-        $phone  = isset($metaData['phone']) ? preg_replace('/\D/', '', $this->get_field_value($form, $entry, $metaData['phone'])) : null;
-    
-        $comments = isset($metaData['Message']) ? $this->get_field_value($form, $entry, $metaData['Message']) : null;
-    
-        /*Interest in - Carelevels*/
-        $careLevelAL1 = isset($metaData['careLevelAL']) ? $this->get_field_value($form, $entry, $metaData['careLevelAL']) : null;
-        $careLevelIL1 = isset($metaData['careLevelIL']) ? $this->get_field_value($form, $entry, $metaData['careLevelIL']) : null;
-        $careLevelMS1 = isset($metaData['careLevelMS']) ? $this->get_field_value($form, $entry, $metaData['careLevelMS']) : null;
-        $careLevelRC1 = isset($metaData['careLevelRC']) ? $this->get_field_value($form, $entry, $metaData['careLevelRC']) : null;
-        $careLevelRT1 = isset($metaData['careLevelRT']) ? $this->get_field_value($form, $entry, $metaData['careLevelRT']) : null;
-        $careLevelSN1 = isset($metaData['careLevelSN']) ? $this->get_field_value($form, $entry, $metaData['careLevelSN']) : null;
-        $careLevelST1 = isset($metaData['careLevelST']) ? $this->get_field_value($form, $entry, $metaData['careLevelST']) : null;
+        $communityunique = isset($communityUniqueMap[$communityunique]) ? $communityUniqueMap[$communityunique] : null; // Correct mapping
 
-        /*Inquiries*/
-        $volunteerInquiry = isset($metaData['volunteerinquiry']) ? $this->get_field_value($form, $entry, $metaData['volunteerinquiry']) : null;
-        $careerInquiry = isset($metaData['careerinquiry']) ? $this->get_field_value($form, $entry, $metaData['careerinquiry']) : null;
-        $vedorInquiry = isset($metaData['vendorinquiry']) ? $this->get_field_value($form, $entry, $metaData['vendorinquiry']) : null;
+        $CareLevelValue = isset($metaData['careLevelAL']) ? $this->get_field_value($form, $entry, $metaData['careLevelAL']) : null; // Assuming careLevelAL is the primary care level field
+        $CareLevelValue = isset($careLevelMap[$CareLevelValue]) ? $careLevelMap[$CareLevelValue] : null;
 
-        /*Interest in - Carelevels Array*/
-        $careLevels = [
-            'careLevelAL' => $careLevelAL1,
-            'careLevelIL' => $careLevelIL1,
-            'careLevelMS' => $careLevelMS1,
-            'careLevelRC' => $careLevelRC1,
-            'careLevelRT' => $careLevelRT1,
-            'careLevelSN' => $careLevelSN1,
-            'careLevelST' => $careLevelST1,
-        ];
-
-        /*Interest in - Carelevels Value*/
-        $CareLevelValue = null;
-        foreach ($careLevels as $level => $value) {
-            if ($value !== null && $value !== '') {
-                $CareLevelValue = $value;
-                break;
-            }
-        }
-
-        /*Inquiries Array*/
-        $inquireLevels = [
-            'volunteerinquiry1' => $volunteerInquiry,
-            'careerinquiry1' => $careerInquiry,
-            'vendorinquiry1' => $vedorInquiry
-        ];
-
-        /*excluded inquiry levels from API send*/
-        $excludedInquiryLevels = array_filter($inquireLevels);
-
-        if (!empty($excludedInquiryLevels)) {
-        error_log('Skipping API request due to excluded inquiry level');
-            return;
-        }
-
-        /*Error logging*/
-
-        $LogFilePath = plugin_dir_path(__FILE__) . 'debug.log';
-        error_log('Care Level - AL: ' . print_r($careLevelAL1, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - IL: ' . print_r($careLevelIL1, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - MS: ' . print_r($careLevelMS1, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - RC: ' . print_r($careLevelRC1, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - RT: ' . print_r($careLevelRT1, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - SN: ' . print_r($careLevelSN1, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - ST: ' . print_r($careLevelST1, true) . PHP_EOL, 3, $LogFilePath);
-                        
-        error_log('Care Level Value: ' . print_r($CareLevelValue, true) . PHP_EOL, 3, $LogFilePath);
-
-        /*Residence Preference*/
-        $resultCottage = isset($metaData['resultcottage']) ? $this->get_field_value($form, $entry, $metaData['resultcottage']) : null;
-        $resultTwonhouses = isset($metaData['resulttownhouses']) ? $this->get_field_value($form, $entry, $metaData['resulttownhouses']) : null;
-        $resultApartment = isset($metaData['resultapartment']) ? $this->get_field_value($form, $entry, $metaData['resultapartment']) : null;
-
-        /*Residence Preference Array*/
-        $residencePreferences = [
-            'resultcottage1' => $resultCottage,
-            'resulttownhouses1' => $resultTwonhouses,
-            'resultapartment1' => $resultApartment,
-        ];
-
-        /*residence preference value*/
+        $residencePreferenceRaw = $this->get_field_value($form, $entry, $metaData['apartmentpreference']); // Get the raw value
+        preg_match_all('/\{(.*?)\}/', $residencePreferenceRaw, $matches); // Extract values within curly braces
+        $residencePreferenceValues = $matches[1]; // Array of values like "residencePreference-LakeForest:28"
         $residenceValue = null;
-        foreach ($residencePreferences as $residence => $value) {
-            if ($value !== null && $value !== '') {
-                $residenceValue = $value;
-                break;
+        foreach ($residencePreferenceValues as $value) {
+            $parts = explode(':', $value);
+            if (isset($parts[1]) && isset($apartmentPreferenceMap[$parts[1]])) {
+                $residenceValue = $apartmentPreferenceMap[$parts[1]];
+                break; // Stop after finding the first valid mapping
             }
         }
 
-        /*error log for residence preference*/
-        
-        error_log('Cottages: ' . print_r($resultCottage, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - IL: ' . print_r($resultTwonhouses, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - MS: ' . print_r($resultApartment, true) . PHP_EOL, 3, $LogFilePath);
-                        
-        error_log('Appartment Prefernce Value: ' . print_r($residenceValue, true) . PHP_EOL, 3, $LogFilePath);
+        $expansionstatus = isset($metaData['expansionstatus']) ? $this->get_field_value($form, $entry, $metaData['expansionstatus']) : null;
+        $expansionstatus = isset($expansionStatusMap[$expansionstatus]) ? $expansionStatusMap[$expansionstatus] : null;
 
-        /*prospect or contact into type*/
+        $marketsource = isset($metaData['marketsource']) ? $this->get_field_value($form, $entry, $metaData['marketsource']) : null;
+        $marketsource = isset($marketSourceMap[$marketsource]) ? $marketSourceMap[$marketsource] : null;
+
+        $email = isset($metaData['email']) ? $this->get_field_value($form, $entry, $metaData['email']) : null;
+        $first = isset($metaData['firstname']) ? $this->get_field_value($form, $entry, $metaData['firstname']) : null;
+        $last = isset($metaData['lastname']) ? $this->get_field_value($form, $entry, $metaData['lastname']) : null;
+        $phone  = isset($metaData['phone']) ? preg_replace('/\D/', '', $this->get_field_value($form, $entry, $metaData['phone'])) : null;
+        $comments = isset($metaData['Message']) ? $this->get_field_value($form, $entry, $metaData['Message']) : null;
         $inquiringfor = isset($metaData['inquiringfor']) ? $this->get_field_value($form, $entry, $metaData['inquiringfor']) : null;
-
-        /* Primary Contact ID based on inquiringfor */
-        $primaryContactId = ($inquiringfor == 'Myself') ? 1 : 2;  // 1 for Yes, 2 for No
-
-        /*if contact/loved one*/
         $lovedfirst = isset($metaData['lovedfirst']) ? $this->get_field_value($form, $entry, $metaData['lovedfirst']) : null;
         $lovedlast = isset($metaData['lovedlast']) ? $this->get_field_value($form, $entry, $metaData['lovedlast']) : null;
-    
-        /*utm*/
         $utmsource = isset($metaData['utmsource']) ? $this->get_field_value($form, $entry, $metaData['utmsource']) : null;
         $utmcampaign = isset($metaData['utmcampaign']) ? $this->get_field_value($form, $entry, $metaData['utmcampaign']) : null;
         $utmmedium = isset($metaData['utmmedium']) ? $this->get_field_value($form, $entry, $metaData['utmmedium']) : null;
         $utmid = isset($metaData['utmid']) ? $this->get_field_value($form, $entry, $metaData['utmid']) : null;
         $gclid = isset($metaData['gclid']) ? $this->get_field_value($form, $entry, $metaData['gclid']) : null;
-    
-        /*expansion status*/
-        $expansionstatus = isset($metaData['expansionstatus']) ? $this->get_field_value($form, $entry, $metaData['expansionstatus']) : null;
 
-        /*market source*/
-        $marketsource = isset($metaData['marketsource']) ? $this->get_field_value($form, $entry, $metaData['marketsource']) : null;
+        $primaryContactId = ($inquiringfor == 'Myself') ? 1 : 2;  // 1 for Yes, 2 for No
 
-        /*Map community unique to ID*/
-        $communityUniqueMap = array(
-            'Lake Forest Place' => '546729',
-            'Ten Twenty Grove (rental)' => '546730',
-            'The Moorings Arlington Heights' => '546731',
-            'Westminster Place' => '546732',
-        );
-        $communityunique = isset($communityUniqueMap[$communityunique]) ? $communityUniqueMap[$communityunique] : null;
-
-        /*Map care level to ID*/
-        $careLevelMap = array(
-            'Assisted Living' => '762',
-            'IL Rental' => '1364',
-            'Independent Living' => '763',
-            'Memory Care' => '764',
-            'Rehab' => '887',
-            'Respite' => '1365',
-            'Skilled Nursing' => '765',
-        );
-        $CareLevelValue = isset($careLevelMap[$CareLevelValue]) ? $careLevelMap[$CareLevelValue] : null;
-
-        /*Map apartment preference to ID*/
-        $apartmentPreferenceMap = array(
-            'Cottage' => '1335',
-            'Townhouse' => '1337',
-            'Apartment' => '1111', // Replace with actual ID
-        );
-        $residenceValue = isset($apartmentPreferenceMap[$residenceValue]) ? $apartmentPreferenceMap[$residenceValue] : null;
-
-        /*Map expansion status to ID*/
-        $expansionStatusMap = array(
-            '1. Active Interest' => '547072',
-        );
-        $expansionstatus = isset($expansionStatusMap[$expansionstatus]) ? $expansionStatusMap[$expansionstatus] : null;
-
-        /*Map market source to ID*/
-        $marketSourceMap = array(
-            'Referral: FAM/FRIEND' => '21586',
-            'Referral: Resident' => '22340',
-            'Referral: Professional' => '22332',
-            'Adv.Newspaper' => '40598',
-            'Organic Search' => '40660',
-            'DM Invitations' => '40593',
-            'WEBSITE' => '22518',
-            'Other' => '22322',
-        );
-        $marketsource = isset($marketSourceMap[$marketsource]) ? $marketSourceMap[$marketsource] : null;
-
-        /*data Array*/
         $data = array(
             'communityunique' => $communityunique,
             'email' => $email,
@@ -292,7 +191,7 @@ class GFAPITrap extends GFFeedAddOn {
             'carelevel' => $CareLevelValue,
             'primarycontactid' => $primaryContactId
         );
-    
+
         error_log('this is the data: ' . print_r($data, true));
         $response = $this->sendApiRequest($data, $inquiringfor);
         error_log('this is the response: ' . print_r($response, true));
