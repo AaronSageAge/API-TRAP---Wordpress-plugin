@@ -359,20 +359,19 @@ class GFAPITrap extends GFFeedAddOn {
                             ["NameUnique" => $data['communityunique']]
                         ],
                         "properties" => [
-                            ["property" => "firstname",   "value" => $data['FirstName']], 
-                            [ "property" => "lastname",  "value" => $data['LastName']], 
-                            ["property" => "Email",      "value" => $data['email']], 
-                            ["property" => "Home Phone", "value" => $data['Phone']],
-                            ["property" => "type",       "value" => $individualType],
-                            ["property" => "Expansion Status",     "value" => $data['expansionstatus']],
-                            ["property" => "Market Source",        "value" => $data['marketsource']],
-                            ["property" => "Apartment Preference", "value" => $data['apartmentpreference']],
-                            ["property" => "Care Level",           "value" => $data['carelevel']],
-                            ["property" => "utmSource",            "value" => $data['utmsource']],
-                            ["property" => "UTM Campaign",         "value" => $data['utmcampaign']],
-                            ["property" => "UTM Medium",           "value" => $data['utmmedium']],
-                            ["property" => "UTM Id",               "value" => $data['utmid']],
-                            ["property" => "GCLID",                "value" => $data['gclid']]
+                            ["id" => "30323", "value" => $data['FirstName']], 
+                            ["id" => "30325", "value" => $data['LastName']], 
+                            ["id" => "30326", "value" => $data['Phone']],
+                            ["id" => "30330", "value" => $data['email']],
+                            ["id" => "30442", "value" => $data['carelevel']],
+                            ["id" => "30367", "value" => $data['apartmentpreference']],
+                            ["id" => "62897", "value" => $data['expansionstatus']],
+                            ["id" => "62908", "value" => $data['utmsource']],
+                            ["id" => "62909", "value" => $data['utmmedium']],
+                            ["id" => "62910", "value" => $data['utmcampaign']],
+                            ["id" => "62911", "value" => $data['utmid']],
+                            ["id" => "62912", "value" => $data['gclid']],
+                            ["id" => "30463", "value" => $data['marketsource']]
                         ],
                         "activities" => [
                             [
@@ -393,9 +392,8 @@ class GFAPITrap extends GFFeedAddOn {
                         ],
                         "relationship" => "Family Member",
                         "properties" => [
-                            ["property" => "firstname", "value" => $data['lovedfirst']],
-                            ["property" => "lastname", "value" => $data['lovedlast']],
-                            ["property" => "type",     "value" => $relationshipType]
+                            ["id" => "30323", "value" => $data['lovedfirst']],
+                            ["id" => "30325", "value" => $data['lovedlast']]
                         ]
                     ]
                 ]
@@ -409,20 +407,19 @@ class GFAPITrap extends GFFeedAddOn {
                             ["NameUnique" => $data['communityunique']]
                         ],
                         "properties" => [
-                            ["property" => "firstname",   "value" => $data['FirstName']], 
-                            ["property" => "lastname",  "value" => $data['LastName']], 
-                            ["property" => "Email",      "value" => $data['email']], 
-                            ["property" => "Home Phone", "value" => $data['Phone']],
-                            ["property" => "type",       "value" => $individualType],
-                            ["property" => "Expansion Status",     "value" => $data['expansionstatus']],
-                            ["property" => "Market Source",        "value" => $data['marketsource']],
-                            ["property" => "Apartment Preference", "value" => $data['apartmentpreference']],
-                            ["property" => "Care Level",           "value" => $data['carelevel']],
-                            ["property" => "utmSource",            "value" => $data['utmsource']],
-                            ["property" => "UTM Campaign",         "value" => $data['utmcampaign']],
-                            ["property" => "UTM Medium",           "value" => $data['utmmedium']],
-                            ["property" => "UTM Id",               "value" => $data['utmid']],
-                            ["property" => "GCLID",                "value" => $data['gclid']]
+                            ["id" => "30323", "value" => $data['FirstName']], 
+                            ["id" => "30325", "value" => $data['LastName']], 
+                            ["id" => "30326", "value" => $data['Phone']],
+                            ["id" => "30330", "value" => $data['email']],
+                            ["id" => "30442", "value" => $data['carelevel']],
+                            ["id" => "30367", "value" => $data['apartmentpreference']],
+                            ["id" => "62897", "value" => $data['expansionstatus']],
+                            ["id" => "62908", "value" => $data['utmsource']],
+                            ["id" => "62909", "value" => $data['utmmedium']],
+                            ["id" => "62910", "value" => $data['utmcampaign']],
+                            ["id" => "62911", "value" => $data['utmid']],
+                            ["id" => "62912", "value" => $data['gclid']],
+                            ["id" => "30463", "value" => $data['marketsource']]
                         ],
                         "activities" => [
                             [
@@ -443,15 +440,14 @@ class GFAPITrap extends GFFeedAddOn {
                         ],
                         "relationship" => "Family Member",
                         "properties" => [
-                            ["property" => "firstname", "value" => $data['lovedfirst']],
-                            ["property" => "lastname", "value" => $data['lovedlast']],
-                            ["property" => "type",     "value" => $relationshipType]
+                            ["id" => "30323", "value" => $data['lovedfirst']],
+                            ["id" => "30325", "value" => $data['lovedlast']]
                         ]
                     ]
                 ]
             ];
         }
-
+        
         $args = [
             'method' => 'POST',
             'headers' => [
