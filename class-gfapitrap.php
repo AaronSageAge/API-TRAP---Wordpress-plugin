@@ -232,6 +232,54 @@ class GFAPITrap extends GFFeedAddOn {
         /*market source*/
         $marketsource = isset($metaData['marketsource']) ? $this->get_field_value($form, $entry, $metaData['marketsource']) : null;
 
+        /*Map community unique to ID*/
+        $communityUniqueMap = array(
+            'Lake Forest Place' => '546729',
+            'Ten Twenty Grove (rental)' => '546730',
+            'The Moorings Arlington Heights' => '546731',
+            'Westminster Place' => '546732',
+        );
+        $communityunique = isset($communityUniqueMap[$communityunique]) ? $communityUniqueMap[$communityunique] : null;
+
+        /*Map care level to ID*/
+        $careLevelMap = array(
+            'Assisted Living' => '762',
+            'IL Rental' => '1364',
+            'Independent Living' => '763',
+            'Memory Care' => '764',
+            'Rehab' => '887',
+            'Respite' => '1365',
+            'Skilled Nursing' => '765',
+        );
+        $CareLevelValue = isset($careLevelMap[$CareLevelValue]) ? $careLevelMap[$CareLevelValue] : null;
+
+        /*Map apartment preference to ID*/
+        $apartmentPreferenceMap = array(
+            'Cottage' => '1335',
+            'Townhouse' => '1337',
+            'Apartment' => '1111', // Replace with actual ID
+        );
+        $residenceValue = isset($apartmentPreferenceMap[$residenceValue]) ? $apartmentPreferenceMap[$residenceValue] : null;
+
+        /*Map expansion status to ID*/
+        $expansionStatusMap = array(
+            '1. Active Interest' => '547072',
+        );
+        $expansionstatus = isset($expansionStatusMap[$expansionstatus]) ? $expansionStatusMap[$expansionstatus] : null;
+
+        /*Map market source to ID*/
+        $marketSourceMap = array(
+            'Referral: FAM/FRIEND' => '21586',
+            'Referral: Resident' => '22340',
+            'Referral: Professional' => '22332',
+            'Adv.Newspaper' => '40598',
+            'Organic Search' => '40660',
+            'DM Invitations' => '40593',
+            'WEBSITE' => '22518',
+            'Other' => '22322',
+        );
+        $marketsource = isset($marketSourceMap[$marketsource]) ? $marketSourceMap[$marketsource] : null;
+
         /*data Array*/
         $data = array(
             'communityunique' => $communityunique,
