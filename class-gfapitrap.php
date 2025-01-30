@@ -203,17 +203,8 @@ class GFAPITrap extends GFFeedAddOn {
         /*prospect or contact into type*/
         $inquiringfor = isset($metaData['inquiringfor']) ? $this->get_field_value($form, $entry, $metaData['inquiringfor']) : null;
 
-        /*prospect or contact change based on inquiring for*/
-        if ($inquiringfor == 'Myself') {
-            $individualType = 'Prospect';
-            $relationshipType = '';
-        } elseif ($inquiringfor == 'A Loved One') {
-            $individualType = 'Contact';
-            $relationshipType = 'Prospect';
-        } else {
-            $individualType = 'Prospect';
-            $relationshipType = '';
-        }
+        /* Primary Contact ID based on inquiringfor */
+        $primaryContactId = ($inquiringfor == 'Myself') ? 1 : 2;  // 1 for Yes, 2 for No
 
         /*if contact/loved one*/
         $lovedfirst = isset($metaData['lovedfirst']) ? $this->get_field_value($form, $entry, $metaData['lovedfirst']) : null;
@@ -298,15 +289,16 @@ class GFAPITrap extends GFFeedAddOn {
             'apartmentpreference' => $residenceValue,
             'expansionstatus' => $expansionstatus,
             'marketsource' => $marketsource,
-            'carelevel' => $CareLevelValue
+            'carelevel' => $CareLevelValue,
+            'primarycontactid' => $primaryContactId
         );
     
         error_log('this is the data: ' . print_r($data, true));
-        $response = $this->sendApiRequest($data, $inquiringfor, $individualType, $relationshipType);
+        $response = $this->sendApiRequest($data, $inquiringfor);
         error_log('this is the response: ' . print_r($response, true));
     }
 
-    public function sendApiRequest(array $data, $inquiringfor, $individualType, $relationshipType) {
+    public function sendApiRequest(array $data, $inquiringfor) {
         error_log('API request data: ' . print_r($data, true), 3, plugin_dir_path(__FILE__) . 'debug.log');
 
         $primaryApiKey = get_option('gravity_api_trap_primary_api_key');
@@ -371,7 +363,8 @@ class GFAPITrap extends GFFeedAddOn {
                             ["id" => "62910", "value" => $data['utmcampaign']],
                             ["id" => "62911", "value" => $data['utmid']],
                             ["id" => "62912", "value" => $data['gclid']],
-                            ["id" => "30463", "value" => $data['marketsource']]
+                            ["id" => "30463", "value" => $data['marketsource']],
+                            ["id" => "30396", "value" => $data['primarycontactid']]
                         ],
                         "activities" => [
                             [
@@ -419,7 +412,8 @@ class GFAPITrap extends GFFeedAddOn {
                             ["id" => "62910", "value" => $data['utmcampaign']],
                             ["id" => "62911", "value" => $data['utmid']],
                             ["id" => "62912", "value" => $data['gclid']],
-                            ["id" => "30463", "value" => $data['marketsource']]
+                            ["id" => "30463", "value" => $data['marketsource']],
+                            ["id" => "30396", "value" => $data['primarycontactid']]
                         ],
                         "activities" => [
                             [
