@@ -265,7 +265,7 @@ class GFAPITrap extends GFFeedAddOn {
         $secondaryApiKey = get_option('gravity_api_trap_secondary_api_key');
         $url = get_option('gravity_api_trap_endpoint_url');
 
-        $getResponse = wp_remote_get($url, [
+        $getResponse = wp_remote_get($url . '?email=' . $data['email'], [
             'method' => 'GET',
             'headers' => [
                 'Ocp-Apim-Subscription-Key' => $primaryApiKey,
@@ -275,7 +275,7 @@ class GFAPITrap extends GFFeedAddOn {
         ]);
 
         if (is_wp_error($getResponse)) {
-            $getResponse = wp_remote_get($url, [
+            $getResponse = wp_remote_get($url . '?email=' . $data['email'], [
                 'method' => 'GET',
                 'headers' => [
                     'Ocp-Apim-Subscription-Key' => $secondaryApiKey,
@@ -306,6 +306,7 @@ class GFAPITrap extends GFFeedAddOn {
                 "individuals" => [
                     [
                         "id" => $existingIndividual['id'],
+                        "IndividualID" => $existingIndividual['id'], // Add IndividualID
                         "communities" => [
                             ["NameUnique" => $data['communityunique']]
                         ],
@@ -314,7 +315,16 @@ class GFAPITrap extends GFFeedAddOn {
                             [ "property" => "lastname",  "value" => $data['LastName']], 
                             ["property" => "Email",      "value" => $data['email']], 
                             ["property" => "Home Phone", "value" => $data['Phone']],
-                            ["property" => "type",       "value" => $individualType]
+                            ["property" => "type",       "value" => $individualType],
+                            ["property" => "Expansion Status",     "value" => $data['expansionstatus']],
+                            ["property" => "Market Source",        "value" => $data['marketsource']],
+                            ["property" => "Apartment Preference", "value" => $data['apartmentpreference']],
+                            ["property" => "Care Level",           "value" => $data['carelevel']],
+                            ["property" => "utmSource",            "value" => $data['utmsource']],
+                            ["property" => "UTM Campaign",         "value" => $data['utmcampaign']],
+                            ["property" => "UTM Medium",           "value" => $data['utmmedium']],
+                            ["property" => "UTM Id",               "value" => $data['utmid']],
+                            ["property" => "GCLID",                "value" => $data['gclid']]
                         ],
                         "activities" => [
                             [
@@ -352,10 +362,19 @@ class GFAPITrap extends GFFeedAddOn {
                         ],
                         "properties" => [
                             ["property" => "firstname",   "value" => $data['FirstName']], 
-                            [ "property" => "lastname",  "value" => $data['LastName']], 
+                            ["property" => "lastname",  "value" => $data['LastName']], 
                             ["property" => "Email",      "value" => $data['email']], 
                             ["property" => "Home Phone", "value" => $data['Phone']],
-                            ["property" => "type",       "value" => $individualType]
+                            ["property" => "type",       "value" => $individualType],
+                            ["property" => "Expansion Status",     "value" => $data['expansionstatus']],
+                            ["property" => "Market Source",        "value" => $data['marketsource']],
+                            ["property" => "Apartment Preference", "value" => $data['apartmentpreference']],
+                            ["property" => "Care Level",           "value" => $data['carelevel']],
+                            ["property" => "utmSource",            "value" => $data['utmsource']],
+                            ["property" => "UTM Campaign",         "value" => $data['utmcampaign']],
+                            ["property" => "UTM Medium",           "value" => $data['utmmedium']],
+                            ["property" => "UTM Id",               "value" => $data['utmid']],
+                            ["property" => "GCLID",                "value" => $data['gclid']]
                         ],
                         "activities" => [
                             [
@@ -383,43 +402,6 @@ class GFAPITrap extends GFFeedAddOn {
                     ]
                 ]
             ];
-        }
-
-        // Add the additional property to the prospect be it Indiviaul or Relationship based on Myself or Loved One
-        
-        // Define the properties array
-        $properties = [
-            ["property" => "Expansion Status",     "value" => $data['expansionstatus']],
-            ["property" => "Market Source",        "value" => $data['marketsource']],
-            ["property" => "Apartment Preference", "value" => $data['apartmentpreference']],
-            ["property" => "Care Level",           "value" => $data['carelevel']],
-            ["property" => "utmSource",            "value" => $data['utmsource']],
-            ["property" => "UTM Campaign",         "value" => $data['utmcampaign']],
-            ["property" => "UTM Medium",           "value" => $data['utmmedium']],
-            ["property" => "UTM Id",               "value" => $data['utmid']],
-            ["property" => "GCLID",                "value" => $data['gclid']]
-        ];
-
-        // Check if any individual in the API response already exists
-        if (isset($getResponse['body']) && !empty($getResponse['body'])) {
-            foreach ($existingIndividuals as $individual) {
-                if (isset($individual['notes'])) {
-                    foreach ($properties as $prop) {
-                        $this->add_or_append_property($individual['notes'], "Message", $prop['value']);
-                    }
-                } else {
-                    $individual['notes'] = [["Message" => $prop['value']]];
-                }
-            }
-            $sendData["individuals"] = $existingIndividuals;
-        } else {
-            // If no individual exists, add the properties to the first individual's notes
-            if (!isset($sendData["individuals"][0]["notes"])) {
-                $sendData["individuals"][0]["notes"] = [];
-            }
-            foreach ($properties as $prop) {
-                $this->add_or_append_property($sendData["individuals"][0]["notes"], "Message", $prop['value']);
-            }
         }
 
         $args = [
@@ -456,15 +438,5 @@ class GFAPITrap extends GFFeedAddOn {
         }
 
         return $response;
-    }
-
-    private function add_or_append_property(&$notes, $key, $value) {
-        foreach ($notes as &$note) {
-            if ($note['Message'] === $key) {
-                $note['Message'] .= ' ' . $value;
-                return;
-            }
-        }
-        $notes[] = ['Message' => $value];
     }
 }
