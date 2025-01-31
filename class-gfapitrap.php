@@ -133,7 +133,7 @@ class GFAPITrap extends GFFeedAddOn {
         $apartmentPreferenceMap = [
             'Cottage' => '1335', // Cottage
             'Townhouse' => '1337', // Townhouse
-            'Apartment' => '1298', // Apartment set to "One Bedroom w/ den Apartment"for now need actual ID
+            'Apartment' => '2622', // Apartment set to "One Bedroom w/ den Apartment"for now need actual ID
         ];
 
         //Expansion Status stay ID's these are the values not the Labels
@@ -201,7 +201,7 @@ class GFAPITrap extends GFFeedAddOn {
 
         $marketsource = isset($metaData['marketsource']) ? $this->get_field_value($form, $entry, $metaData['marketsource']) : null;
         $marketsource = isset($marketSourceMap[$marketsource]) ? $marketSourceMap[$marketsource] : null;
-        
+
         $email = isset($metaData['email']) ? $this->get_field_value($form, $entry, $metaData['email']) : null;
         $first = isset($metaData['firstname']) ? $this->get_field_value($form, $entry, $metaData['firstname']) : null;
         $last = isset($metaData['lastname']) ? $this->get_field_value($form, $entry, $metaData['lastname']) : null;
