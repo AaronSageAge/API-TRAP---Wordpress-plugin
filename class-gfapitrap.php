@@ -80,7 +80,7 @@ class GFAPITrap extends GFFeedAddOn {
                     ),
                 ),
             )
-        );
+        ];
     }
 
     public function feed_list_columns() {
@@ -288,108 +288,91 @@ class GFAPITrap extends GFFeedAddOn {
 
         if ($existingIndividual) {
             // Update existing individual
-            $sendData = [
-                "individuals" => [
+            $individual = [
+                "id" => $existingIndividual['id'],
+                "IndividualID" => $existingIndividual['id'], 
+                "communities" => [
+                    ["NameUnique" => $data['communityunique']]
+                ],
+                "properties" => [
+                    ["property" => "FirstName", "value" => $data['FirstName']], 
+                    ["property" => "LastName", "value" => $data['LastName']], 
+                    ["property" => "Home Phone", "value" => $data['Phone']],
+                    ["property" => "Email", "value" => $data['email']],
+                    ["property" => "type", "value" => $data['primarycontactid']]
+                ],
+                "activities" => [
                     [
-                        "id" => $existingIndividual['id'],
-                        "IndividualID" => $existingIndividual['id'], 
-                        "communities" => [
-                            ["NameUnique" => $data['communityunique']]
-                        ],
-                        "properties" => [
-                            ["property" => "FirstName", "value" => $data['FirstName']], 
-                            ["property" => "LastName", "value" => $data['LastName']], 
-                            ["property" => "Home Phone", "value" => $data['Phone']],
-                            ["property" => "Email", "value" => $data['email']],
-                            ["property" => "Care Level", "value" => $data['carelevel']],
-                            ["property" => "Apartment Preference", "value" => $data['apartmentpreference']],
-                            ["property" => "Expansion Status", "value" => $data['expansionstatus']],
-                            ["property" => "UTM Source", "value" => $data['utmsource']],
-                            ["property" => "UTM Medium", "value" => $data['utmmedium']],
-                            ["property" => "UTM Campaign", "value" => $data['utmcampaign']],
-                            ["property" => "UTM Id", "value" => $data['utmid']],
-                            ["property" => "GCLID", "value" => $data['gclid']],
-                            ["property" => "Market Source", "value" => $data['marketsource']],
-                            ["property" => "type", "value" => $data['primarycontactid']]
-                        ],
-                        "activities" => [
-                            [
-                                "reInquiry" => true,
-                                "description" => "Webform",
-                                "activityStatusMasterId" => 2,
-                                "activityResultMasterId" => 2,
-                                "activityTypeMasterId" => 17
-                            ]
-                        ],
-                        "notes" => [
-                            ["Message" => (string)$data['Message']] // Cast to string
-                        ]
-                    ],
-                    [
-                        "relationship" => "Family Member",
-                        "communities" => [
-                            ["NameUnique" => $data['communityunique']]
-                        ],
-                        "properties" => [
-                            ["property" => "FirstName", "value" => $data['lovedfirst']],
-                            ["property" => "LastName", "value" => $data['lovedlast']],
-                            ["property" => "type", "value" => ($data['primarycontactid'] == 'Prospect') ? 'Contact' : 'Prospect']
-                        ]
+                        "reInquiry" => true,
+                        "description" => "Webform",
+                        "activityStatusMasterId" => 2,
+                        "activityResultMasterId" => 2,
+                        "activityTypeMasterId" => 17
                     ]
+                ],
+                "notes" => [
+                    ["Message" => (string)$data['Message']] // Cast to string
                 ]
             ];
         } else {
             // Create new individual
-            $sendData = [
-                "individuals" => [
+            $individual = [
+                "communities" => [
+                    ["NameUnique" => $data['communityunique']]
+                ],
+                "properties" => [
+                    ["property" => "FirstName", "value" => $data['FirstName']], 
+                    ["property" => "LastName", "value" => $data['LastName']], 
+                    ["property" => "Home Phone", "value" => $data['Phone']],
+                    ["property" => "Email", "value" => $data['email']],
+                    ["property" => "type", "value" => $data['primarycontactid']]
+                ],
+                "activities" => [
                     [
-                        "communities" => [
-                            ["NameUnique" => $data['communityunique']]
-                        ],
-                        "properties" => [
-                            ["property" => "FirstName", "value" => $data['FirstName']], 
-                            ["property" => "LastName", "value" => $data['LastName']], 
-                            ["property" => "Home Phone", "value" => $data['Phone']],
-                            ["property" => "Email", "value" => $data['email']],
-                            ["property" => "Care Level", "value" => $data['carelevel']],
-                            ["property" => "Apartment Preference", "value" => $data['apartmentpreference']],
-                            ["property" => "Expansion Status", "value" => $data['expansionstatus']],
-                            ["property" => "UTM Source", "value" => $data['utmsource']],
-                            ["property" => "UTM Medium", "value" => $data['utmmedium']],
-                            ["property" => "UTM Campaign", "value" => $data['utmcampaign']],
-                            ["property" => "UTM Id", "value" => $data['utmid']],
-                            ["property" => "GCLID", "value" => $data['gclid']],
-                            ["property" => "Market Source", "value" => $data['marketsource']],
-                            ["property" => "type", "value" => $data['primarycontactid']]
-                        ],
-                        "activities" => [
-                            [
-                                "reInquiry" => false,
-                                "description" => "Webform",
-                                "activityStatusMasterId" => 2,
-                                "activityResultMasterId" => 2,
-                                "activityTypeMasterId" => 17
-                            ]
-                        ],
-                        "notes" => [
-                            ["Message" => (string)$data['Message']] // Cast to string
-                        ]
-                    ],
-                    [
-                        "relationship" => "Family Member",
-                        "communities" => [
-                            ["NameUnique" => $data['communityunique']]
-                        ],
-                        "properties" => [
-                            ["property" => "FirstName", "value" => $data['lovedfirst']],
-                            ["property" => "LastName", "value" => $data['lovedlast']],
-                            ["property" => "type", "value" => ($data['primarycontactid'] == 'Prospect') ? 'Contact' : 'Prospect']
-                        ]
+                        "reInquiry" => false,
+                        "description" => "Webform",
+                        "activityStatusMasterId" => 2,
+                        "activityResultMasterId" => 2,
+                        "activityTypeMasterId" => 17
                     ]
+                ],
+                "notes" => [
+                    ["Message" => (string)$data['Message']] // Cast to string
                 ]
             ];
         }
-        
+
+        if ($data['primarycontactid'] == 'prospect') {
+            $individual["properties"] = array_merge($individual["properties"], [
+                ["property" => "Care Level", "value" => $data['carelevel']],
+                ["property" => "Apartment Preference", "value" => $data['apartmentpreference']],
+                ["property" => "Expansion Status", "value" => $data['expansionstatus']],
+                ["property" => "UTM Source", "value" => $data['utmsource']],
+                ["property" => "UTM Medium", "value" => $data['utmmedium']],
+                ["property" => "UTM Campaign", "value" => $data['utmcampaign']],
+                ["property" => "UTM Id", "value" => $data['utmid']],
+                ["property" => "GCLID", "value" => $data['gclid']],
+                ["property" => "Market Source", "value" => $data['marketsource']],
+            ]);
+        }
+
+        $sendData = [
+            "individuals" => [
+                $individual,
+                [
+                    "relationship" => "Family Member",
+                    "communities" => [
+                        ["NameUnique" => $data['communityunique']]
+                    ],
+                    "properties" => [
+                        ["property" => "FirstName", "value" => $data['lovedfirst']],
+                        ["property" => "LastName", "value" => $data['lovedlast']],
+                        ["property" => "type", "value" => ($data['primarycontactid'] == 'Prospect') ? 'Contact' : 'Prospect']
+                    ]
+                ]
+            ]
+        ];
+
         $args = [
             'method' => 'POST',
             'headers' => [
