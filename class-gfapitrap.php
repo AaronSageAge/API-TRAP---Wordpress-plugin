@@ -299,6 +299,15 @@ class GFAPITrap extends GFFeedAddOn {
                     ["property" => "LastName", "value" => $data['LastName']], 
                     ["property" => "Home Phone", "value" => $data['Phone']],
                     ["property" => "Email", "value" => $data['email']],
+                    ["property" => "Care Level", "value" => $data['carelevel']],
+                    ["property" => "Apartment Preference", "value" => $data['apartmentpreference']],
+                    ["property" => "Expansion Status", "value" => $data['expansionstatus']],
+                    ["property" => "UTM Source", "value" => $data['utmsource']],
+                    ["property" => "UTM Medium", "value" => $data['utmmedium']],
+                    ["property" => "UTM Campaign", "value" => $data['utmcampaign']],
+                    ["property" => "UTM Id", "value" => $data['utmid']],
+                    ["property" => "GCLID", "value" => $data['gclid']],
+                    ["property" => "Market Source", "value" => $data['marketsource']],
                     ["property" => "type", "value" => $data['primarycontactid']]
                 ],
                 "activities" => [
@@ -325,6 +334,15 @@ class GFAPITrap extends GFFeedAddOn {
                     ["property" => "LastName", "value" => $data['LastName']], 
                     ["property" => "Home Phone", "value" => $data['Phone']],
                     ["property" => "Email", "value" => $data['email']],
+                    ["property" => "Care Level", "value" => $data['carelevel']],
+                    ["property" => "Apartment Preference", "value" => $data['apartmentpreference']],
+                    ["property" => "Expansion Status", "value" => $data['expansionstatus']],
+                    ["property" => "UTM Source", "value" => $data['utmsource']],
+                    ["property" => "UTM Medium", "value" => $data['utmmedium']],
+                    ["property" => "UTM Campaign", "value" => $data['utmcampaign']],
+                    ["property" => "UTM Id", "value" => $data['utmid']],
+                    ["property" => "GCLID", "value" => $data['gclid']],
+                    ["property" => "Market Source", "value" => $data['marketsource']],
                     ["property" => "type", "value" => $data['primarycontactid']]
                 ],
                 "activities" => [
@@ -341,21 +359,7 @@ class GFAPITrap extends GFFeedAddOn {
                 ]
             ];
         }
-
-        if ($data['primarycontactid'] == 'prospect') {
-            $individual["properties"] = array_merge($individual["properties"], [
-                ["property" => "Care Level", "value" => $data['carelevel']],
-                ["property" => "Apartment Preference", "value" => $data['apartmentpreference']],
-                ["property" => "Expansion Status", "value" => $data['expansionstatus']],
-                ["property" => "UTM Source", "value" => $data['utmsource']],
-                ["property" => "UTM Medium", "value" => $data['utmmedium']],
-                ["property" => "UTM Campaign", "value" => $data['utmcampaign']],
-                ["property" => "UTM Id", "value" => $data['utmid']],
-                ["property" => "GCLID", "value" => $data['gclid']],
-                ["property" => "Market Source", "value" => $data['marketsource']],
-            ]);
-        }
-
+    
         $sendData = [
             "individuals" => [
                 $individual,
@@ -367,7 +371,7 @@ class GFAPITrap extends GFFeedAddOn {
                     "properties" => [
                         ["property" => "FirstName", "value" => $data['lovedfirst']],
                         ["property" => "LastName", "value" => $data['lovedlast']],
-                        ["property" => "type", "value" => ($data['primarycontactid'] == 'Prospect') ? 'Contact' : 'Prospect']
+                        ["property" => "type", "value" => 'contact']
                     ]
                 ]
             ]
