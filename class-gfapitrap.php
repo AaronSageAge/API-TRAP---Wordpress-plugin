@@ -80,7 +80,7 @@ class GFAPITrap extends GFFeedAddOn {
                     ),
                 ),
             )
-        ];
+        );
     }
 
     public function feed_list_columns() {
