@@ -55,6 +55,15 @@
       "ColumnId": 25
 --------------------------------------------
 
+      "Id": 30330,
+      "Form": "General Information",
+      "Name": "Email",
+      "Label": "Email",
+      "Type": "Text Input",
+      "Required": false,
+      "ColumnId": 23
+--------------------------------------------
+
       "Id": 30442,
       "Form": "Sales and Marketing",
       "Name": "Preference",
