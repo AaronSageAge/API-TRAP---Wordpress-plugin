@@ -1,0 +1,34 @@
+<script>
+  /*This script goes on the form.
+  
+  Sets the result interested value to the selected option
+  */
+
+
+// Get the result input element by its label
+const resultInput = document.querySelector('label[textContent*="resultInterested"]')?.nextElementSibling.querySelector('input');
+// Loop through the dropdown labels and add event listeners
+['interestedIn-LakeForest', 'interestedIn-Moorings', 'interestedIn-Westminster', 'interestedIn-TTG'].forEach(label => {
+  const labelElement = document.querySelector(`label[for*="${label}"]`);
+  if (labelElement) {
+    const selectElement = labelElement.nextElementSibling.querySelector('select');
+
+    if (selectElement) {
+      // Add an event listener to the select element
+      selectElement.addEventListener('change', function() {
+        // Get the selected option
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+
+        // Remove the selected attribute from all options
+        Array.from(selectElement.options).forEach(option => option.removeAttribute('selected'));
+
+        // Add the selected attribute to the selected option
+        selectedOption.setAttribute('selected', 'selected');
+
+        // Update the result input value
+        resultInput.value = selectedOption.value;
+      });
+    }
+  }
+});
+</script>

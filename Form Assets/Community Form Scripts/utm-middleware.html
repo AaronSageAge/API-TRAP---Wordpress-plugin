@@ -1,0 +1,73 @@
+<script id="middleware">
+
+/*This script goes on the form.
+
+Parse UTM from url and set hidden input values
+*/
+
+document.addEventListener('DOMContentLoaded', function() {
+  setHiddenInputValues();
+});
+
+function getParameterByName(name) {
+  var url = window.location.href;
+  var regex = new RegExp("[?&]" + name + "=([^&]*)");
+  var results = regex.exec(url);
+  return results == null ? "" : decodeURIComponent(results[1]);
+}
+
+function setHiddenInputValues() {
+  console.log('setHiddenInputValues called');
+  var utmSource = getParameterByName('utm_source');
+  var utmMedium = getParameterByName('utm_medium');
+  var utmCampaign = getParameterByName('utm_campaign');
+  var utmId = getParameterByName('utm_id');
+  var gclid = getParameterByName('gclid');
+
+  console.log('utmSource:', utmSource);
+  console.log('utmMedium:', utmMedium);
+  console.log('utmCampaign:', utmCampaign);
+  console.log('utmId:', utmId);
+  console.log('gclid:', gclid);
+
+  var forms = document.querySelectorAll('form'); // select all forms on the page
+  if (forms.length > 0) {
+    forms.forEach(function(form) {
+      var labels = form.querySelectorAll('label.gfield_label');
+
+      labels.forEach(function(labelElement) {
+        var inputId = labelElement.getAttribute('for');
+        var input = form.querySelector('input#' + inputId);
+        if (input) {
+          if (labelElement.textContent.trim() === 'WebFormCampaignAdwordGroup') {
+            console.log('Setting value for input:', input, utmSource || 'Web');
+            input.setAttribute('value', utmSource || 'Web');
+            input.dispatchEvent(new Event('change'));
+          } else if (labelElement.textContent.trim() === 'WebFormCampaignMedium') {
+            console.log('Setting value for input:', input, utmMedium || 'Web');
+            input.setAttribute('value', utmMedium || 'Web');
+            input.dispatchEvent(new Event('change'));
+          } else if (labelElement.textContent.trim() === 'WebFormCampaignName') {
+            console.log('Setting value for input:', input, utmCampaign || 'Web');
+            input.setAttribute('value', utmCampaign || 'Web');
+            input.dispatchEvent(new Event('change'));
+          } else if (labelElement.textContent.trim() === 'WebFormCampaignTerm') {
+            console.log('Setting value for input:', input, utmId || 'Web');
+            input.setAttribute('value', utmId || 'Web');
+            input.dispatchEvent(new Event('change'));
+          } else if (labelElement.textContent.trim() === 'GCLID') {
+            console.log('Setting value for input:', input, gclid);
+            input.setAttribute('value', gclid);
+            input.dispatchEvent(new Event('change'));
+          }
+          console.log('Value set:', input.value);
+        } else {
+          console.log('Input element not found for label:', labelElement.textContent);
+        }
+      });
+    });
+  } else {
+    console.log('webForm not found');
+  }
+}
+</script>

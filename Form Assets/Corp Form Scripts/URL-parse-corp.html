@@ -1,0 +1,92 @@
+<script id="communityIDs">
+
+    /*This script goes on the form.*/
+
+    document.addEventListener("DOMContentLoaded", function() {
+      var url = window.location.href;
+    
+      var communityName;
+      var uniqueName;
+    
+      // Get the dropdown element
+      var dropdown = document.getElementById("input_32_40");
+    
+      // Add an event listener to the dropdown element
+      dropdown.addEventListener("change", function() {
+        // Get the selected option
+        var selectedOption = dropdown.value;
+    
+        // Update the uniqueName variable based on the selected option
+        switch (selectedOption) {
+          case "Lake Forest Place":
+            uniqueName = "LakeForestPlacePH";
+            break;
+          case "The Moorings":
+            uniqueName = "TheMooringsPH";
+            break;
+          case "Westminster Place":
+            uniqueName = "WestminsterPlace";
+            break;
+          case "Ten Twenty Grove":
+            uniqueName = "PresHomesTenTwentyGrove";
+            break;
+        }
+    
+        // Update the input_32_18 element
+        var uniqueInput = document.getElementById("input_32_18");
+        if (uniqueInput) {
+          uniqueInput.setAttribute("value", uniqueName);
+        }
+      });
+    
+      // Check if an option is selected in input_40
+      var selectedOption = dropdown.value;
+      if (selectedOption) {
+        switch (selectedOption) {
+          case "Lake Forest Place":
+            uniqueName = "LakeForestPlacePH";
+            break;
+          case "The Moorings":
+            uniqueName = "TheMooringsPH";
+            break;
+          case "Westminster Place":
+            uniqueName = "WestminsterPlace";
+            break;
+          case "Ten Twenty Grove":
+            uniqueName = "PresHomesTenTwentyGrove";
+            break;
+        }
+      } else {
+        // If no option is selected, use the original logic
+        if (url.includes("/our-locations/westminster-place/")) {
+          communityName = "Evanston";
+          uniqueName = "WestminsterPlace";
+        } else if (url.includes("/our-locations/lake-forest-place/")) {
+          communityName = "Lake Forest Place";
+          uniqueName = "LakeForestPlacePH";
+        } else if (url.includes("/our-locations/the-moorings/")) {
+          communityName = "Moorings";
+          uniqueName = "TheMooringsPH";
+        } else if (url.includes("/our-locations/ten-twenty-grove/")) {
+          communityName = "Ten Twenty Grove";
+          uniqueName = "PresHomesTenTwentyGrove";
+        } else if (!url.includes("/our-locations/")) {
+          communityName = "Presbyterian Homes Corporate";
+          uniqueName = "PresbyterianHomesCorporate";
+        }
+      }
+    
+      if (communityName && uniqueName) {
+        var communityInput = document.getElementById("input_32_20");
+        var uniqueInput = document.getElementById("input_32_18");
+    
+        if (communityInput && uniqueInput) {
+          communityInput.setAttribute("value", communityName);
+          uniqueInput.setAttribute("value", uniqueName);
+        }
+      }
+    });
+    </script>
+  <style>
+  .Hidden{display:none!important;visibility:hidden!important;}
+  </style>

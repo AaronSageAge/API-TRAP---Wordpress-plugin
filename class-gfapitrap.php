@@ -7,7 +7,7 @@ GFForms::include_feed_addon_framework();
 
 class GFAPITrap extends GFFeedAddOn {
  
-    protected $_version = GF_API_TRAP_VERSION;
+    protected $_version = '1.0.0';
     protected $_min_gravityforms_version = '2.8';
     protected $_slug = 'gravity-api-trap';
     protected $_path = 'gravity-api-trap/gravity-api-trap.php';
@@ -46,122 +46,35 @@ class GFAPITrap extends GFFeedAddOn {
                             'title'             => 'API Field',
                             'allow_custom'      => FALSE,
                             'choices'           => array(
-                                array(
-                                    'label'         => 'Email',
-                                    'value'         => 'email',
-                                ),
-                                array(
-                                    'label'         => 'firstName',
-                                    'value'         => 'firstname',
-                                ),
-                                array(
-                                    'label'         => 'lastName',
-                                    'value'         => 'lastname',
-                                ),
-                                array(
-                                    'label'         => 'Phone',
-                                    'value'         => 'phone',
-                                ),
-                                array(
-                                    'label'         => 'Comments',
-                                    'value'         => 'Message',
-                                ),
-                                array(
-                                    'label'         => 'CommunityUnique',
-                                    'value'         => 'communityunique',
-                                ),
-                                array(
-                                    'label'         => 'InquiringFor',
-                                    'value'         => 'inquiringfor',
-                                ),
-                                array(
-                                    'label'         => 'lovedFirst',
-                                    'value'         => 'lovedfirst',
-                                ),
-                                array(
-                                    'label'         => 'lovedLast',
-                                    'value'         => 'lovedlast',
-                                ),
-                                array(
-                                    'label'         => 'utmSource',
-                                    'value'         => 'utmsource',
-                                ),
-                                array(
-                                    'label'         => 'utmMedium',
-                                    'value'         => 'utmmedium',
-                                ),
-                                array(
-                                    'label'         => 'utmCampaign',
-                                    'value'         => 'utmcampaign',
-                                ),
-                                array(
-                                    'label'         => 'utmId',
-                                    'value'         => 'utmid',
-                                ),
-                                array(
-                                    'label'         => 'GCLID',
-                                    'value'         => 'gclid',
-                                ),
-                                array(
-                                    'label'         => 'Care Level - AL',
-                                    'value'         => 'careLevelAL',
-                                ),
-                                array(
-                                    'label'         => 'Care Level - IL no expansion',
-                                    'value'         => 'careLevelIL',
-                                ),
-                                array(
-                                    'label'         => 'Care Level - MS',
-                                    'value'         => 'careLevelMS',
-                                ),
-                                array(
-                                    'label'         => 'Care Level - SN',
-                                    'value'         => 'careLevelSN',
-                                ),
-                                array(
-                                    'label'         => 'Care Level - RT',
-                                    'value'         => 'careLevelRT',
-                                ),
-                                array(
-                                    'label'         => 'Care Level - RC',
-                                    'value'         => 'careLevelRC',
-                                ),
-                                array(
-                                    'label'         => 'Volunteer Inquiry',
-                                    'value'         => 'volunteerinquiry',
-                                ),
-                                array(
-                                    'label'         => 'Career Inquiry',
-                                    'value'         => 'careerinquiry',
-                                ),
-                                array(
-                                    'label'         => 'Vendor Inquiry',
-                                    'value'         => 'vendorinquiry',
-                                ),
-                                array(
-                                    'label'         => 'Result Residents Cottage',
-                                    'value'         => 'resultcottage',
-                                ),
-                                array(
-                                    'label'         => 'Result Residents Apartment',
-                                    'value'         => 'resultapartment',
-                                ),
-                                array(
-                                    'label'         => 'Result Residents Townhouse',
-                                    'value'         => 'resulttownhouse',
-                                ),
-                                array(
-                                    'label'         => 'Result Residents Apartment',
-                                    'value'         => 'resultapartment',
-                                ),
-                                array(
-                                    'label'         => 'expansionStatus',
-                                    'value'         => 'expansionstatus',
-                                ),
-                                array(
-                                    'label'         => 'MarketSource',
-                                    'value'         => 'marketsource',
-                                ),
+                                array('label' => 'Email','value' => 'email',),
+                                array('label' => 'firstName','value' => 'firstname',),
+                                array('label' => 'lastName','value' => 'lastname',),
+                                array('label' => 'Phone','value' => 'phone',),
+                                array('label' => 'Comments','value' => 'Message',),
+                                array('label' => 'CommunityUnique','value' => 'communityunique',),
+                                array('label' => 'InquiringFor','value' => 'inquiringfor',),
+                                array('label' => 'lovedFirst','value' => 'lovedfirst',),
+                                array('label' => 'lovedLast','value' => 'lovedlast',),
+                                array('label' => 'utmSource','value' => 'utmsource',),
+                                array('label' => 'utmMedium','value' => 'utmmedium',),
+                                array('label' => 'utmCampaign','value' => 'utmcampaign',),
+                                array('label' => 'utmId', 'value' => 'utmid',),
+                                array('label' => 'GCLID','value' => 'gclid'),
+                                array('label' => 'Care Level - AL','value' => 'careLevelAL',),
+                                array('label' => 'Care Level - IL no expansion','value' => 'careLevelIL',),
+                                array('label' => 'Care Level - MS','value' => 'careLevelMS',),
+                                array('label' => 'Care Level - SN','value' => 'careLevelSN',),
+                                array('label' => 'Care Level - RT', 'value' => 'careLevelRT',),
+                                array('label' => 'Care Level - RC','value' => 'careLevelRC'),
+                                array('label' => 'Volunteer Inquiry','value' => 'volunteerinquiry',),
+                                array('label' => 'Career Inquiry', 'value' => 'careerinquiry',),
+                                array('label' => 'Vendor Inquiry', 'value' => 'vendorinquiry'),
+                                array('label' => 'Result Residents Cottage', 'value' => 'resultcottage',),
+                                array('label' => 'Result Residents Apartment', 'value' => 'resultapartment',),
+                                array('label' => 'Result Residents Townhouse', 'value' => 'resulttownhouse',),
+                                array('label' => 'Result Residents Apartment', 'value' => 'resultapartment',),
+                                array('label' => 'expansionStatus', 'value' => 'expansionstatus',),
+                                array('label' => 'MarketSource', 'value' => 'marketsource',),
                             ),
                         ),
                     ),
@@ -177,147 +90,134 @@ class GFAPITrap extends GFFeedAddOn {
     }
 
     public function process_feed( $feed, $entry, $form ) {
-        error_log('Feed data: ' . print_r($feed, true), 3, plugin_dir_path(__FILE__) . 'debug.log');
+
+        //logs values not just id's of inputs
+        $feedData = array();
+        foreach ($feed as $key => $value) {
+            if (is_array($value)) {
+                foreach ($value as $subKey => $subValue) {
+                    $feedData[$key . '_' . $subKey] = $subValue;
+                }
+            } else {
+                $feedData[$key] = $value;
+            }
+        }
+        error_log('Feed data: ' . print_r($feedData, true), 3, plugin_dir_path(__FILE__) . 'debug.log');
+        //end logs values not just id's of inputs
 
         var_dump($feed);
         error_log('this is the feed:');
         error_log(print_r($feed, true));
         $metaData = $this->get_generic_map_fields( $feed, 'formFieldMap' );
     
+        // Mapping Arrays (Make these complete!)
+        $communityUniqueMap = [
+            'LakeForestPlacePH' => 'Lake Forest Place', // Lake Forest Place
+            'PresHomesTenTwentyGrove' => 'Ten Twenty Grove', // Ten Twenty Grove
+            'TheMooringsPH' => 'The Moorings of Arlington Heights', // The Moorings
+            'WestminsterPlace' => 'Westminster Place', // Westminster Place
+            'PresbyterianHomesCorporate' => 'Presbyterian Homes Corporate', // Presbyterian Homes Corporate
+        ];
+
+        //CareLevels stay ID's these are the values not the Labels
+        $careLevelMap = [
+            'Assisted Living' => 'Assisted Living',
+            'Independent Living' => 'Independent Living',
+            'Memory Support' => 'Memory Care',
+            'Skilled Nursing' => 'Skilled Nursing',
+            'Rehab' => 'Rehab',
+            'Respite' => 'Respite',
+        ];
+
+        //Apartment Preference stay ID's these are the values not the Labels
+        $apartmentPreferenceMap = [
+            'Cottage' => 'Cottage', 
+            'Townhouse' => 'Townhouse', 
+            'Apartment' => 'Apartments', 
+        ];
+
+        //Expansion Status stay ID's these are the values not the Labels
+        $expansionStatusMap = [
+            '1. Active Interest' => '1. Active Interest', 
+        ];
+
+        //Market Source stay ID's these are the values not the Labels
+        $marketSourceMap = [
+            'Referral from friend' => 'Referral: FAM/FRIEND',
+            'Referral from family' => 'Referral: FAM/FRIEND',
+            'Referral from resident' => 'Referral: Resident',
+            'Referral from a professional' => 'Referral: Professional',
+            'Newspaper' => 'Adv.Newspaper',
+            'Internet search' => 'Web: Organic Search',
+            'Direct Mail' => 'EMAIL BLAST', //needs to be either direct mail or email
+            'Community website' => 'WEBSITE', 
+            'Other' => 'Referral: Other', 
+        ];
+
         $communityunique = isset($metaData['communityunique']) ? $this->get_field_value($form, $entry, $metaData['communityunique']) : null;
-    
-        $email = isset($metaData['email']) ? $this->get_field_value($form, $entry, $metaData['email']) : null;
-    
-        $first = isset($metaData['firstname']) ? $this->get_field_value($form, $entry, $metaData['firstname']) : null;
-    
-        $last = isset($metaData['lastname']) ? $this->get_field_value($form, $entry, $metaData['lastname']) : null;
-    
-        $phone  = isset($metaData['phone']) ? preg_replace('/\D/', '', $this->get_field_value($form, $entry, $metaData['phone'])) : null;
-    
-        $comments = isset($metaData['Message']) ? $this->get_field_value($form, $entry, $metaData['Message']) : null;
-    
-        /*Interest in - Carelevels*/
-        $careLevelAL1 = isset($metaData['careLevelAL']) ? $this->get_field_value($form, $entry, $metaData['careLevelAL']) : null;
-        $careLevelIL1 = isset($metaData['careLevelIL']) ? $this->get_field_value($form, $entry, $metaData['careLevelIL']) : null;
-        $careLevelMS1 = isset($metaData['careLevelMS']) ? $this->get_field_value($form, $entry, $metaData['careLevelMS']) : null;
-        $careLevelRC1 = isset($metaData['careLevelRC']) ? $this->get_field_value($form, $entry, $metaData['careLevelRC']) : null;
-        $careLevelRT1 = isset($metaData['careLevelRT']) ? $this->get_field_value($form, $entry, $metaData['careLevelRT']) : null;
-        $careLevelSN1 = isset($metaData['careLevelSN']) ? $this->get_field_value($form, $entry, $metaData['careLevelSN']) : null;
-        $careLevelST1 = isset($metaData['careLevelST']) ? $this->get_field_value($form, $entry, $metaData['careLevelST']) : null;
-
-        /*Inquiries*/
-        $volunteerInquiry = isset($metaData['volunteerinquiry']) ? $this->get_field_value($form, $entry, $metaData['volunteerinquiry']) : null;
-        $careerInquiry = isset($metaData['careerinquiry']) ? $this->get_field_value($form, $entry, $metaData['careerinquiry']) : null;
-        $vedorInquiry = isset($metaData['vendorinquiry']) ? $this->get_field_value($form, $entry, $metaData['vendorinquiry']) : null;
-
-        /*Interest in - Carelevels Array*/
-        $careLevels = [
-            'careLevelAL' => $careLevelAL1,
-            'careLevelIL' => $careLevelIL1,
-            'careLevelMS' => $careLevelMS1,
-            'careLevelRC' => $careLevelRC1,
-            'careLevelRT' => $careLevelRT1,
-            'careLevelSN' => $careLevelSN1,
-            'careLevelST' => $careLevelST1,
-        ];
-
-        /*Interest in - Carelevels Value*/
-        $CareLevelValue = null;
-        foreach ($careLevels as $level => $value) {
-            if ($value !== null && $value !== '') {
-                $CareLevelValue = $value;
-                break;
-            }
-        }
-
-        /*Inquiries Array*/
-        $inquireLevels = [
-            'volunteerinquiry1' => $volunteerInquiry,
-            'careerinquiry1' => $careerInquiry,
-            'vendorinquiry1' => $vedorInquiry
-        ];
-
-        /*excluded inquiry levels from API send*/
-        $excludedInquiryLevels = array_filter($inquireLevels);
-
-        if (!empty($excludedInquiryLevels)) {
-            error_log('Skipping API request due to excluded inquiry level');
-            return;
-        }
-
-        /*Error logging*/
-        $LogFilePath = plugin_dir_path(__FILE__) . 'debug.log';
-        error_log('Care Level - AL: ' . print_r($careLevelAL1, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - IL: ' . print_r($careLevelIL1, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - MS: ' . print_r($careLevelMS1, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - RC: ' . print_r($careLevelRC1, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - RT: ' . print_r($careLevelRT1, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - SN: ' . print_r($careLevelSN1, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - ST: ' . print_r($careLevelST1, true) . PHP_EOL, 3, $LogFilePath);
-                
-        error_log('Care Level Value: ' . print_r($CareLevelValue, true) . PHP_EOL, 3, $LogFilePath);
-
-        /*Residence Preference*/
-        $resultCottage = isset($metaData['resultcottage']) ? $this->get_field_value($form, $entry, $metaData['resultcottage']) : null;
-        $resultTwonhouses = isset($metaData['resulttownhouses']) ? $this->get_field_value($form, $entry, $metaData['resulttownhouses']) : null;
-        $resultApartment = isset($metaData['resultapartment']) ? $this->get_field_value($form, $entry, $metaData['resultapartment']) : null;
-
-        /*Residence Preference Array*/
-        $residencePreferences = [
-            'resultcottage1' => $resultCottage,
-            'resulttownhouses1' => $resultTwonhouses,
-            'resultapartment1' => $resultApartment,
-        ];
-
-        /*residence preference value*/
-        $residenceValue = null;
-        foreach ($residencePreferences as $residence => $value) {
-            if ($value !== null && $value !== '') {
-                $residenceValue = $value;
-                break;
-            }
-        }
-
-        /*error log for residence preference*/
-        error_log('Cottages: ' . print_r($resultCottage, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - IL: ' . print_r($resultTwonhouses, true) . PHP_EOL, 3, $LogFilePath);
-        error_log('Care Level - MS: ' . print_r($resultApartment, true) . PHP_EOL, 3, $LogFilePath);
-                
-        error_log('Appartment Prefernce Value: ' . print_r($residenceValue, true) . PHP_EOL, 3, $LogFilePath);
-
-        /*prospect or contact into type*/
-        $inquiringfor = isset($metaData['inquiringfor']) ? $this->get_field_value($form, $entry, $metaData['inquiringfor']) : null;
-
-        /*prospect or contact change based on inquiring for*/
-        if ($inquiringfor == 'Myself') {
-            $individualType = 'Prospect';
-            $relationshipType = '';
-        } elseif ($inquiringfor == 'A Loved One') {
-            $individualType = 'Contact';
-            $relationshipType = 'Prospect';
+        if ($communityunique) {
+            $communityunique = isset($communityUniqueMap[$communityunique]) ? $communityUniqueMap[$communityunique] : $communityunique;
         } else {
-            $individualType = 'Prospect';
-            $relationshipType = '';
+            //error_log('Community unique value is null', 3, plugin_dir_path(__FILE__) . 'debug.log');
+            // You can set a default value for $communityunique 
+            $communityunique = 'Presbyterian Homes Corporate'; // default if empty
         }
 
-        /*if contact/loved one*/
+        $careLevelFields = array('careLevelAL', 'careLevelIL', 'careLevelMS', 'careLevelSN', 'careLevelRT', 'careLevelRC');
+        $CareLevelValue = null;
+        foreach ($careLevelFields as $field) {
+            if (isset($metaData[$field])) {
+                $careLevelValueRaw = $this->get_field_value($form, $entry, $metaData[$field]);
+                if (isset($careLevelMap[$careLevelValueRaw])) {
+                    $CareLevelValue = $careLevelMap[$careLevelValueRaw];
+                    break;
+                } else {
+                    error_log('Invalid care level value: ' . $careLevelValueRaw, 3, plugin_dir_path(__FILE__) . 'debug.log');
+                }
+            }
+        }
+        
+        // Check if $CareLevelValue is still null
+        if ($CareLevelValue === null) {
+            error_log('Care level value is null', 3, plugin_dir_path(__FILE__) . 'debug.log');
+            // You can set a default value for $CareLevelValue 
+            $CareLevelValue = 'Assisted Living'; // default if empty
+        }
+
+        $residencePreferenceRaw = $this->get_field_value($form, $entry, $metaData['apartmentpreference']); // Get the raw value
+        preg_match_all('/\{(.*?)\}/', $residencePreferenceRaw, $matches); // Extract values within curly braces
+        $residencePreferenceValues = $matches[1]; // Array of values like "residencePreference-LakeForest:28"
+        $residenceValue = null;
+        foreach ($residencePreferenceValues as $value) {
+            $parts = explode(':', $value);
+            if (isset($parts[1]) && isset($apartmentPreferenceMap[$parts[1]])) {
+                $residenceValue = $apartmentPreferenceMap[$parts[1]];
+                break; // Stop after finding the first valid mapping
+            }
+        }
+
+        $expansionstatus = isset($metaData['expansionstatus']) ? $this->get_field_value($form, $entry, $metaData['expansionstatus']) : null;
+        $expansionstatus = isset($expansionStatusMap[$expansionstatus]) ? $expansionStatusMap[$expansionstatus] : null;
+
+        $marketsource = isset($metaData['marketsource']) ? $this->get_field_value($form, $entry, $metaData['marketsource']) : null;
+        $marketsource = isset($marketSourceMap[$marketsource]) ? $marketSourceMap[$marketsource] : null;
+
+        $email = isset($metaData['email']) ? $this->get_field_value($form, $entry, $metaData['email']) : null;
+        $first = isset($metaData['firstname']) ? $this->get_field_value($form, $entry, $metaData['firstname']) : null;
+        $last = isset($metaData['lastname']) ? $this->get_field_value($form, $entry, $metaData['lastname']) : null;
+        $phone  = isset($metaData['phone']) ? preg_replace('/\D/', '', $this->get_field_value($form, $entry, $metaData['phone'])) : null;
+        $comments = isset($metaData['Message']) ? $this->get_field_value($form, $entry, $metaData['Message']) : null;
+        $inquiringfor = isset($metaData['inquiringfor']) ? $this->get_field_value($form, $entry, $metaData['inquiringfor']) : null;
         $lovedfirst = isset($metaData['lovedfirst']) ? $this->get_field_value($form, $entry, $metaData['lovedfirst']) : null;
         $lovedlast = isset($metaData['lovedlast']) ? $this->get_field_value($form, $entry, $metaData['lovedlast']) : null;
-    
-        /*utm*/
         $utmsource = isset($metaData['utmsource']) ? $this->get_field_value($form, $entry, $metaData['utmsource']) : null;
         $utmcampaign = isset($metaData['utmcampaign']) ? $this->get_field_value($form, $entry, $metaData['utmcampaign']) : null;
         $utmmedium = isset($metaData['utmmedium']) ? $this->get_field_value($form, $entry, $metaData['utmmedium']) : null;
         $utmid = isset($metaData['utmid']) ? $this->get_field_value($form, $entry, $metaData['utmid']) : null;
         $gclid = isset($metaData['gclid']) ? $this->get_field_value($form, $entry, $metaData['gclid']) : null;
-    
-        /*expansion status*/
-        $expansionstatus = isset($metaData['expansionstatus']) ? $this->get_field_value($form, $entry, $metaData['expansionstatus']) : null;
 
-        /*market source*/
-        $marketsource = isset($metaData['marketsource']) ? $this->get_field_value($form, $entry, $metaData['marketsource']) : null;
+        $primaryContactId = ($inquiringfor == 'Myself') ? 'prospect' : 'contact';  
 
-        /*data Array*/
         $data = array(
             'communityunique' => $communityunique,
             'email' => $email,
@@ -335,126 +235,23 @@ class GFAPITrap extends GFFeedAddOn {
             'apartmentpreference' => $residenceValue,
             'expansionstatus' => $expansionstatus,
             'marketsource' => $marketsource,
-            'carelevel' => $CareLevelValue
+            'carelevel' => $CareLevelValue,
+            'primarycontactid' => $primaryContactId
         );
-    
+
         error_log('this is the data: ' . print_r($data, true));
-        $response = $this->sendApiRequest($data, $inquiringfor, $individualType, $relationshipType);
+        $response = $this->sendApiRequest($data, $inquiringfor);
         error_log('this is the response: ' . print_r($response, true));
     }
 
-    public function sendApiRequest(array $data, $inquiringfor, $individualType, $relationshipType) {
+    public function sendApiRequest(array $data, $inquiringfor) {
         error_log('API request data: ' . print_r($data, true), 3, plugin_dir_path(__FILE__) . 'debug.log');
-
-        $sendData = [
-            "individuals" => [
-                [
-                    "communities" => [
-                        [
-                            "NameUnique" => $data['communityunique'],
-                        ]
-                    ],
-                    "properties" => [
-                        [
-                            "property" => "firstname",
-                            "value" => $data['FirstName']
-                        ], [
-                            "property" => "lastname",
-                            "value" => $data['LastName']
-                        ], [
-                            "property" => "Email",
-                            "value" => $data['email']
-                        ], [
-                            "property" => "Home Phone",
-                            "value" => $data['Phone']
-                        ],[
-                            "property" => "Care Level", 
-                            "value" => $data['carelevel'],
-                        ],[
-                            "property" => "type",
-                           "value" => $individualType
-                        ],[
-                            "property" => "utmSource",
-                            "value" => $data['utmsource']
-                        ],[
-                            "property" => "UTM Campaign",
-                            "value" => $data['utmcampaign']
-                        ],[
-                            "property" => "UTM Medium",
-                            "value" => $data['utmmedium']
-                        ],[
-                            "property" => "UTM Id",
-                            "value" => $data['utmid']
-                        ],[
-                            "property" => "GCLID",
-                            "value" => $data['gclid']
-                        ],[
-                            "property" => "Market Source",
-                            "value" => $data['marketsource']
-                        ],[
-                            "property" => "Apartment Preference",
-                            "value" => $data['apartmentpreference']
-                        ]
-                    ],
-                    "activities" => [
-                        [
-                            "reInquiry" => true,
-                            "description" => "Webform",
-                            "activityStatusMasterId" => 2,
-                            "activityResultMasterId" => 2,
-                            "activityTypeMasterId" => 17
-                        ]
-                    ],
-                    "notes" => [
-                        [
-                            "Message" => (string)$data['Message'], // Cast to string
-                        ]
-                    ]
-                ],
-                [
-                    "communities" => [
-                        [
-                            "NameUnique" => $data['communityunique'],
-                        ]
-                    ],
-                    "relationship" => "Family Member",
-                    "properties" => [
-            
-                        [
-                            "property" => "firstname",
-                            "value" => $data['lovedfirst']
-                        ],
-                        [
-                            "property" => "lastname",
-                            "value" => $data['lovedlast']
-                        ],
-                        [
-                            "property" => "type",
-                            "value" => $relationshipType
-                        ]
-                    ]
-                ]
-            ]
-        ];
-
-        // Add the "Expansion Status" property to the prospect be it indiviaul or Relationship
-        if ($relationshipType == 'Prospect') {
-            $sendData["individuals"][1]["properties"][] = [
-                "property" => "Expansion Status",
-                "value" => $data['expansionstatus']
-            ];
-        } elseif ($individualType == 'Prospect') {
-            $sendData["individuals"][0]["properties"][] = [
-                "property" => "Expansion Status",
-                "value" => $data['expansionstatus']
-            ];
-        }
 
         $primaryApiKey = get_option('gravity_api_trap_primary_api_key');
         $secondaryApiKey = get_option('gravity_api_trap_secondary_api_key');
         $url = get_option('gravity_api_trap_endpoint_url');
-    
-        $getResponse = wp_remote_get($url, [
+
+        $getResponse = wp_remote_get($url . '?email=' . $data['email'], [
             'method' => 'GET',
             'headers' => [
                 'Ocp-Apim-Subscription-Key' => $primaryApiKey,
@@ -462,9 +259,9 @@ class GFAPITrap extends GFFeedAddOn {
                 'PortalId'     => get_option('gravity_api_trap_portal_id'),
             ]
         ]);
-    
+
         if (is_wp_error($getResponse)) {
-            $getResponse = wp_remote_get($url, [
+            $getResponse = wp_remote_get($url . '?email=' . $data['email'], [
                 'method' => 'GET',
                 'headers' => [
                     'Ocp-Apim-Subscription-Key' => $secondaryApiKey,
@@ -478,58 +275,154 @@ class GFAPITrap extends GFFeedAddOn {
             error_log('API request failed: ' . $getResponse->get_error_message(), 3, plugin_dir_path(__FILE__) . 'debug.log');
             return;
         }
-        
-        /*Check for existing data and add comments if true*/
-        $existingData = json_decode($getResponse['body'], true);
-    
-        if ($existingData === null) {
-            error_log('Invalid response from API', 3, plugin_dir_path(__FILE__) . 'debug.log');
-            return;
-        } else {
-            foreach ($sendData["individuals"] as $index => $individual) {
-                foreach ($individual["properties"] as $property) {
-                    if (isset($existingData["individuals"][$index]["properties"][$property["property"]]) && $existingData["individuals"][$index]["properties"][$property["property"]] != $property["value"]) {
-                        $sendData["individuals"][$index]["comments"][] = "Changed " . $property["property"] . " from " . $existingData["individuals"][$index]["properties"][$property["property"]] . " to " . $property["value"];
-                    }
-                }
-            }
-        
 
-                $args = [
-                    'method' => 'POST',
-                    'headers' => [
-                        'Ocp-Apim-Subscription-Key' => $primaryApiKey,
-                        'Content-Type' => 'application/json',
-                        'PortalId'     => get_option('gravity_api_trap_portal_id'),
-                    ],
-                    'body' => json_encode($sendData)
-                ];
-    
-            error_log('API request JSON data: ' . json_encode($sendData, JSON_PRETTY_PRINT), 3, plugin_dir_path(__FILE__) . 'debug.log');
+        $existingIndividuals = json_decode(wp_remote_retrieve_body($getResponse), true);
 
-
-            $response = wp_remote_post($url, $args);
-    
-            if (is_wp_error($response)) {
-                $args['headers']['Ocp-Apim-Subscription-Key'] = $secondaryApiKey;
-                $response = wp_remote_post($url, $args);
+        $existingIndividual = null;
+        foreach ($existingIndividuals as $individual) {
+            if ($individual['properties'][0]['value'] === $data['email']) { // Check if email matches
+                $existingIndividual = $individual;
+                break;
             }
-    
-            if (is_wp_error($response)) {
-                error_log('API request failed: ' . $response->get_error_message(), 3, plugin_dir_path(__FILE__) . 'debug.log');
-                return;
-            }
-
-            $responseCode = wp_remote_retrieve_response_code($response);
-            $responseBody = wp_remote_retrieve_body($response);
-            
-            if ($responseCode === 200) {
-                error_log('API request successful: ' . $responseCode . ' - ' . $responseBody, 3, plugin_dir_path(__FILE__) . 'debug.log');
-            } else {
-                error_log('API request failed: ' . $responseCode . ' - ' . $responseBody, 3, plugin_dir_path(__FILE__) . 'debug.log');
-            }
-    
-            return $response;
         }
+
+        if ($existingIndividual) {
+            // Update existing individual
+            $sendData = [
+                "individuals" => [
+                    [
+                        "id" => $existingIndividual['id'],
+                        "IndividualID" => $existingIndividual['id'], 
+                        "communities" => [
+                            ["NameUnique" => $data['communityunique']]
+                        ],
+                        "properties" => [
+                            ["property" => "FirstName", "value" => $data['FirstName']], 
+                            ["property" => "LastName", "value" => $data['LastName']], 
+                            ["property" => "Home Phone", "value" => $data['Phone']],
+                            ["property" => "Email", "value" => $data['email']],
+                            ["property" => "Care Level", "value" => $data['carelevel']],
+                            ["property" => "Apartment Preference", "value" => $data['apartmentpreference']],
+                            ["property" => "Expansion Status", "value" => $data['expansionstatus']],
+                            ["property" => "UTM Source", "value" => $data['utmsource']],
+                            ["property" => "UTM Medium", "value" => $data['utmmedium']],
+                            ["property" => "UTM Campaign", "value" => $data['utmcampaign']],
+                            ["property" => "UTM Id", "value" => $data['utmid']],
+                            ["property" => "GCLID", "value" => $data['gclid']],
+                            ["property" => "Market Source", "value" => $data['marketsource']],
+                            ["property" => "type", "value" => $data['primarycontactid']]
+                        ],
+                        "activities" => [
+                            [
+                                "reInquiry" => true,
+                                "description" => "Webform",
+                                "activityStatusMasterId" => 2,
+                                "activityResultMasterId" => 2,
+                                "activityTypeMasterId" => 17
+                            ]
+                        ],
+                        "notes" => [
+                            ["Message" => (string)$data['Message']] // Cast to string
+                        ]
+                    ],
+                    [
+                        "relationship" => "Family Member",
+                        "communities" => [
+                            ["NameUnique" => $data['communityunique']]
+                        ],
+                        "properties" => [
+                            ["property" => "FirstName", "value" => $data['lovedfirst']],
+                            ["property" => "LastName", "value" => $data['lovedlast']],
+                            ["property" => "type", "value" => ($data['primarycontactid'] == 'Prospect') ? 'Contact' : 'Prospect']
+                        ]
+                    ]
+                ]
+            ];
+        } else {
+            // Create new individual
+            $sendData = [
+                "individuals" => [
+                    [
+                        "communities" => [
+                            ["NameUnique" => $data['communityunique']]
+                        ],
+                        "properties" => [
+                            ["property" => "FirstName", "value" => $data['FirstName']], 
+                            ["property" => "LastName", "value" => $data['LastName']], 
+                            ["property" => "Home Phone", "value" => $data['Phone']],
+                            ["property" => "Email", "value" => $data['email']],
+                            ["property" => "Care Level", "value" => $data['carelevel']],
+                            ["property" => "Apartment Preference", "value" => $data['apartmentpreference']],
+                            ["property" => "Expansion Status", "value" => $data['expansionstatus']],
+                            ["property" => "UTM Source", "value" => $data['utmsource']],
+                            ["property" => "UTM Medium", "value" => $data['utmmedium']],
+                            ["property" => "UTM Campaign", "value" => $data['utmcampaign']],
+                            ["property" => "UTM Id", "value" => $data['utmid']],
+                            ["property" => "GCLID", "value" => $data['gclid']],
+                            ["property" => "Market Source", "value" => $data['marketsource']],
+                            ["property" => "type", "value" => $data['primarycontactid']]
+                        ],
+                        "activities" => [
+                            [
+                                "reInquiry" => false,
+                                "description" => "Webform",
+                                "activityStatusMasterId" => 2,
+                                "activityResultMasterId" => 2,
+                                "activityTypeMasterId" => 17
+                            ]
+                        ],
+                        "notes" => [
+                            ["Message" => (string)$data['Message']] // Cast to string
+                        ]
+                    ],
+                    [
+                        "relationship" => "Family Member",
+                        "communities" => [
+                            ["NameUnique" => $data['communityunique']]
+                        ],
+                        "properties" => [
+                            ["property" => "FirstName", "value" => $data['lovedfirst']],
+                            ["property" => "LastName", "value" => $data['lovedlast']],
+                            ["property" => "type", "value" => ($data['primarycontactid'] == 'Prospect') ? 'Contact' : 'Prospect']
+                        ]
+                    ]
+                ]
+            ];
+        }
+        
+        $args = [
+            'method' => 'POST',
+            'headers' => [
+                'Ocp-Apim-Subscription-Key' => $primaryApiKey,
+                'Content-Type' => 'application/json',
+                'PortalId'     => get_option('gravity_api_trap_portal_id'),
+            ],
+            'body' => json_encode($sendData)
+        ];
+
+        error_log('API request JSON data: ' . json_encode($sendData, JSON_PRETTY_PRINT), 3, plugin_dir_path(__FILE__) . 'debug.log');
+
+        $response = wp_remote_post($url, $args);
+
+        if (is_wp_error($response)) {
+            $args['headers']['Ocp-Apim-Subscription-Key'] = $secondaryApiKey;
+            $response = wp_remote_post($url, $args);
+        }
+
+        if (is_wp_error($response)) {
+            error_log('API request failed: ' . $response->get_error_message(), 3, plugin_dir_path(__FILE__) . 'debug.log');
+            return;
+        }
+
+        $responseCode = wp_remote_retrieve_response_code($response);
+        $responseBody = wp_remote_retrieve_body($response);
+
+        if ($responseCode === 200) {
+            error_log('API request successful: ' . $responseCode . ' - ' . $responseBody, 3, plugin_dir_path(__FILE__) . 'debug.log');
+        } else {
+            error_log('API request failed: ' . $responseCode . ' - ' . $responseBody, 3, plugin_dir_path(__FILE__) . 'debug.log');
+        }
+
+        return $response;
     }
 }
