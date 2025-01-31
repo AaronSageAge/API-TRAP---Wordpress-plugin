@@ -131,9 +131,9 @@ class GFAPITrap extends GFFeedAddOn {
 
         //Apartment Preference stay ID's these are the values not the Labels
         $apartmentPreferenceMap = [
-            'Cottage' => 'Cottage', 
-            'Townhouse' => 'Townhouse', 
-            'Apartment' => 'Apartments', 
+            'resultcottage' => 'Cottage', 
+            'resulttownhouse' => 'Townhouse', 
+            'resultapartment' => 'Apartments', 
         ];
 
         //Expansion Status stay ID's these are the values not the Labels
@@ -184,17 +184,9 @@ class GFAPITrap extends GFFeedAddOn {
             $CareLevelValue = 'Assisted Living'; // default if empty
         }
 
-        $residencePreferenceRaw = $this->get_field_value($form, $entry, $metaData['apartmentpreference']); // Get the raw value
-        preg_match_all('/\{(.*?)\}/', $residencePreferenceRaw, $matches); // Extract values within curly braces
-        $residencePreferenceValues = $matches[1]; // Array of values like "residencePreference-LakeForest:28"
-        $residenceValue = null;
-        foreach ($residencePreferenceValues as $value) {
-            $parts = explode(':', $value);
-            if (isset($parts[1]) && isset($apartmentPreferenceMap[$parts[1]])) {
-                $residenceValue = $apartmentPreferenceMap[$parts[1]];
-                break; // Stop after finding the first valid mapping
-            }
-        }
+
+        $apartmentpreference = isset($metaData['resultapartment']) ? $this->get_field_value($form, $entry, $metaData['resultapartment']) : null;
+        $apartmentpreference = isset( $apartmentPreferenceMap [$apartmentpreference]) ?  $apartmentPreferenceMap [$apartmentpreference] : null;
 
         $expansionstatus = isset($metaData['expansionstatus']) ? $this->get_field_value($form, $entry, $metaData['expansionstatus']) : null;
         $expansionstatus = isset($expansionStatusMap[$expansionstatus]) ? $expansionStatusMap[$expansionstatus] : null;
@@ -216,7 +208,9 @@ class GFAPITrap extends GFFeedAddOn {
         $utmid = isset($metaData['utmid']) ? $this->get_field_value($form, $entry, $metaData['utmid']) : null;
         $gclid = isset($metaData['gclid']) ? $this->get_field_value($form, $entry, $metaData['gclid']) : null;
 
-        $primaryContactId = ($inquiringfor == 'Myself') ? 'prospect' : 'contact';  
+        error_log('Inquiring for: ' . $inquiringfor, 3, plugin_dir_path(__FILE__) . 'debug.log');
+        $primaryContactId = ($inquiringfor == 'Myself') ? 'prospect' : 'contact';
+        error_log('Primary contact ID: ' . $primaryContactId, 3, plugin_dir_path(__FILE__) . 'debug.log');
 
         $data = array(
             'communityunique' => $communityunique,
@@ -232,7 +226,7 @@ class GFAPITrap extends GFFeedAddOn {
             'utmmedium' => $utmmedium,
             'utmid' => $utmid,
             'gclid' => $gclid,
-            'apartmentpreference' => $residenceValue,
+            'apartmentpreference' => $apartmentpreference,
             'expansionstatus' => $expansionstatus,
             'marketsource' => $marketsource,
             'carelevel' => $CareLevelValue,
@@ -246,11 +240,11 @@ class GFAPITrap extends GFFeedAddOn {
 
     public function sendApiRequest(array $data, $inquiringfor) {
         error_log('API request data: ' . print_r($data, true), 3, plugin_dir_path(__FILE__) . 'debug.log');
-
+    
         $primaryApiKey = get_option('gravity_api_trap_primary_api_key');
         $secondaryApiKey = get_option('gravity_api_trap_secondary_api_key');
         $url = get_option('gravity_api_trap_endpoint_url');
-
+    
         $getResponse = wp_remote_get($url . '?email=' . $data['email'], [
             'method' => 'GET',
             'headers' => [
@@ -259,7 +253,7 @@ class GFAPITrap extends GFFeedAddOn {
                 'PortalId'     => get_option('gravity_api_trap_portal_id'),
             ]
         ]);
-
+    
         if (is_wp_error($getResponse)) {
             $getResponse = wp_remote_get($url . '?email=' . $data['email'], [
                 'method' => 'GET',
@@ -270,14 +264,14 @@ class GFAPITrap extends GFFeedAddOn {
                 ]
             ]);
         }
-
+    
         if (is_wp_error($getResponse)) {
             error_log('API request failed: ' . $getResponse->get_error_message(), 3, plugin_dir_path(__FILE__) . 'debug.log');
             return;
         }
-
+    
         $existingIndividuals = json_decode(wp_remote_retrieve_body($getResponse), true);
-
+    
         $existingIndividual = null;
         foreach ($existingIndividuals as $individual) {
             if ($individual['properties'][0]['value'] === $data['email']) { // Check if email matches
@@ -285,131 +279,267 @@ class GFAPITrap extends GFFeedAddOn {
                 break;
             }
         }
-
+    
         if ($existingIndividual) {
             // Update existing individual
-            $individual = [
-                "id" => $existingIndividual['id'],
-                "IndividualID" => $existingIndividual['id'], 
-                "communities" => [
-                    ["NameUnique" => $data['communityunique']]
-                ],
-                "properties" => [
-                    ["property" => "FirstName", "value" => $data['FirstName']], 
-                    ["property" => "LastName", "value" => $data['LastName']], 
-                    ["property" => "Home Phone", "value" => $data['Phone']],
-                    ["property" => "Email", "value" => $data['email']],
-                    ["property" => "Care Level", "value" => $data['carelevel']],
-                    ["property" => "Apartment Preference", "value" => $data['apartmentpreference']],
-                    ["property" => "Expansion Status", "value" => $data['expansionstatus']],
-                    ["property" => "UTM Source", "value" => $data['utmsource']],
-                    ["property" => "UTM Medium", "value" => $data['utmmedium']],
-                    ["property" => "UTM Campaign", "value" => $data['utmcampaign']],
-                    ["property" => "UTM Id", "value" => $data['utmid']],
-                    ["property" => "GCLID", "value" => $data['gclid']],
-                    ["property" => "Market Source", "value" => $data['marketsource']],
-                    ["property" => "type", "value" => $data['primarycontactid']]
-                ],
-                "activities" => [
-                    [
-                        "reInquiry" => true,
-                        "description" => "Webform",
-                        "activityStatusMasterId" => 2,
-                        "activityResultMasterId" => 2,
-                        "activityTypeMasterId" => 17
-                    ]
-                ],
-                "notes" => [
-                    ["Message" => (string)$data['Message']] // Cast to string
-                ]
-            ];
-        } else {
-            // Create new individual
-            $individual = [
-                "communities" => [
-                    ["NameUnique" => $data['communityunique']]
-                ],
-                "properties" => [
-                    ["property" => "FirstName", "value" => $data['FirstName']], 
-                    ["property" => "LastName", "value" => $data['LastName']], 
-                    ["property" => "Home Phone", "value" => $data['Phone']],
-                    ["property" => "Email", "value" => $data['email']],
-                    ["property" => "Care Level", "value" => $data['carelevel']],
-                    ["property" => "Apartment Preference", "value" => $data['apartmentpreference']],
-                    ["property" => "Expansion Status", "value" => $data['expansionstatus']],
-                    ["property" => "UTM Source", "value" => $data['utmsource']],
-                    ["property" => "UTM Medium", "value" => $data['utmmedium']],
-                    ["property" => "UTM Campaign", "value" => $data['utmcampaign']],
-                    ["property" => "UTM Id", "value" => $data['utmid']],
-                    ["property" => "GCLID", "value" => $data['gclid']],
-                    ["property" => "Market Source", "value" => $data['marketsource']],
-                    ["property" => "type", "value" => $data['primarycontactid']]
-                ],
-                "activities" => [
-                    [
-                        "reInquiry" => false,
-                        "description" => "Webform",
-                        "activityStatusMasterId" => 2,
-                        "activityResultMasterId" => 2,
-                        "activityTypeMasterId" => 17
-                    ]
-                ],
-                "notes" => [
-                    ["Message" => (string)$data['Message']] // Cast to string
-                ]
-            ];
-        }
-    
-        $sendData = [
-            "individuals" => [
-                $individual,
-                [
-                    "relationship" => "Family Member",
+            if ($data['primarycontactid'] === 'prospect') {
+                $individual = [
+                    "id" => $existingIndividual['id'],
+                    "IndividualID" => $existingIndividual['id'], 
                     "communities" => [
                         ["NameUnique" => $data['communityunique']]
                     ],
                     "properties" => [
-                        ["property" => "FirstName", "value" => $data['lovedfirst']],
-                        ["property" => "LastName", "value" => $data['lovedlast']],
-                        ["property" => "type", "value" => 'contact']
+                        ["property" => "FirstName", "value" => $data['FirstName']], 
+                        ["property" => "LastName", "value" => $data['LastName']], 
+                        ["property" => "Home Phone", "value" => $data['Phone']],
+                        ["property" => "Email", "value" => $data['email']],
+                        ["property" => "type", "value" => $data['primarycontactid']]
+                    ],
+                    "activities" => [
+                        [
+                            "reInquiry" => true,
+                            "description" => "Webform",
+                            "activityStatusMasterId" => 2,
+                            "activityResultMasterId" => 2,
+                            "activityTypeMasterId" => 17
+                        ]
+                    ],
+                    "notes" => [
+                        ["Message" => (string)$data['Message']] // Cast to string
                     ]
-                ]
-            ]
-        ];
+                ];
+            
+                // Conditionally add properties if primaryContactId is 'prospect'
+                $additionalProperties = [
+                    ["property" => "Care Level", "value" => $data['carelevel']],
+                    ["property" => "Apartment Preference", "value" => $data['apartmentpreference']],
+                    ["property" => "Expansion Status", "value" => $data['expansionstatus']],
+                    ["property" => "UTM Source", "value" => $data['utmsource']],
+                    ["property" => "UTM Medium", "value" => $data['utmmedium']],
+                    ["property" => "UTM Campaign", "value" => $data['utmcampaign']],
+                    ["property" => "UTM Id", "value" => $data['utmid']],
+                    ["property" => "GCLID", "value" => $data['gclid']],
+                    ["property" => "Market Source", "value" => $data['marketsource']]
+                ];
+                $individual['properties'] = array_merge($individual['properties'], $additionalProperties);
+            } else {
+                $individual = [
+                    "id" => $existingIndividual['id'],
+                    "IndividualID" => $existingIndividual['id'], 
+                    "communities" => [
+                        ["NameUnique" => $data['communityunique']]
+                    ],
+                    "properties" => [
+                        ["property" => "FirstName", "value" => $data['FirstName']], 
+                        ["property" => "LastName", "value" => $data['LastName']], 
+                        ["property" => "Home Phone", "value" => $data['Phone']],
+                        ["property" => "Email", "value" => $data['email']],
+                        ["property" => "type", "value" => $data['primarycontactid']]
+                    ],
+                    "activities" => [
+                        [
+                            "reInquiry" => true,
+                            "description" => "Webform",
+                            "activityStatusMasterId" => 2,
+                            "activityResultMasterId" => 2,
+                            "activityTypeMasterId" => 17
+                        ]
+                    ],
+                    "notes" => [
+                        ["Message" => (string)$data['Message']] // Cast to string
+                    ]
+                ];
+            }
 
-        $args = [
-            'method' => 'POST',
-            'headers' => [
-                'Ocp-Apim-Subscription-Key' => $primaryApiKey,
-                'Content-Type' => 'application/json',
-                'PortalId'     => get_option('gravity_api_trap_portal_id'),
-            ],
-            'body' => json_encode($sendData)
-        ];
+            $args = [
+                'method' => 'POST',
+                'headers' => [
+                    'Ocp-Apim-Subscription-Key' => $primaryApiKey,
+                    'Content-Type' => 'application/json',
+                    'PortalId'     => get_option('gravity_api_trap_portal_id'),
+                ],
+                'body' => json_encode($individual, JSON_PRETTY_PRINT)
+            ];
 
-        error_log('API request JSON data: ' . json_encode($sendData, JSON_PRETTY_PRINT), 3, plugin_dir_path(__FILE__) . 'debug.log');
+            error_log('API request JSON data: ' . json_encode($individual, JSON_PRETTY_PRINT), 3, plugin_dir_path(__FILE__) . 'debug.log');
 
+        } else {
+            // Create new individual
+            if ($data['primarycontactid'] === 'prospect') {
+                $individual = [
+                    "communities" => [
+                        ["NameUnique" => $data['communityunique']]
+                    ],
+                    "properties" => [
+                        ["property" => "FirstName", "value" => $data['FirstName']], 
+                        ["property" => "LastName", "value" => $data['LastName']], 
+                        ["property" => "Home Phone", "value" => $data['Phone']],
+                        ["property" => "Email", "value" => $data['email']],
+                        ["property" => "type", "value" => $data['primarycontactid']]
+                    ],
+                    "activities" => [
+                        [
+                            "reInquiry" => true,
+                            "description" => "Webform",
+                            "activityStatusMasterId" => 2,
+                            "activityResultMasterId" => 2,
+                            "activityTypeMasterId" => 17
+                        ]
+                    ],
+                    "notes" => [
+                        ["Message" => (string)$data['Message']] // Cast to string
+                    ]
+                ];
+            
+                // Conditionally add properties if primaryContactId is 'prospect'
+                $additionalProperties = [
+                    ["property" => "Care Level", "value" => $data['carelevel']],
+                    ["property" => "Apartment Preference", "value" => $data['apartmentpreference']],
+                    ["property" => "Expansion Status", "value" => $data['expansionstatus']],
+                    ["property" => "UTM Source", "value" => $data['utmsource']],
+                    ["property" => "UTM Medium", "value" => $data['utmmedium']],
+                    ["property" => "UTM Campaign", "value" => $data['utmcampaign']],
+                    ["property" => "UTM Id", "value" => $data['utmid']],
+                    ["property" => "GCLID", "value" => $data['gclid']],
+                    ["property" => "Market Source", "value" => $data['marketsource']]
+                ];
+                $individual['properties'] = array_merge($individual['properties'], $additionalProperties);
+
+                $sendData = [
+                    "individuals" => [
+                        $individual,
+                        [
+                            "relationship" => "Family Member",
+                            "communities" => [
+                                ["NameUnique" => $data['communityunique']]
+                            ],
+                            "properties" => [
+                                ["property" => "FirstName", "value" => $data['lovedfirst']],
+                                ["property" => "LastName", "value" => $data['lovedlast']],
+                                ["property" => "type", "value" => 'contact']
+                            ]
+                        ]
+                    ]
+                ];
+
+                $args = [
+                    'method' => 'POST',
+                    'headers' => [
+                        'Ocp-Apim-Subscription-Key' => $primaryApiKey,
+                        'Content-Type' => 'application/json',
+                        'PortalId'     => get_option('gravity_api_trap_portal_id'),
+                    ],
+                    'body' => json_encode($sendData, JSON_PRETTY_PRINT)
+                ];
+
+                error_log('API request JSON data: ' . json_encode($sendData, JSON_PRETTY_PRINT), 3, plugin_dir_path(__FILE__) . 'debug.log');
+            } else {
+                $contact = [
+                    "communities" => [
+                        ["NameUnique" => $data['communityunique']]
+                    ],
+                    "properties" => [
+                        ["property" => "FirstName", "value" => $data['FirstName']], 
+                        ["property" => "LastName", "value" => $data['LastName']], 
+                        ["property" => "Home Phone", "value" => $data['Phone']],
+                        ["property" => "Email", "value" => $data['email']],
+                        ["property" => "type", "value" => 'contact']
+                    ],
+                    "activities" => [
+                        [
+                            "reInquiry" => true,
+                            "description" => "Webform",
+                            "activityStatusMasterId" => 2,
+                            "activityResultMasterId" => 2,
+                            "activityTypeMasterId" => 17
+                        ]
+                    ],
+                    "notes" => [
+                        ["Message" => (string)$data['Message']] // Cast to string
+                    ]
+                ];
+
+                $prospect = [
+                    "communities" => [
+                        ["NameUnique" => $data['communityunique']]
+                    ],
+                    "properties" => [
+                        ["property" => "FirstName", "value" => $data['lovedfirst']], 
+                        ["property" => "LastName", "value" => $data['lovedlast']], 
+                        ["property" => "Home Phone", "value" => ''],
+                        ["property" => "Email", "value" => ''],
+                        ["property" => "type", "value" => 'prospect']
+                    ],
+                    "activities" => [
+                        [
+                            "reInquiry" => true,
+                            "description" => "Webform",
+                            "activityStatusMasterId" => 2,
+                            "activityResultMasterId" => 2,
+                            "activityTypeMasterId" => 17
+                        ]
+                    ],
+                    "notes" => [
+                        ["Message" => (string)$data['Message']] // Cast to string
+                    ]
+                ];
+
+                $additionalProperties = [
+                    ["property" => "Care Level", "value" => $data['carelevel']],
+                    ["property" => "Apartment Preference", "value" => $data['apartmentpreference']],
+                    ["property" => "Expansion Status", "value" => $data['expansionstatus']],
+                    ["property" => "UTM Source", "value" => $data['utmsource']],
+                    ["property" => "UTM Medium", "value" => $data['utmmedium']],
+                    ["property" => "UTM Campaign", "value" => $data['utmcampaign']],
+                    ["property" => "UTM Id", "value" => $data['utmid']],
+                    ["property" => "GCLID", "value" => $data['gclid']],
+                    ["property" => "Market Source", "value" => $data['marketsource']]
+                ];
+                $prospect['properties'] = array_merge($prospect['properties'], $additionalProperties);
+
+                $sendData = [
+                    "individuals" => [
+                        $contact,
+                        $prospect
+                    ]
+                ];
+
+                $args = [
+                    'method' => 'POST',
+                    'headers' => [
+                        'Ocp-Apim-Subscription-Key' => $primaryApiKey,
+                        'Content-Type' => 'application/json',
+                        'PortalId'     => get_option('gravity_api_trap_portal_id'),
+                    ],
+                    'body' => json_encode($sendData, JSON_PRETTY_PRINT)
+                ];
+
+                error_log('API request JSON data: ' . json_encode($sendData, JSON_PRETTY_PRINT), 3, plugin_dir_path(__FILE__) . 'debug.log');
+            }
+        }
+    
         $response = wp_remote_post($url, $args);
-
+    
         if (is_wp_error($response)) {
             $args['headers']['Ocp-Apim-Subscription-Key'] = $secondaryApiKey;
             $response = wp_remote_post($url, $args);
         }
-
+    
         if (is_wp_error($response)) {
             error_log('API request failed: ' . $response->get_error_message(), 3, plugin_dir_path(__FILE__) . 'debug.log');
             return;
         }
-
+    
         $responseCode = wp_remote_retrieve_response_code($response);
         $responseBody = wp_remote_retrieve_body($response);
-
+    
         if ($responseCode === 200) {
             error_log('API request successful: ' . $responseCode . ' - ' . $responseBody, 3, plugin_dir_path(__FILE__) . 'debug.log');
         } else {
             error_log('API request failed: ' . $responseCode . ' - ' . $responseBody, 3, plugin_dir_path(__FILE__) . 'debug.log');
         }
-
+    
         return $response;
     }
 }
