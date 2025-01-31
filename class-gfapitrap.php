@@ -112,55 +112,55 @@ class GFAPITrap extends GFFeedAddOn {
     
         // Mapping Arrays (Make these complete!)
         $communityUniqueMap = [
-            'LakeForestPlacePH' => '546729', // Lake Forest Place
-            'PresHomesTenTwentyGrove' => '546730', // Ten Twenty Grove
-            'TheMooringsPH' => '546731', // The Moorings
-            'WestminsterPlace' => '546732', // Westminster Place
-            'PresbyterianHomesCorporate' => 'PresbyterianHomesCorporate', // Presbyterian Homes Corporate
+            'LakeForestPlacePH' => 'Lake Forest Place', // Lake Forest Place
+            'PresHomesTenTwentyGrove' => 'Ten Twenty Grove', // Ten Twenty Grove
+            'TheMooringsPH' => 'The Moorings of Arlington Heights', // The Moorings
+            'WestminsterPlace' => 'Westminster Place', // Westminster Place
+            'PresbyterianHomesCorporate' => 'Presbyterian Homes Corporate', // Presbyterian Homes Corporate
         ];
 
         //CareLevels stay ID's these are the values not the Labels
         $careLevelMap = [
-            'Assisted Living' => '762',
-            'Independent Living' => '763',
-            'Memory Support' => '764',
-            'Skilled Nursing' => '765',
-            'Rehab' => '887',
-            'Respite' => '1365',
+            'Assisted Living' => 'Assisted Living',
+            'Independent Living' => 'Independent Living',
+            'Memory Support' => 'Memory Care',
+            'Skilled Nursing' => 'Skilled Nursing',
+            'Rehab' => 'Rehab',
+            'Respite' => 'Respite',
         ];
 
         //Apartment Preference stay ID's these are the values not the Labels
         $apartmentPreferenceMap = [
-            'Cottage' => '1335', // Cottage
-            'Townhouse' => '1337', // Townhouse
-            'Apartment' => '2622', // Apartment set to "One Bedroom w/ den Apartment"for now need actual ID
+            'Cottage' => 'Cottage', 
+            'Townhouse' => 'Townhouse', 
+            'Apartment' => 'Apartments', 
         ];
 
         //Expansion Status stay ID's these are the values not the Labels
         $expansionStatusMap = [
-            '1. Active Interest' => '547072', // 1. Active Interest
+            '1. Active Interest' => '1. Active Interest', 
         ];
 
         //Market Source stay ID's these are the values not the Labels
         $marketSourceMap = [
-            'Referral from friend' => '21586',
-            'Referral from family' => '21586',
-            'Referral from resident' => '22340',
-            'Referral from a professional' => '22332',
-            'Newspaper' => '40598',
-            'Internet search' => '40660',
-            'Direct Mail' => '21531', //needs to be either direct mail or email
-            'Community website' => '22518', 
-            'Other' => '22322', 
+            'Referral from friend' => 'Referral: FAM/FRIEND',
+            'Referral from family' => 'Referral: FAM/FRIEND',
+            'Referral from resident' => 'Referral: Resident',
+            'Referral from a professional' => 'Referral: Professional',
+            'Newspaper' => 'Adv.Newspaper',
+            'Internet search' => 'Web: Organic Search',
+            'Direct Mail' => 'EMAIL BLAST', //needs to be either direct mail or email
+            'Community website' => 'WEBSITE', 
+            'Other' => 'Referral: Other', 
         ];
 
         $communityunique = isset($metaData['communityunique']) ? $this->get_field_value($form, $entry, $metaData['communityunique']) : null;
         if ($communityunique) {
             $communityunique = isset($communityUniqueMap[$communityunique]) ? $communityUniqueMap[$communityunique] : $communityunique;
         } else {
-            error_log('Community unique value is null', 3, plugin_dir_path(__FILE__) . 'debug.log');
+            //error_log('Community unique value is null', 3, plugin_dir_path(__FILE__) . 'debug.log');
             // You can set a default value for $communityunique 
-            $communityunique = '546729'; // For example
+            $communityunique = 'Presbyterian Homes Corporate'; // default if empty
         }
 
         $careLevelFields = array('careLevelAL', 'careLevelIL', 'careLevelMS', 'careLevelSN', 'careLevelRT', 'careLevelRC');
@@ -181,7 +181,7 @@ class GFAPITrap extends GFFeedAddOn {
         if ($CareLevelValue === null) {
             error_log('Care level value is null', 3, plugin_dir_path(__FILE__) . 'debug.log');
             // You can set a default value for $CareLevelValue 
-            $CareLevelValue = '762'; // For example
+            $CareLevelValue = 'Assisted Living'; // default if empty
         }
 
         $residencePreferenceRaw = $this->get_field_value($form, $entry, $metaData['apartmentpreference']); // Get the raw value
@@ -216,7 +216,7 @@ class GFAPITrap extends GFFeedAddOn {
         $utmid = isset($metaData['utmid']) ? $this->get_field_value($form, $entry, $metaData['utmid']) : null;
         $gclid = isset($metaData['gclid']) ? $this->get_field_value($form, $entry, $metaData['gclid']) : null;
 
-        $primaryContactId = ($inquiringfor == 'Myself') ? 1 : 2;  // 1 for Yes, 2 for No
+        $primaryContactId = ($inquiringfor == 'Myself') ? 'prospect' : 'contact';  
 
         $data = array(
             'communityunique' => $communityunique,
@@ -293,10 +293,12 @@ class GFAPITrap extends GFFeedAddOn {
                     [
                         "id" => $existingIndividual['id'],
                         "IndividualID" => $existingIndividual['id'], 
-                        "communities" => [],
+                        "communities" => [
+                            ["NameUnique" => $data['communityunique']]
+                        ],
                         "properties" => [
-                            ["property" => "First Name", "value" => $data['FirstName']], 
-                            ["property" => "Last Name", "value" => $data['LastName']], 
+                            ["property" => "FirstName", "value" => $data['FirstName']], 
+                            ["property" => "LastName", "value" => $data['LastName']], 
                             ["property" => "Home Phone", "value" => $data['Phone']],
                             ["property" => "Email", "value" => $data['email']],
                             ["property" => "Care Level", "value" => $data['carelevel']],
@@ -325,65 +327,28 @@ class GFAPITrap extends GFFeedAddOn {
                     ],
                     [
                         "relationship" => "Family Member",
-                        "communities" => [],
+                        "communities" => [
+                            ["NameUnique" => $data['communityunique']]
+                        ],
                         "properties" => [
-                            ["property" => "First Name", "value" => $data['lovedfirst']],
-                            ["property" => "Last Name", "value" => $data['lovedlast']],
+                            ["property" => "FirstName", "value" => $data['lovedfirst']],
+                            ["property" => "LastName", "value" => $data['lovedlast']],
                             ["property" => "type", "value" => ($data['primarycontactid'] == 'Prospect') ? 'Contact' : 'Prospect']
                         ]
                     ]
                 ]
             ];
-            if ($data['primarycontactid'] == 'Prospect') {
-                $sendData['individuals'][0]['communities'][] = [
-                    "NameUnique" => $data['communityunique']
-                ];
-                // Remove existing type property
-                $sendData['individuals'][0]['properties'] = array_filter($sendData['individuals'][0]['properties'], function($property) {
-                    return $property['property'] !== 'type';
-                });
-                $sendData['individuals'][0]['properties'][] = [
-                    "property" => "type",
-                    "value" => 'prospect'
-                ];
-                // Remove existing type property
-                $sendData['individuals'][1]['properties'] = array_filter($sendData['individuals'][1]['properties'], function($property) {
-                    return $property['property'] !== 'type';
-                });
-                $sendData['individuals'][1]['properties'][] = [
-                    "property" => "type",
-                    "value" => 'contact'
-                ];
-            } else {
-                $sendData['individuals'][1]['communities'][] = [
-                    "NameUnique" => $data['communityunique']
-                ];
-                // Remove existing type property
-                $sendData['individuals'][1]['properties'] = array_filter($sendData['individuals'][1]['properties'], function($property) {
-                    return $property['property'] !== 'type';
-                });
-                $sendData['individuals'][1]['properties'][] = [
-                    "property" => "type",
-                    "value" => 'prospect'
-                ];
-                // Remove existing type property
-                $sendData['individuals'][0]['properties'] = array_filter($sendData['individuals'][0]['properties'], function($property) {
-                    return $property['property'] !== 'type';
-                });
-                $sendData['individuals'][0]['properties'][] = [
-                    "property" => "type",
-                    "value" => 'contact'
-                ];
-            }
         } else {
             // Create new individual
             $sendData = [
                 "individuals" => [
                     [
-                        "communities" => [],
+                        "communities" => [
+                            ["NameUnique" => $data['communityunique']]
+                        ],
                         "properties" => [
-                            ["property" => "First Name", "value" => $data['FirstName']], 
-                            ["property" => "Last Name", "value" => $data['LastName']], 
+                            ["property" => "FirstName", "value" => $data['FirstName']], 
+                            ["property" => "LastName", "value" => $data['LastName']], 
                             ["property" => "Home Phone", "value" => $data['Phone']],
                             ["property" => "Email", "value" => $data['email']],
                             ["property" => "Care Level", "value" => $data['carelevel']],
@@ -412,56 +377,17 @@ class GFAPITrap extends GFFeedAddOn {
                     ],
                     [
                         "relationship" => "Family Member",
-                        "communities" => [],
+                        "communities" => [
+                            ["NameUnique" => $data['communityunique']]
+                        ],
                         "properties" => [
-                            ["property" => "First Name", "value" => $data['lovedfirst']],
-                            ["property" => "Last Name", "value" => $data['lovedlast']],
+                            ["property" => "FirstName", "value" => $data['lovedfirst']],
+                            ["property" => "LastName", "value" => $data['lovedlast']],
                             ["property" => "type", "value" => ($data['primarycontactid'] == 'Prospect') ? 'Contact' : 'Prospect']
                         ]
                     ]
                 ]
             ];
-            if ($data['primarycontactid'] == 'Prospect') {
-                $sendData['individuals'][0]['communities'][] = [
-                    "NameUnique" => $data['communityunique']
-                ];
-                // Remove existing type property
-                $sendData['individuals'][0]['properties'] = array_filter($sendData['individuals'][0]['properties'], function($property) {
-                    return $property['property'] !== 'type';
-                });
-                $sendData['individuals'][0]['properties'][] = [
-                    "property" => "type",
-                    "value" => 'prospect'
-                ];
-                // Remove existing type property
-                $sendData['individuals'][1]['properties'] = array_filter($sendData['individuals'][1]['properties'], function($property) {
-                    return $property['property'] !== 'type';
-                });
-                $sendData['individuals'][1]['properties'][] = [
-                    "property" => "type",
-                    "value" => 'contact'
-                ];
-            } else {
-                $sendData['individuals'][1]['communities'][] = [
-                    "NameUnique" => $data['communityunique']
-                ];
-                // Remove existing type property
-                $sendData['individuals'][1]['properties'] = array_filter($sendData['individuals'][1]['properties'], function($property) {
-                    return $property['property'] !== 'type';
-                });
-                $sendData['individuals'][1]['properties'][] = [
-                    "property" => "type",
-                    "value" => 'prospect'
-                ];
-                // Remove existing type property
-                $sendData['individuals'][0]['properties'] = array_filter($sendData['individuals'][0]['properties'], function($property) {
-                    return $property['property'] !== 'type';
-                });
-                $sendData['individuals'][0]['properties'][] = [
-                    "property" => "type",
-                    "value" => 'contact'
-                ];
-            }
         }
         
         $args = [
