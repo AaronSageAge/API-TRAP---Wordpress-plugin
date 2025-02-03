@@ -72,7 +72,6 @@ class GFAPITrap extends GFFeedAddOn {
                                 array('label' => 'Result Residents Cottage', 'value' => 'resultcottage',),
                                 array('label' => 'Result Residents Apartment', 'value' => 'resultapartment',),
                                 array('label' => 'Result Residents Townhouse', 'value' => 'resulttownhouse',),
-                                array('label' => 'Result Residents Apartment', 'value' => 'resultapartment',),
                                 array('label' => 'expansionStatus', 'value' => 'expansionstatus',),
                                 array('label' => 'MarketSource', 'value' => 'marketsource',),
                             ),
@@ -185,8 +184,17 @@ class GFAPITrap extends GFFeedAddOn {
         }
 
 
-        $apartmentpreference = isset($metaData['resultapartment']) ? $this->get_field_value($form, $entry, $metaData['resultapartment']) : null;
-        $apartmentpreference = isset( $apartmentPreferenceMap [$apartmentpreference]) ?  $apartmentPreferenceMap [$apartmentpreference] : null;
+        $apartmentpreference = null;
+        $apartmentPreferenceFields = ['resultcottage', 'resulttownhouse', 'resultapartment'];
+        foreach ($apartmentPreferenceFields as $field) {
+            if (isset($metaData[$field])) {
+                $apartmentpreferenceValue = $this->get_field_value($form, $entry, $metaData[$field]);
+                if (isset($apartmentPreferenceMap[$apartmentpreferenceValue])) {
+                    $apartmentpreference = $apartmentPreferenceMap[$apartmentpreferenceValue];
+                    break;
+                }
+            }
+        }
 
         $expansionstatus = isset($metaData['expansionstatus']) ? $this->get_field_value($form, $entry, $metaData['expansionstatus']) : null;
         $expansionstatus = isset($expansionStatusMap[$expansionstatus]) ? $expansionStatusMap[$expansionstatus] : null;
@@ -226,7 +234,7 @@ class GFAPITrap extends GFFeedAddOn {
             'utmmedium' => $utmmedium,
             'utmid' => $utmid,
             'gclid' => $gclid,
-            'apartmentpreference' => $apartmentpreference,
+            'apartmentpreference' => $apartmentPreferenceMap,
             'expansionstatus' => $expansionstatus,
             'marketsource' => $marketsource,
             'carelevel' => $CareLevelValue,
