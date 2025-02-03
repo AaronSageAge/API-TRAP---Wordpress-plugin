@@ -112,11 +112,11 @@ class GFAPITrap extends GFFeedAddOn {
     
         // Mapping Arrays (Make these complete!)
         $communityUniqueMap = [
-            'LakeForestPlacePH' => 'Lake Forest Place', // Lake Forest Place
-            'PresHomesTenTwentyGrove' => 'Ten Twenty Grove', // Ten Twenty Grove
-            'TheMooringsPH' => 'The Moorings of Arlington Heights', // The Moorings
-            'WestminsterPlace' => 'Westminster Place', // Westminster Place
-            'PresbyterianHomesCorporate' => 'Presbyterian Homes Corporate', // Presbyterian Homes Corporate
+            'LakeForestPlacePH' => 'LakeForestPlacePH', // Lake Forest Place
+            'PresHomesTenTwentyGrove' => 'PresHomesTenTwentyGrove', // Ten Twenty Grove
+            'TheMooringsPH' => 'TheMooringsPH', // The Moorings
+            'WestminsterPlace' => 'WestminsterPlace', // Westminster Place
+            'PresbyterianHomesCorporate' => 'PresbyterianHomesCorporate', // Presbyterian Homes Corporate
         ];
 
         //CareLevels stay ID's these are the values not the Labels
@@ -406,22 +406,30 @@ class GFAPITrap extends GFFeedAddOn {
                 ];
                 $individual['properties'] = array_merge($individual['properties'], $additionalProperties);
 
-                $sendData = [
-                    "individuals" => [
-                        $individual,
-                        [
-                            "relationship" => "Family Member",
-                            "communities" => [
-                                ["NameUnique" => $data['communityunique']]
-                            ],
-                            "properties" => [
-                                ["property" => "FirstName", "value" => $data['lovedfirst']],
-                                ["property" => "LastName", "value" => $data['lovedlast']],
-                                ["property" => "type", "value" => 'contact']
+                if ($inquiringfor !== 'Myself') {
+                    $sendData = [
+                        "individuals" => [
+                            $individual,
+                            [
+                                "relationship" => "Family Member",
+                                "communities" => [
+                                    ["NameUnique" => $data['communityunique']]
+                                ],
+                                "properties" => [
+                                    ["property" => "FirstName", "value" => $data['lovedfirst']],
+                                    ["property" => "LastName", "value" => $data['lovedlast']],
+                                    ["property" => "type", "value" => 'contact']
+                                ]
                             ]
                         ]
-                    ]
-                ];
+                    ];
+                } else {
+                    $sendData = [
+                        "individuals" => [
+                            $individual
+                        ]
+                    ];
+                }
 
                 $args = [
                     'method' => 'POST',
