@@ -188,13 +188,11 @@ class GFAPITrap extends GFFeedAddOn {
         $apartmentPreferenceFields = ['resultcottage', 'resulttownhouse', 'resultapartment'];
         foreach ($apartmentPreferenceFields as $field) {
             if (isset($metaData[$field])) {
-                $apartmentpreferenceValue = $this->get_field_value($form, $entry, $metaData[$field]);
-                if (isset($apartmentPreferenceMap[$apartmentpreferenceValue])) {
-                    $apartmentpreference = $apartmentPreferenceMap[$apartmentpreferenceValue];
-                    break;
-                }
+                $apartmentpreference = $apartmentPreferenceMap[$field];
+                break;
             }
         }
+
 
         $expansionstatus = isset($metaData['expansionstatus']) ? $this->get_field_value($form, $entry, $metaData['expansionstatus']) : null;
         $expansionstatus = isset($expansionStatusMap[$expansionstatus]) ? $expansionStatusMap[$expansionstatus] : null;
@@ -234,7 +232,7 @@ class GFAPITrap extends GFFeedAddOn {
             'utmmedium' => $utmmedium,
             'utmid' => $utmid,
             'gclid' => $gclid,
-            'apartmentpreference' => $apartmentPreferenceMap,
+            'apartmentpreference' => $apartmentpreference,
             'expansionstatus' => $expansionstatus,
             'marketsource' => $marketsource,
             'carelevel' => $CareLevelValue,
