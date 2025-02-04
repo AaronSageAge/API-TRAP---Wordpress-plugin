@@ -318,6 +318,7 @@ class GFAPITrap extends GFFeedAddOn {
             
                 // Conditionally add properties if primaryContactId is 'prospect'
                 $additionalProperties = [
+                    ["property" => "Status Code", "value" => "Not Yet Classified"],
                     ["property" => "Care Level", "value" => $data['carelevel']],
                     ["property" => "Apartment Preference", "value" => $data['apartmentpreference']],
                     ["property" => "Expansion Status", "value" => $data['expansionstatus']],
@@ -400,6 +401,7 @@ class GFAPITrap extends GFFeedAddOn {
             
                 // Conditionally add properties if primaryContactId is 'prospect'
                 $additionalProperties = [
+                    ["property" => "Status Code", "value" => "Not Yet Classified"],
                     ["property" => "Care Level", "value" => $data['carelevel']],
                     ["property" => "Apartment Preference", "value" => $data['apartmentpreference']],
                     ["property" => "Expansion Status", "value" => $data['expansionstatus']],
@@ -500,6 +502,7 @@ class GFAPITrap extends GFFeedAddOn {
                 ];
 
                 $additionalProperties = [
+                    ["property" => "Status Code", "value" => "Not Yet Classified"],
                     ["property" => "Care Level", "value" => $data['carelevel']],
                     ["property" => "Apartment Preference", "value" => $data['apartmentpreference']],
                     ["property" => "Expansion Status", "value" => $data['expansionstatus']],
