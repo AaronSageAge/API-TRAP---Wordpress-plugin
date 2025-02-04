@@ -7,7 +7,6 @@ This script will need to be tailored per community if there is more than one com
 Else if ther is only one this script can be ignored and the community name and unique name can be hard coded.
 */
 
-
 document.addEventListener("DOMContentLoaded", function() {
   var url = window.location.href;
 
@@ -26,15 +25,34 @@ document.addEventListener("DOMContentLoaded", function() {
   } else if (url.includes("ten-twenty-grove")) {
     communityName = "Ten Twenty Grove";
     uniqueName = "PresHomesTenTwentyGrove";
-  } 
+  }
+
+  if (url.includes("assisted-living")) {
+    AL_careLevel = "Assisted Living";
+  } else if (url.includes("independent-living")) {
+    IL_careLevel = "Independent Living";
+  } else if (url.includes("memory-care") || url.includes("memory-support")) {
+    MC_careLevel = "Memory Care";
+  } else {
+    IL_careLevel = "Independent Living"; // default value
+ }
 
   if (communityName && uniqueName) {
-    var communityInput = document.getElementById("input_29_20");
-    var uniqueInput = document.getElementById("input_29_18");
+    var communityInput = document.getElementById("input_33_20");
+    var uniqueInput = document.getElementById("input_33_18");
+    var ALInput = document.getElementById("input_33_43");
+    var ILInput = document.getElementById("input_33_44");
+    var MCInput = document.getElementById("input_33_45");
 
     if (communityInput && uniqueInput) {
       communityInput.setAttribute("value", communityName);
       uniqueInput.setAttribute("value", uniqueName);
+    }
+
+    if (ALInput && ILInput && MCInput) {
+      ALInput.setAttribute("value", AL_careLevel);
+      ILInput.setAttribute("value", IL_careLevel);
+      MCInput.setAttribute("value", MC_careLevel);
     }
   }
 });
