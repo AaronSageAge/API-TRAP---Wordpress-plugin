@@ -148,7 +148,7 @@ class GFAPITrap extends GFFeedAddOn {
             'Referral from a professional' => 'Referral: Professional',
             'Newspaper' => 'Adv.Newspaper',
             'Internet search' => 'Web: Organic Search',
-            'Direct Mail' => 'EMAIL BLAST', //needs to be either direct mail or email
+            'Direct Mail' => 'DM Invitations', 
             'Community website' => 'WEBSITE', 
             'Other' => 'Referral: Other', 
         ];
