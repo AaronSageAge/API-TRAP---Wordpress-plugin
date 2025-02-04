@@ -118,10 +118,6 @@ class GFAPITrap extends GFFeedAddOn {
             'PresbyterianHomesCorporate' => 'PresbyterianHomesCorporate', // Presbyterian Homes Corporate
         ];
 
-        if ($expansionstatus == '1. Active Interest') {
-            $CareLevelValue = 'Independent Living';
-        }
-
         //CareLevels stay ID's these are the values not the Labels
         $careLevelMap = [
             'Assisted Living' => 'Assisted Living',
@@ -130,7 +126,6 @@ class GFAPITrap extends GFFeedAddOn {
             'Skilled Nursing' => 'Skilled Nursing',
             'Rehab' => 'Rehab',
             'Respite' => 'Respite',
-            '1. Active Interest' => 'Independent Living', // If expansion is set carelevel IL
         ];
 
         //Apartment Preference stay ID's these are the values not the Labels
@@ -185,7 +180,7 @@ class GFAPITrap extends GFFeedAddOn {
         if ($CareLevelValue === null) {
             error_log('Care level value is null', 3, plugin_dir_path(__FILE__) . 'debug.log');
             // You can set a default value for $CareLevelValue 
-            $CareLevelValue = 'Assisted Living'; // default if empty
+            $CareLevelValue = 'Independent Living'; // default if empty
         }
 
 
